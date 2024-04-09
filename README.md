@@ -1,2 +1,2 @@
 # mobile
-Repository for Pawsitive mobile app
+Repository for Pawsitive mobile app - available only on android for now
