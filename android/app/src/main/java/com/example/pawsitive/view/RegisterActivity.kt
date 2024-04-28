@@ -1,6 +1,7 @@
 package com.example.pawsitive.view
 
 import android.content.Intent
+import android.app.Activity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,12 +17,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,7 +29,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,19 +49,21 @@ import com.example.pawsitive.ui.theme.Green4
 import com.example.pawsitive.ui.theme.PawsitiveTheme
 
 
-class LoginActivity : ComponentActivity() {
+class RegisterActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-
-            LoginView()
-
-
+            PawsitiveTheme {
+                RegisterView()
+            }
+//            RegisterView()
         }
     }
 
+
     @Composable
-    fun LoginView() {
+    fun RegisterView() {
 
         val context = LocalContext.current
 
@@ -128,26 +128,40 @@ class LoginActivity : ComponentActivity() {
                                 }
                             }
                         )
+                        OutlinedTextField(
+                            value = passwordInput,
+                            label = { Text(text = "Powtórz hasło") },
+                            visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                            onValueChange = { passwordInput = it },
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            trailingIcon = {
+                                IconButton(onClick = { showPassword = !showPassword }) {
+                                    Icon(
+                                        imageVector = if (showPassword) Icons.Outlined.Lock else Icons.Filled.Lock,
+                                        contentDescription = "show password"
+                                    )
+                                }
+                            }
+                        )
                         Spacer(modifier = Modifier.height(10.dp))
                         Row(
-                            modifier = Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .fillMaxWidth(),
+                            modifier = Modifier.align(
+                                Alignment.CenterHorizontally
+                            ).fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
                             OutlinedButton(
                                 onClick = {
-                                    val intent = Intent(context, RegisterActivity::class.java)
+                                    val intent = Intent(context, LoginActivity::class.java)
                                     startActivity(intent)
                                 },
-
-                                ) {
-                                Text(text = "Nie masz jeszcze konta?")
+                            ) {
+                                Text(text = "Masz już konto?")
                             }
-                            Button(
-                                onClick = {},
-                                ) {
-                                Text(text = "Zaloguj")
+                            Button(onClick = {}
+                            ) {
+                                Text(text = "Zarejestruj")
                             }
 
                         }
@@ -158,7 +172,4 @@ class LoginActivity : ComponentActivity() {
 
         }
     }
-
 }
-
-
