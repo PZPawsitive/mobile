@@ -13,6 +13,11 @@
         android:theme="@style/Theme.Pawsitive"
         tools:targetApi="31">
         <activity
+            android:name=".view.MainScreen"
+            android:exported="false"
+            android:label="@string/title_activity_main_screen"
+            android:theme="@style/Theme.Pawsitive" />
+        <activity
             android:name=".view.RegisterActivity"
             android:exported="false"
             android:label="@string/title_activity_register"
@@ -32,7 +37,7 @@
             android:name=".MainActivity"
             android:exported="false"
             android:label="@string/app_name"
-            android:theme="@style/Theme.Pawsitive"></activity>
+            android:theme="@style/Theme.Pawsitive" />
     </application>
 
 </manifest>

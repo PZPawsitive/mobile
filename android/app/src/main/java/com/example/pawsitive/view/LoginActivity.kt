@@ -145,8 +145,11 @@ class LoginActivity : ComponentActivity() {
                                 Text(text = "Nie masz jeszcze konta?")
                             }
                             Button(
-                                onClick = {},
-                                ) {
+                                onClick = {
+                                    val intent = Intent(context, MainScreen::class.java)
+                                    startActivity(intent)
+                                },
+                            ) {
                                 Text(text = "Zaloguj")
                             }
 
