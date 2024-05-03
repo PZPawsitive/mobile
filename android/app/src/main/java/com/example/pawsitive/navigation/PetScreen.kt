@@ -32,7 +32,19 @@ val pets =
     listOf(
         Pet("Kacper", PetType.DOG),
         Pet("Franciszek", PetType.CAT),
-        Pet("Bogusław", PetType.DOG)
+        Pet("Bogusław", PetType.DOG),
+        Pet("Kacper", PetType.DOG),
+        Pet("Franciszek", PetType.CAT),
+        Pet("Bogusław", PetType.DOG),
+        Pet("Kacper", PetType.DOG),
+        Pet("Franciszek", PetType.CAT),
+        Pet("Bogusław", PetType.DOG),
+        Pet("Kacper", PetType.DOG),
+        Pet("Franciszek", PetType.CAT),
+        Pet("Bogusław", PetType.DOG),
+        Pet("Kacper", PetType.DOG),
+        Pet("Franciszek", PetType.CAT),
+        Pet("Bogusław", PetType.DOG),
     )
 
 @Composable
