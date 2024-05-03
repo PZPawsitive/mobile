@@ -59,6 +59,8 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.navigation.compose)
     implementation(libs.font.awesome)
+
+    implementation(libs.osmdroid.android)
     //noinspection UseTomlInstead
     implementation("androidx.compose.material:material-icons-extended")
 
