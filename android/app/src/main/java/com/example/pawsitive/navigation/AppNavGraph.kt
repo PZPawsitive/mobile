@@ -16,6 +16,7 @@ fun AppNavGraph(
         addHomeRoute(navController)
         addFollowRoute(navController)
         addPetRoute(navController)
+        addMessagesRoute(navController)
         addSearchRoute(navController)
         addFavoritesRoute(navController)
         addProfileRoute(navController)
@@ -49,6 +50,15 @@ private fun NavGraphBuilder.addPetRoute(navController: NavController) {
         showPet(navController)
     }
 }
+
+private fun NavGraphBuilder.addMessagesRoute(navController: NavController) {
+    navigation(
+        route = RootScreen.Messages.route,
+        startDestination = LeafScreen.Messages.route
+    ) {
+        showMessages(navController)
+    }
+}
 private fun NavGraphBuilder.showHome(navController: NavController) {
     composable(route = LeafScreen.Home.route) {
         HomeScreen(
@@ -80,6 +90,11 @@ private fun NavGraphBuilder.showPet(navController: NavController) {
     }
 }
 
+private fun NavGraphBuilder.showMessages(navController: NavController) {
+    composable(route = LeafScreen.Messages.route) {
+        MessagesScreen()
+    }
+}
 
 private fun NavGraphBuilder.addSearchRoute(navController: NavController) {
     navigation(
@@ -123,6 +138,6 @@ private fun NavGraphBuilder.addProfileRoute(navController: NavController) {
 }
 private fun NavGraphBuilder.showProfile(navController: NavController) {
     composable(route = LeafScreen.Profile.route) {
-//        ProfileScreen()
+        ProfileScreen()
     }
 }

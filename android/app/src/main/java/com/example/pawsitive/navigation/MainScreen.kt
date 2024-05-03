@@ -6,12 +6,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.ManageAccounts
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Chat
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.ManageAccounts
 import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material.icons.outlined.SupervisorAccount
 import androidx.compose.material.icons.twotone.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -112,14 +118,31 @@ private fun BottomNavBar(
             }
         )
         NavigationBarItem(
-            selected = currentSelectedScreen == RootScreen.Search,
-            onClick = { navController.navigateToRootScreen(RootScreen.Search) },
+            selected = currentSelectedScreen == RootScreen.Messages,
+            onClick = { navController.navigateToRootScreen(RootScreen.Messages) },
             alwaysShowLabel = true,
             label = {
-                Text(text = "home")
+                Text(text = "Messages")
             },
             icon = {
-                Icon(imageVector = Icons.Default.Home, contentDescription = "home")
+                Icon(
+                    imageVector = if (currentSelectedScreen == RootScreen.Messages) Icons.Default.Chat else Icons.Outlined.Chat,
+                    contentDescription = "home"
+                )
+            }
+        )
+        NavigationBarItem(
+            selected = currentSelectedScreen == RootScreen.Profile,
+            onClick = { navController.navigateToRootScreen(RootScreen.Profile) },
+            alwaysShowLabel = true,
+            label = {
+                Text(text = "Profile")
+            },
+            icon = {
+                Icon(
+                    imageVector = if (currentSelectedScreen == RootScreen.Profile) Icons.Filled.ManageAccounts else Icons.Outlined.ManageAccounts,
+                    contentDescription = "home"
+                )
             }
         )
 
@@ -143,6 +166,10 @@ private fun NavController.currentScreenAsState(): State<RootScreen> {
 
                 destination.hierarchy.any { it.route == RootScreen.Pet.route } -> {
                     selectedItem.value = RootScreen.Pet
+                }
+
+                destination.hierarchy.any { it.route == RootScreen.Messages.route } -> {
+                    selectedItem.value = RootScreen.Messages
                 }
 
                 destination.hierarchy.any { it.route == RootScreen.Search.route } -> {
