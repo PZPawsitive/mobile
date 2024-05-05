@@ -31,6 +31,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -63,6 +65,10 @@ fun MainScreen() {
         mutableStateOf(false)
     }
 
+    var walker by remember {
+        mutableStateOf(false)
+    }
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -76,13 +82,16 @@ fun MainScreen() {
                     }
                 },
                 actions = {
+                    Text(text = "Walker", modifier = Modifier.padding(end = 5.dp))
+                    Switch(checked = walker, onCheckedChange = { walker = !walker })
                     IconButton(onClick = { expandedSettings = !expandedSettings }) {
                         Icon(
                             imageVector = Icons.Filled.Menu,
                             contentDescription = "Localized description"
                         )
                     }
-                    DropdownMenu(
+
+                    DropdownMenu( // ui broken - fix
                         expanded = expandedSettings,
                         onDismissRequest = { expandedSettings = false }
                     ) {
