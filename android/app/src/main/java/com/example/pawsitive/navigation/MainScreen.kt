@@ -5,22 +5,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Chat
-import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.ManageAccounts
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Chat
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.ManageAccounts
-import androidx.compose.material.icons.outlined.Star
-import androidx.compose.material.icons.outlined.SupervisorAccount
-import androidx.compose.material.icons.twotone.Star
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
@@ -31,20 +25,14 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.pawsitive.R
 import androidx.compose.runtime.*
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -53,6 +41,8 @@ import compose.icons.FontAwesomeIcons
 import compose.icons.fontawesomeicons.Solid
 import compose.icons.fontawesomeicons.solid.Paw
 
+
+var LocalGlobalState = compositionLocalOf<Boolean> { error("not composed") }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,59 +55,68 @@ fun MainScreen() {
         mutableStateOf(false)
     }
 
-    var walker by remember {
+
+
+    var state by remember {
         mutableStateOf(false)
     }
 
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text(text = "Pawsitive", fontWeight = FontWeight.Bold) },
-                navigationIcon = {
-                    IconButton(onClick = { TODO() }) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "Localized description"
-                        )
-                    }
-                },
-                actions = {
-                    Text(text = "Walker", modifier = Modifier.padding(end = 5.dp))
-                    Switch(checked = walker, onCheckedChange = { walker = !walker })
-                    IconButton(onClick = { expandedSettings = !expandedSettings }) {
-                        Icon(
-                            imageVector = Icons.Filled.Menu,
-                            contentDescription = "Localized description"
-                        )
-                    }
+    CompositionLocalProvider(LocalGlobalState provides state) {
 
-                    DropdownMenu( // ui broken - fix
-                        expanded = expandedSettings,
-                        onDismissRequest = { expandedSettings = false }
-                    ) {
-                        DropdownMenuItem(text = { Text(text = "Settings") }, onClick = { /*TODO*/ })
-                        Divider()
-                        DropdownMenuItem(text = { Text(text = "...") }, onClick = { /*TODO*/ })
-                    }
-                }
-            )
 
-        },
-        bottomBar = {
-            BottomNavBar(
-                navController = navController,
-                currentSelectedScreen = currentSelectedScreen
-            )
-        },
-        modifier = Modifier.fillMaxSize(),
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(it)
+        Scaffold(
+            topBar = {
+                CenterAlignedTopAppBar(
+                    title = { Text(text = "Pawsitive", fontWeight = FontWeight.Bold) },
+                    navigationIcon = {
+                        IconButton(onClick = { TODO() }) {
+                            Icon(
+                                imageVector = Icons.Filled.ArrowBack,
+                                contentDescription = "Localized description"
+                            )
+                        }
+                    },
+                    actions = {
+                        Text(text = "Walker", modifier = Modifier.padding(end = 5.dp))
+                        Switch(checked = state, onCheckedChange = { state = !state })
+                        IconButton(onClick = { expandedSettings = !expandedSettings }) {
+                            Icon(
+                                imageVector = Icons.Filled.Menu,
+                                contentDescription = "Localized description"
+                            )
+                        }
+
+                        DropdownMenu( // ui broken - fix
+                            expanded = expandedSettings,
+                            onDismissRequest = { expandedSettings = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text(text = "Settings") },
+                                onClick = { /*TODO*/ })
+                            Divider()
+                            DropdownMenuItem(text = { Text(text = "...") }, onClick = { /*TODO*/ })
+                        }
+                    }
+                )
+
+            },
+            bottomBar = {
+                BottomNavBar(
+                    navController = navController,
+                    currentSelectedScreen = currentSelectedScreen
+                )
+            },
+            modifier = Modifier.fillMaxSize(),
         ) {
-            AppNavGraph(navController = navController)
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(it)
+            ) {
+                AppNavGraph(navController = navController)
+            }
         }
+
     }
 }
 
@@ -127,6 +126,7 @@ private fun BottomNavBar(
     navController: NavController,
     currentSelectedScreen: RootScreen
 ) {
+
     NavigationBar {
         NavigationBarItem(
             selected = currentSelectedScreen == RootScreen.Home,

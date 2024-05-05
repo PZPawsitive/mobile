@@ -18,11 +18,12 @@ import androidx.compose.ui.unit.dp
 fun HomeDetailScreen(
     onBack: () -> Unit
 ) {
+
     Scaffold {
         Box(modifier = Modifier.fillMaxSize()) {
             Text(
                 modifier = Modifier.align(Alignment.Center),
-                text = "Home Detail Screen", style = MaterialTheme.typography.headlineMedium
+                text = "${LocalGlobalState.current}", style = MaterialTheme.typography.headlineMedium
             )
             Button(
                 modifier = Modifier
