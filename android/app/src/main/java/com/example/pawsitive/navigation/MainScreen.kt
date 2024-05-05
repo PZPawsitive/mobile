@@ -22,6 +22,9 @@ import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material.icons.outlined.SupervisorAccount
 import androidx.compose.material.icons.twotone.Star
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -56,6 +59,10 @@ fun MainScreen() {
     val currentSelectedScreen by navController.currentScreenAsState()
     val currentRoute by navController.currentRouteAsState()
 
+    var expandedSettings by remember {
+        mutableStateOf(false)
+    }
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -69,11 +76,19 @@ fun MainScreen() {
                     }
                 },
                 actions = {
-                    IconButton(onClick = { TODO() }) {
+                    IconButton(onClick = { expandedSettings = !expandedSettings }) {
                         Icon(
                             imageVector = Icons.Filled.Menu,
                             contentDescription = "Localized description"
                         )
+                    }
+                    DropdownMenu(
+                        expanded = expandedSettings,
+                        onDismissRequest = { expandedSettings = false }
+                    ) {
+                        DropdownMenuItem(text = { Text(text = "Settings") }, onClick = { /*TODO*/ })
+                        Divider()
+                        DropdownMenuItem(text = { Text(text = "...") }, onClick = { /*TODO*/ })
                     }
                 }
             )
