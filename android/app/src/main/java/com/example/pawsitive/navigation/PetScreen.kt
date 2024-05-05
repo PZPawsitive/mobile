@@ -47,6 +47,7 @@ val pets =
         Pet("Bogusław", PetType.DOG),
     )
 
+// CHECKOUT BRANCH
 @Composable
 fun PetScreen() {
     LazyColumn() {

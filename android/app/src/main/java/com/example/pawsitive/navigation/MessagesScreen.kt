@@ -21,6 +21,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
+
+// CHECKOUT BRANCH
 data class Message(val sender: String, val content: String)
 
 val messages = listOf(

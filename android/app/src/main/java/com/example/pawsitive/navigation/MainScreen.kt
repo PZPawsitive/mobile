@@ -202,14 +202,6 @@ private fun NavController.currentScreenAsState(): State<RootScreen> {
                     selectedItem.value = RootScreen.Messages
                 }
 
-                destination.hierarchy.any { it.route == RootScreen.Search.route } -> {
-                    selectedItem.value = RootScreen.Search
-                }
-
-                destination.hierarchy.any { it.route == RootScreen.Favorites.route } -> {
-                    selectedItem.value = RootScreen.Favorites
-                }
-
                 destination.hierarchy.any { it.route == RootScreen.Profile.route } -> {
                     selectedItem.value = RootScreen.Profile
                 }

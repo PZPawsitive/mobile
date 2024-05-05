@@ -24,5 +24,6 @@ fun FollowScreen() {
                 text = "Follow Screen", style = MaterialTheme.typography.headlineMedium
             )
         }
+        // CHECKOUT BRANCH
     }
 }
