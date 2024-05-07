@@ -50,9 +50,6 @@ android {
 }
 
 dependencies {
-    val nav_version = "2.7.7"
-
-
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -61,15 +58,21 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.font.awesome)
 
+    implementation(files("libs/MTBeaconPlus.aar"))
 
     implementation(libs.osmdroid.android)
     //noinspection UseTomlInstead
     implementation("androidx.compose.material:material-icons-extended")
 
+    implementation("com.guolindev.permissionx:permissionx:1.7.1") {
+        exclude(group = "androidx.appcompat", module = "appcompat")
+    }
+
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.appcompat)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
