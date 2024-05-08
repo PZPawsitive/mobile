@@ -2,6 +2,7 @@ package com.example.pawsitive.beacon
 
 import android.Manifest
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -40,16 +41,15 @@ import com.permissionx.guolindev.PermissionX
 //import androidx.compose.runtime.*
 
 
+
+@SuppressLint("MutableCollectionMutableState")
 class ScanDeviceListActivity : AppCompatActivity() {
     val mObjectAnimator: ObjectAnimator? = null
 
     lateinit var mMTCentralManager: MTCentralManager
 
     @Composable
-    fun PeripheralList(mlist2: List<MTPeripheral>?) {
-        val rememberList = remember {
-            mutableStateListOf<MTPeripheral>()
-        }
+    fun PeripheralList() {
 
         LazyColumn(
             modifier = Modifier.height(50.dp)
@@ -63,10 +63,6 @@ class ScanDeviceListActivity : AppCompatActivity() {
         }
     }
 
-//            private var mlist: List<MTPeripheral>? = null
-//    var mlist by mutableStateOf(emptyList<MTPeripheral>())
-//    var mlist by mutableStateListOf<MTPeripheral>(emptyList<MTPeripheral>())
-//    var mlist = mutableStateListOf<MTPeripheral>()
     var mlist by mutableStateOf(mutableStateListOf<MTPeripheral>())
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,13 +73,7 @@ class ScanDeviceListActivity : AppCompatActivity() {
         setContent {
             Column {
 
-//                LazyColumn {
-//                    items(items = mlist!!) {
-//                        Text(text = it.toString())
-//
-//                    }
-//                }
-                PeripheralList(mlist)
+                PeripheralList()
 
                 Button(onClick = { checkItems() }) {
                     Text(text = "Check Items")
