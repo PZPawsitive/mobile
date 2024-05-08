@@ -1,17 +1,16 @@
 package com.example.pawsitive.navigation
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -24,7 +23,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.pawsitive.ui.theme.Purple40
 import compose.icons.FontAwesomeIcons
 import compose.icons.fontawesomeicons.Solid
 import compose.icons.fontawesomeicons.solid.Cat
@@ -56,14 +58,44 @@ val pets =
         Pet("Bogusław", PetType.DOG),
     )
 
-// CHECKOUT BRANCH
-@OptIn(ExperimentalMaterial3Api::class)
+data class Contract(
+    val owner: String,
+    val price: Double,
+    val petNumber: Number,
+    val danger: Boolean
+)
+
+val contracts = listOf(
+    Contract("kacper", 15.6, 3, true),
+    Contract("kacper", 15.6, 3, false),
+    Contract("kacper", 15.6, 3, false),
+    Contract("kacper", 15.6, 3, true)
+)
+
 @Composable
 fun PetScreen(
     showPetHistory: () -> Unit,
     showPetInfo: () -> Unit
+) {
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
+        if (LocalGlobalState.current) {
+            Contracts()
+        } else {
+            MyPetsColumn(showPetHistory = showPetHistory, showPetInfo = showPetInfo)
+        }
+    }
 
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MyPetsColumn(
+    showPetHistory: () -> Unit,
+    showPetInfo: () -> Unit
+) {
     LazyColumn() {
         items(items = pets) {
             var expandedSettings by remember {
@@ -78,7 +110,9 @@ fun PetScreen(
                         text = { Text(text = "Info") },
                         onClick = { showPetInfo() })
                     Divider()
-                    DropdownMenuItem(text = { Text(text = "Historia spacerów") }, onClick = { showPetHistory() })
+                    DropdownMenuItem(
+                        text = { Text(text = "Historia spacerów") },
+                        onClick = { showPetHistory() })
                 }
                 Card(
                     modifier = Modifier
@@ -107,3 +141,35 @@ fun PetScreen(
         }
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Contracts() {
+    LazyColumn(
+        modifier = Modifier.padding(10.dp)
+    ) {
+        items(items = contracts) {
+            Card(
+                onClick = { /*TODO*/ },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp),
+                colors = if (it.danger) CardDefaults.cardColors(containerColor = Color.Red) else CardDefaults.cardColors(
+                    containerColor = Purple40
+                )
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(text = it.owner, fontWeight = FontWeight.Bold)
+                    Text(text = "${it.petNumber} pets")
+                    Text(text = "${it.price} $", fontWeight = FontWeight.Bold)
+                }
+            }
+        }
+    }
+}
+
