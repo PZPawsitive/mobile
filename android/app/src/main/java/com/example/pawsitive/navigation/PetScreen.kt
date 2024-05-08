@@ -59,7 +59,10 @@ val pets =
 // CHECKOUT BRANCH
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PetScreen() {
+fun PetScreen(
+    showPetHistory: () -> Unit,
+    showPetInfo: () -> Unit
+    ) {
 
     LazyColumn() {
         items(items = pets) {
@@ -73,9 +76,9 @@ fun PetScreen() {
                 ) {
                     DropdownMenuItem(
                         text = { Text(text = "Info") },
-                        onClick = { /*TODO*/ })
+                        onClick = { showPetInfo() })
                     Divider()
-                    DropdownMenuItem(text = { Text(text = "Historia spacerów") }, onClick = { /*TODO*/ })
+                    DropdownMenuItem(text = { Text(text = "Historia spacerów") }, onClick = { showPetHistory() })
                 }
                 Card(
                     modifier = Modifier
