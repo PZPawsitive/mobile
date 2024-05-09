@@ -41,6 +41,7 @@ import compose.icons.fontawesomeicons.solid.Cat
 import compose.icons.fontawesomeicons.solid.Dog
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
+import org.osmdroid.util.GeoPoint
 
 enum class PetType {
     DOG,
@@ -72,14 +73,15 @@ data class Contract(
     val owner: String,
     val price: Double,
     val petNumber: Number,
-    val danger: Boolean
+    val danger: Boolean,
+    val localization: GeoPoint
 )
 
 val contracts = listOf(
-    Contract("kacper", 15.6, 3, true),
-    Contract("kacper", 15.6, 3, false),
-    Contract("kacper", 15.6, 3, false),
-    Contract("kacper", 15.6, 3, true)
+    Contract("kacper", 15.6, 3, true, GeoPoint(1, 1)),
+    Contract("kacper", 15.6, 3, false, GeoPoint(1, 1)),
+    Contract("kacper", 15.6, 3, false, GeoPoint(1, 1)),
+    Contract("kacper", 15.6, 3, true, GeoPoint(1, 1))
 )
 
 @Composable
