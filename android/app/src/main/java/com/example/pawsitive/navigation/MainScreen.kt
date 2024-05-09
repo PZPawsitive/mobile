@@ -69,7 +69,7 @@ fun MainScreen() {
                 CenterAlignedTopAppBar(
                     title = { Text(text = "Pawsitive", fontWeight = FontWeight.Bold) },
                     navigationIcon = {
-                        IconButton(onClick = { TODO() }) {
+                        IconButton(onClick = { navController.navigateUp() }) {
                             Icon(
                                 imageVector = Icons.Filled.ArrowBack,
                                 contentDescription = "Localized description"

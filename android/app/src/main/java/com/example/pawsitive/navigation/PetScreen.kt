@@ -1,5 +1,7 @@
 package com.example.pawsitive.navigation
 
+import android.util.Log
+import androidx.compose.animation.core.animateIntOffsetAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 
@@ -9,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -37,6 +40,11 @@ import compose.icons.fontawesomeicons.Solid
 import compose.icons.fontawesomeicons.solid.Cat
 import compose.icons.fontawesomeicons.solid.Dog
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.pointerInteropFilter
+import androidx.compose.ui.unit.DpOffset
+import androidx.core.util.TypedValueCompat.pxToDp
 
 enum class PetType {
     DOG,
@@ -90,14 +98,18 @@ fun PetScreen(
         if (LocalGlobalState.current) {
             Contracts()
         } else {
-            MyPetsColumn(showPetHistory = showPetHistory, showPetInfo = showPetInfo, showPetAddForm = showPetAddForm)
+            MyPetsColumn(
+                showPetHistory = showPetHistory,
+                showPetInfo = showPetInfo,
+                showPetAddForm = showPetAddForm
+            )
         }
     }
 
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun MyPetsColumn(
     showPetHistory: () -> Unit,
@@ -110,19 +122,7 @@ fun MyPetsColumn(
                 var expandedSettings by remember {
                     mutableStateOf(false)
                 }
-                Box {
-                    DropdownMenu( // ui broken - fix
-                        expanded = expandedSettings,
-                        onDismissRequest = { expandedSettings = false }
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text(text = "Info") },
-                            onClick = { showPetInfo() })
-                        Divider()
-                        DropdownMenuItem(
-                            text = { Text(text = "Historia spacerów") },
-                            onClick = { showPetHistory() })
-                    }
+                Box() {
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -144,7 +144,22 @@ fun MyPetsColumn(
                                 Modifier.size(30.dp)
                             )
                         }
+                        DropdownMenu(
+                            // ui broken - fix
+                            expanded = expandedSettings,
+                            onDismissRequest = { expandedSettings = false },
+                        ) {
+
+                            DropdownMenuItem(
+                                text = { Text(text = "Info") },
+                                onClick = { showPetInfo() })
+                            Divider()
+                            DropdownMenuItem(
+                                text = { Text(text = "Historia spacerów") },
+                                onClick = { showPetHistory() })
+                        }
                     }
+
                 }
 
             }
