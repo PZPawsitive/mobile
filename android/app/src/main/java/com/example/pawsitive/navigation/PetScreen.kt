@@ -41,10 +41,6 @@ import compose.icons.fontawesomeicons.solid.Cat
 import compose.icons.fontawesomeicons.solid.Dog
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.input.pointer.pointerInteropFilter
-import androidx.compose.ui.unit.DpOffset
-import androidx.core.util.TypedValueCompat.pxToDp
 
 enum class PetType {
     DOG,
@@ -90,13 +86,14 @@ val contracts = listOf(
 fun PetScreen(
     showPetHistory: () -> Unit,
     showPetInfo: () -> Unit,
-    showPetAddForm: () -> Unit
+    showPetAddForm: () -> Unit,
+    showContractScreen: () -> Unit
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
         if (LocalGlobalState.current) {
-            Contracts()
+            Contracts(showContractScreen)
         } else {
             MyPetsColumn(
                 showPetHistory = showPetHistory,
@@ -179,31 +176,53 @@ fun MyPetsColumn(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Contracts() {
+fun Contracts(
+    showContractScreen: () -> Unit
+) {
     LazyColumn(
         modifier = Modifier.padding(10.dp)
     ) {
         items(items = contracts) {
-            Card(
-                onClick = { /*TODO*/ },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp),
-                colors = if (it.danger) CardDefaults.cardColors(containerColor = Color.Red) else CardDefaults.cardColors(
-                    containerColor = Purple40
-                )
-            ) {
-                Row(
+            var expandedSettings by remember {
+                mutableStateOf(false)
+            }
+            Box() {
+                Card(
+                    onClick = { expandedSettings = !expandedSettings },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(10.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    colors = if (it.danger) CardDefaults.cardColors(containerColor = Color.Red) else CardDefaults.cardColors(
+                        containerColor = Purple40
+                    )
                 ) {
-                    Text(text = it.owner, fontWeight = FontWeight.Bold)
-                    Text(text = "${it.petNumber} pets")
-                    Text(text = "${it.price} $", fontWeight = FontWeight.Bold)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(text = it.owner, fontWeight = FontWeight.Bold)
+                        Text(text = "${it.petNumber} pets")
+                        Text(text = "${it.price} $", fontWeight = FontWeight.Bold)
+                    }
+                }
+                DropdownMenu(
+                    // ui broken - fix
+                    expanded = expandedSettings,
+                    onDismissRequest = { expandedSettings = false },
+                ) {
+
+                    DropdownMenuItem(
+                        text = { Text(text = "Napisz wiadomość") },
+                        onClick = { TODO() })
+                    Divider()
+                    DropdownMenuItem(
+                        text = { Text(text = "Przyjmij zlecenie") },
+                        onClick = { showContractScreen() })
                 }
             }
+
         }
     }
 }

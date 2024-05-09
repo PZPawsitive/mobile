@@ -19,4 +19,5 @@ sealed class LeafScreen(val route: String) {
     data object PetHistory : LeafScreen("pet_history")
     data object PetHistoryMap : LeafScreen("pet_history_map")
     data object PetAddForm : LeafScreen("pet_add_form")
+    data object ContractScreen : LeafScreen("contract_screen")
 }
