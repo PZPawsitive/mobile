@@ -31,7 +31,7 @@
             android:name=".beacon.ScanDeviceListActivity"
             android:exported="false"
             android:label="scan_device_list"
-            android:theme="@style/Theme.AppCompat"
+            android:theme="@style/Theme.Pawsitive"
             />
         <activity
             android:name=".view.RegisterActivity"
