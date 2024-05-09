@@ -2,19 +2,24 @@ package com.example.pawsitive.navigation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+
 import androidx.compose.foundation.layout.Row
+
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,6 +36,7 @@ import compose.icons.FontAwesomeIcons
 import compose.icons.fontawesomeicons.Solid
 import compose.icons.fontawesomeicons.solid.Cat
 import compose.icons.fontawesomeicons.solid.Dog
+import androidx.compose.ui.Alignment
 
 enum class PetType {
     DOG,
@@ -75,7 +81,8 @@ val contracts = listOf(
 @Composable
 fun PetScreen(
     showPetHistory: () -> Unit,
-    showPetInfo: () -> Unit
+    showPetInfo: () -> Unit,
+    showPetAddForm: () -> Unit
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
@@ -83,7 +90,7 @@ fun PetScreen(
         if (LocalGlobalState.current) {
             Contracts()
         } else {
-            MyPetsColumn(showPetHistory = showPetHistory, showPetInfo = showPetInfo)
+            MyPetsColumn(showPetHistory = showPetHistory, showPetInfo = showPetInfo, showPetAddForm = showPetAddForm)
         }
     }
 
@@ -94,52 +101,65 @@ fun PetScreen(
 @Composable
 fun MyPetsColumn(
     showPetHistory: () -> Unit,
-    showPetInfo: () -> Unit
+    showPetInfo: () -> Unit,
+    showPetAddForm: () -> Unit
 ) {
-    LazyColumn() {
-        items(items = pets) {
-            var expandedSettings by remember {
-                mutableStateOf(false)
-            }
-            Box {
-                DropdownMenu( // ui broken - fix
-                    expanded = expandedSettings,
-                    onDismissRequest = { expandedSettings = false }
-                ) {
-                    DropdownMenuItem(
-                        text = { Text(text = "Info") },
-                        onClick = { showPetInfo() })
-                    Divider()
-                    DropdownMenuItem(
-                        text = { Text(text = "Historia spacerów") },
-                        onClick = { showPetHistory() })
+    Box(modifier = Modifier.fillMaxSize()) {
+        LazyColumn() {
+            items(items = pets) {
+                var expandedSettings by remember {
+                    mutableStateOf(false)
                 }
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp),
-                    onClick = {
-                        expandedSettings = !expandedSettings
-                    }
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .padding(10.dp)
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                Box {
+                    DropdownMenu( // ui broken - fix
+                        expanded = expandedSettings,
+                        onDismissRequest = { expandedSettings = false }
                     ) {
-                        Text(text = it.name)
-                        Icon(
-                            imageVector = if (it.type == PetType.DOG) FontAwesomeIcons.Solid.Dog else FontAwesomeIcons.Solid.Cat,
-                            contentDescription = "pet type",
-                            Modifier.size(30.dp)
-                        )
+                        DropdownMenuItem(
+                            text = { Text(text = "Info") },
+                            onClick = { showPetInfo() })
+                        Divider()
+                        DropdownMenuItem(
+                            text = { Text(text = "Historia spacerów") },
+                            onClick = { showPetHistory() })
+                    }
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp),
+                        onClick = {
+                            expandedSettings = !expandedSettings
+                        }
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .padding(10.dp)
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(text = it.name)
+                            Icon(
+                                imageVector = if (it.type == PetType.DOG) FontAwesomeIcons.Solid.Dog else FontAwesomeIcons.Solid.Cat,
+                                contentDescription = "pet type",
+                                Modifier.size(30.dp)
+                            )
+                        }
                     }
                 }
+
             }
 
         }
+        FloatingActionButton(
+            onClick = { showPetAddForm() },
+            modifier = Modifier
+                .align(alignment = Alignment.BottomEnd)
+                .padding(20.dp)
+        ) {
+            Icon(imageVector = Icons.Default.Add, contentDescription = "add my pet")
+        }
     }
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

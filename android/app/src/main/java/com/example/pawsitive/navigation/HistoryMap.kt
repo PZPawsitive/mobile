@@ -9,6 +9,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.ItemizedIconOverlay
 import org.osmdroid.views.overlay.ItemizedOverlayWithFocus
@@ -22,6 +23,9 @@ fun HistoryMap() {
             val mapView = MapView(it)
             mapView.setTileSource(TileSourceFactory.MAPNIK)
             mapView.setMultiTouchControls(true)
+            val mapController = mapView.controller
+            mapController.setZoom(9.5)
+            mapController.setCenter(GeoPoint(52.22, 21.01))
 
 //                    val mLocationOverlay = MyLocationNewOverlay(GpsMyLocationProvider(it), mapView)
 //                    mLocationOverlay.enableMyLocation()

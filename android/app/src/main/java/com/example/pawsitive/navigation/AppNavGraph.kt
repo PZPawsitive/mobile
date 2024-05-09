@@ -49,6 +49,7 @@ private fun NavGraphBuilder.addPetRoute(navController: NavController) {
         showPetInfo(navController)
         showPetHistory(navController)
         showPetHistoryMap(navController)
+        showPetAddForm(navController)
     }
 }
 
@@ -99,6 +100,9 @@ private fun NavGraphBuilder.showPet(navController: NavController) {
             },
             showPetInfo = {
                 navController.navigate(LeafScreen.PetInfo.route)
+            },
+            showPetAddForm = {
+                navController.navigate(LeafScreen.PetAddForm.route)
             }
         )
     }
@@ -122,6 +126,11 @@ private fun NavGraphBuilder.showPetHistory(navController: NavController) {
 private fun NavGraphBuilder.showPetHistoryMap(navController: NavController) {
     composable(route = LeafScreen.PetHistoryMap.route) {
         HistoryMap()
+    }
+}
+private fun NavGraphBuilder.showPetAddForm(navController: NavController) {
+    composable(route = LeafScreen.PetAddForm.route) {
+        PetAddForm()
     }
 }
 private fun NavGraphBuilder.showMessages(navController: NavController) {
