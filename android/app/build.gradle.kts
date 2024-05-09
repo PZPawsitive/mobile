@@ -68,6 +68,8 @@ dependencies {
         exclude(group = "androidx.appcompat", module = "appcompat")
     }
 
+    implementation(libs.koin.android)
+
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
