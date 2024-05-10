@@ -32,6 +32,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,6 +43,8 @@ import androidx.compose.ui.unit.dp
 
 import com.example.pawsitive.viewmodel.BeaconViewModel
 import com.minew.beaconplus.sdk.MTFrameHandler
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 import org.osmdroid.util.GeoPoint
 
@@ -92,9 +95,18 @@ fun WalkActiveView(beaconViewModel: BeaconViewModel, setWalk: () -> Unit) {
         mutableStateOf(false)
     }
     val pullToRefreshState = rememberPullToRefreshState()
+    val scope = rememberCoroutineScope()
 
+
+    var isRefreshing by remember {
+        mutableStateOf<Boolean>(false)
+    }
     fun onRefresh() {
-        Log.d("refresh", "on refresh")
+        scope.launch {
+            isRefreshing = true
+            delay(3000L)
+            isRefreshing = false
+        }
     }
     Box(
         modifier = Modifier
@@ -115,11 +127,8 @@ fun WalkActiveView(beaconViewModel: BeaconViewModel, setWalk: () -> Unit) {
             }
             PeripheralList(beaconViewModel = beaconViewModel)
         }
-        var isRefreshing by remember {
-            mutableStateOf<Boolean>(false)
-        }
         FloatingActionButton(
-            onClick = { isRefreshing = !isRefreshing },
+            onClick = { onRefresh() },
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 10.dp)
