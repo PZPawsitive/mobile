@@ -2,29 +2,17 @@ package com.example.pawsitive.view
 
 import android.Manifest
 import android.animation.ObjectAnimator
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.pawsitive.R
-import com.example.pawsitive.navigation.MainScreen
-import com.example.pawsitive.view.ui.theme.PawsitiveTheme
+import com.example.pawsitive.walkactivityviews.OverlayScreen
 import com.example.pawsitive.viewmodel.BeaconViewModel
 import com.minew.beaconplus.sdk.MTCentralManager
 import com.minew.beaconplus.sdk.MTFrameHandler
@@ -57,14 +45,14 @@ class WalkActivity : AppCompatActivity() {
 //        enableEdgeToEdge()
         setContent {
 
-            Button(onClick = {
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-            }) {
-
-                Text(text = "back")
-            }
-
+//            Button(onClick = {
+//                val intent = Intent(this, MainActivity::class.java)
+//                startActivity(intent)
+//            }) {
+//
+//                Text(text = "back")
+//            }
+            OverlayScreen()
         }
     }
     fun initBleManager() {

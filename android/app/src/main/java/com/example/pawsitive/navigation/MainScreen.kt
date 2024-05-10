@@ -56,9 +56,6 @@ fun MainScreen() {
     var expandedSettings by remember {
         mutableStateOf(false)
     }
-
-
-
     var state by remember {
         mutableStateOf(false)
     }
