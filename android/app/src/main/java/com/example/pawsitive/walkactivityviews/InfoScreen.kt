@@ -2,6 +2,7 @@ package com.example.pawsitive.walkactivityviews
 
 import android.annotation.SuppressLint
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,9 +13,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
@@ -34,13 +38,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.pawsitive.viewmodel.BeaconViewModel
 import com.minew.beaconplus.sdk.MTFrameHandler
+import com.minew.beaconplus.sdk.MTPeripheral
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun InfoScreen(beaconViewModel: BeaconViewModel, refresh: () -> Unit) {
+fun InfoScreen(
+    beaconViewModel: BeaconViewModel,
+    refresh: () -> Unit,
+    connect: (MTPeripheral) -> Unit,
+    disconnect: (MTPeripheral) -> Unit
+) {
     var connected by remember {
         mutableStateOf(false)
     }
@@ -73,7 +83,7 @@ fun InfoScreen(beaconViewModel: BeaconViewModel, refresh: () -> Unit) {
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
-            PeripheralList(beaconViewModel = beaconViewModel)
+            PeripheralList(beaconViewModel = beaconViewModel, connect, disconnect)
         }
         FloatingActionButton(
             onClick = { onRefresh() },
@@ -106,7 +116,9 @@ fun InfoScreen(beaconViewModel: BeaconViewModel, refresh: () -> Unit) {
 
 @Composable
 fun PeripheralList(
-    beaconViewModel: BeaconViewModel
+    beaconViewModel: BeaconViewModel,
+    connect: (MTPeripheral) -> Unit,
+    disconnect: (MTPeripheral) -> Unit
 ) {
     val mlist = beaconViewModel.mlist
     val context = LocalContext.current
@@ -121,7 +133,7 @@ fun PeripheralList(
                     .padding(10.dp),
                 onClick = {
                     if (mtFrameHandler.name == "D15N") {
-                        Toast.makeText(context, "polaczono", Toast.LENGTH_SHORT).show()
+                        connect(it)
                     } else {
                         Toast.makeText(context, "wait for device to configure", Toast.LENGTH_SHORT)
                             .show()
@@ -136,6 +148,7 @@ fun PeripheralList(
                         ) {
                             Text(text = mtFrameHandler.name)
                             Text(text = "battery: ${mtFrameHandler.battery}%")
+                            Icon(imageVector = Icons.Default.Clear, contentDescription = "disconnect", Modifier.clickable { disconnect(it) })
                         }
                     } else {
 

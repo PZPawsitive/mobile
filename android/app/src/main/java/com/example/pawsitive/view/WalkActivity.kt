@@ -33,6 +33,7 @@ class WalkActivity : AppCompatActivity() {
     val mObjectAnimator: ObjectAnimator? = null
 
     lateinit var mMTCentralManager: MTCentralManager
+    lateinit var mtPeripheralConnected: MTPeripheral
 
     val beaconViewModel by viewModel<BeaconViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,6 +47,7 @@ class WalkActivity : AppCompatActivity() {
         initBleManager()
         setBleManagerListener()
         initBlePermission()
+        mMTCentralManager.startService()
         super.onCreate(savedInstanceState)
 //        enableEdgeToEdge()
         setContent {
@@ -57,7 +59,7 @@ class WalkActivity : AppCompatActivity() {
 //
 //                Text(text = "back")
 //            }
-            OverlayScreen(beaconViewModel) { refresh() }
+            OverlayScreen(beaconViewModel, { refresh() }, ::connect, ::disconnect )
         }
         val ctx = applicationContext
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx))
@@ -175,11 +177,15 @@ class WalkActivity : AppCompatActivity() {
     }
 
     fun connect(mtPeripheral: MTPeripheral) {
-        mMTCentralManager.connect(mtPeripheral, object : ConnectionStatueListener {
+        mtPeripheralConnected = mtPeripheral
+        Log.d("tag", mtPeripheral.toString())
+
+        mMTCentralManager.connect(mtPeripheral,object : ConnectionStatueListener {
             override fun onUpdateConnectionStatus(
                 connectionStatus: ConnectionStatus,
-                getPasswordListener: GetPasswordListener
+                getPasswordListener: GetPasswordListener?
             ) {
+                Log.d("tag", "thread")
                 runOnUiThread {
                     when (connectionStatus) {
                         ConnectionStatus.CONNECTING -> {
@@ -226,7 +232,9 @@ class WalkActivity : AppCompatActivity() {
                                 Toast.LENGTH_SHORT
                             ).show()
                             val password = "minew123"
-                            getPasswordListener.getPassword(password)
+                            if (getPasswordListener != null) {
+                                getPasswordListener.getPassword(password)
+                            }
                         }
 
                         ConnectionStatus.SYNCHRONIZINGTIME -> {
@@ -298,7 +306,9 @@ class WalkActivity : AppCompatActivity() {
                             ).show()
                         }
 
-                        ConnectionStatus.READINGSENSORS -> TODO()
+                        ConnectionStatus.READINGSENSORS -> {
+                            Log.d("tag", "reading sensors")
+                        }
                     }
                 }
             }
@@ -309,6 +319,7 @@ class WalkActivity : AppCompatActivity() {
         })
 //        Config.mConnectedMTPeripheral = mtPeripheral
     }
+
     fun disconnect(mtPeripheral: MTPeripheral) {
         mMTCentralManager.disconnect(mtPeripheral)
     }

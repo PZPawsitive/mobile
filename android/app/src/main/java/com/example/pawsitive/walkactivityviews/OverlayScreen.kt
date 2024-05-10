@@ -41,10 +41,16 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.pawsitive.viewmodel.BeaconViewModel
+import com.minew.beaconplus.sdk.MTPeripheral
 
 
 @Composable
-fun OverlayScreen(beaconViewModel: BeaconViewModel, refresh:() ->  Unit) {
+fun OverlayScreen(
+    beaconViewModel: BeaconViewModel,
+    refresh: () -> Unit,
+    connect: (MTPeripheral) -> Unit,
+    disconnect: (MTPeripheral) -> Unit
+) {
     val navController = rememberNavController()
     val currentSelectedScreen by navController.currentScreenAsState()
     val currentRoute by navController.currentRouteAsState()
@@ -64,7 +70,7 @@ fun OverlayScreen(beaconViewModel: BeaconViewModel, refresh:() ->  Unit) {
                 .fillMaxSize()
                 .padding(it)
         ) {
-            WalkNavGraph(navController = navController, beaconViewModel, refresh)
+            WalkNavGraph(navController = navController, beaconViewModel, refresh, connect, disconnect)
         }
     }
 }

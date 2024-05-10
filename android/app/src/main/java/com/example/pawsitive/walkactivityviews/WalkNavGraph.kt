@@ -7,16 +7,19 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.example.pawsitive.viewmodel.BeaconViewModel
+import com.minew.beaconplus.sdk.MTPeripheral
 
 
 @Composable
 fun WalkNavGraph(
     navController: NavHostController,
     beaconViewModel: BeaconViewModel,
-    refresh: () -> Unit
+    refresh: () -> Unit,
+    connect: (MTPeripheral) -> Unit,
+    disconnect: (MTPeripheral) -> Unit
 ) {
     NavHost(navController = navController, startDestination = RootScreen.Info.route) {
-        addInfoRoute(navController, beaconViewModel, refresh)
+        addInfoRoute(navController, beaconViewModel, refresh, connect, disconnect)
         addMapRoute(navController)
         addMessagesRoute(navController)
     }
@@ -25,10 +28,12 @@ fun WalkNavGraph(
 private fun NavGraphBuilder.addInfoRoute(
     navController: NavHostController,
     beaconViewModel: BeaconViewModel,
-    refresh: () -> Unit
+    refresh: () -> Unit,
+    connect: (MTPeripheral) -> Unit,
+    disconnect: (MTPeripheral) -> Unit
 ) {
     navigation(route = RootScreen.Info.route, startDestination = LeafScreen.Info.route) {
-        showInfo(navController, beaconViewModel, refresh)
+        showInfo(navController, beaconViewModel, refresh, connect, disconnect)
     }
 }
 
@@ -47,10 +52,12 @@ private fun NavGraphBuilder.addMessagesRoute(navController: NavHostController) {
 private fun NavGraphBuilder.showInfo(
     navController: NavHostController,
     beaconViewModel: BeaconViewModel,
-    refresh: () -> Unit
+    refresh: () -> Unit,
+    connect: (MTPeripheral) -> Unit,
+    disconnect: (MTPeripheral) -> Unit
 ) {
     composable(route = LeafScreen.Info.route) {
-        InfoScreen(beaconViewModel, refresh)
+        InfoScreen(beaconViewModel, refresh, connect, disconnect)
     }
 }
 
