@@ -6,22 +6,29 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.example.pawsitive.viewmodel.BeaconViewModel
 
 
 @Composable
 fun WalkNavGraph(
-    navController: NavHostController
+    navController: NavHostController,
+    beaconViewModel: BeaconViewModel,
+    refresh: () -> Unit
 ) {
     NavHost(navController = navController, startDestination = RootScreen.Info.route) {
-        addInfoRoute(navController)
+        addInfoRoute(navController, beaconViewModel, refresh)
         addMapRoute(navController)
         addMessagesRoute(navController)
     }
 }
 
-private fun NavGraphBuilder.addInfoRoute(navController: NavHostController) {
+private fun NavGraphBuilder.addInfoRoute(
+    navController: NavHostController,
+    beaconViewModel: BeaconViewModel,
+    refresh: () -> Unit
+) {
     navigation(route = RootScreen.Info.route, startDestination = LeafScreen.Info.route) {
-        showInfo(navController)
+        showInfo(navController, beaconViewModel, refresh)
     }
 }
 
@@ -37,9 +44,13 @@ private fun NavGraphBuilder.addMessagesRoute(navController: NavHostController) {
     }
 }
 
-private fun NavGraphBuilder.showInfo(navController: NavHostController) {
+private fun NavGraphBuilder.showInfo(
+    navController: NavHostController,
+    beaconViewModel: BeaconViewModel,
+    refresh: () -> Unit
+) {
     composable(route = LeafScreen.Info.route) {
-        InfoScreen()
+        InfoScreen(beaconViewModel, refresh)
     }
 }
 

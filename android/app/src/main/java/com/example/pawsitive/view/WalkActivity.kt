@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.setContent
@@ -26,6 +27,7 @@ import com.minew.beaconplus.sdk.interfaces.ConnectionStatueListener
 import com.minew.beaconplus.sdk.interfaces.GetPasswordListener
 import com.permissionx.guolindev.PermissionX
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.osmdroid.config.Configuration
 
 class WalkActivity : AppCompatActivity() {
     val mObjectAnimator: ObjectAnimator? = null
@@ -41,6 +43,9 @@ class WalkActivity : AppCompatActivity() {
         ) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.INTERNET), 0)
         }
+        initBleManager()
+        setBleManagerListener()
+        initBlePermission()
         super.onCreate(savedInstanceState)
 //        enableEdgeToEdge()
         setContent {
@@ -52,8 +57,11 @@ class WalkActivity : AppCompatActivity() {
 //
 //                Text(text = "back")
 //            }
-            OverlayScreen()
+            OverlayScreen(beaconViewModel) { refresh() }
         }
+        val ctx = applicationContext
+        Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx))
+        Configuration.getInstance().userAgentValue = "Pawsitive"
     }
     fun initBleManager() {
         mMTCentralManager = MTCentralManager.getInstance(this)
