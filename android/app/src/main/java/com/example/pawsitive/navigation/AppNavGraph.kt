@@ -12,12 +12,13 @@ import com.example.pawsitive.viewmodel.BeaconViewModel
 @Composable
 fun AppNavGraph(
     navController: NavHostController,
-    beaconViewModel: BeaconViewModel
+    beaconViewModel: BeaconViewModel,
+    refresh: () -> Unit
 ) {
     NavHost(navController = navController, startDestination = RootScreen.Home.route) {
         addHomeRoute(navController)
         addFollowRoute(navController, beaconViewModel)
-        addPetRoute(navController, beaconViewModel)
+        addPetRoute(navController, beaconViewModel, refresh)
         addMessagesRoute(navController)
         addProfileRoute(navController)
     }
@@ -42,7 +43,11 @@ private fun NavGraphBuilder.addFollowRoute(navController: NavHostController, bea
     }
 }
 
-private fun NavGraphBuilder.addPetRoute(navController: NavController, beaconViewModel: BeaconViewModel) {
+private fun NavGraphBuilder.addPetRoute(
+    navController: NavController,
+    beaconViewModel: BeaconViewModel,
+    refresh: () -> Unit
+) {
     navigation(
         route = RootScreen.Pet.route,
         startDestination = LeafScreen.Pet.route
@@ -52,7 +57,7 @@ private fun NavGraphBuilder.addPetRoute(navController: NavController, beaconView
         showPetHistory(navController)
         showPetHistoryMap(navController)
         showPetAddForm(navController)
-        showContractScreen(navController, beaconViewModel)
+        showContractScreen(navController, beaconViewModel, refresh)
     }
 }
 
@@ -141,10 +146,11 @@ private fun NavGraphBuilder.showPetAddForm(navController: NavController) {
 }
 private fun NavGraphBuilder.showContractScreen(
     navController: NavController,
-    beaconViewModel: BeaconViewModel
+    beaconViewModel: BeaconViewModel,
+    refresh: () -> Unit
 ) {
     composable(route = LeafScreen.ContractScreen.route) {
-        ContractScreen(beaconViewModel)
+        ContractScreen(beaconViewModel, refresh)
     }
 }
 private fun NavGraphBuilder.showMessages(navController: NavController) {

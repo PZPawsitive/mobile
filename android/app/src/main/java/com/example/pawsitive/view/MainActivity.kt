@@ -2,49 +2,27 @@ package com.example.pawsitive.view
 
 import android.Manifest
 import android.animation.ObjectAnimator
-import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.util.Log
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Card
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.toMutableStateList
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModel
 import com.example.pawsitive.R
-import com.example.pawsitive.navigation.LocalGlobalState
 
 import com.example.pawsitive.navigation.MainScreen
 import com.example.pawsitive.viewmodel.BeaconViewModel
 import com.minew.beaconplus.sdk.MTCentralManager
 import com.minew.beaconplus.sdk.MTFrameHandler
-import com.minew.beaconplus.sdk.MTPeripheral
 import com.minew.beaconplus.sdk.Utils.BLETool
 import com.minew.beaconplus.sdk.enums.FrameType
 import com.minew.beaconplus.sdk.frames.IBeaconFrame
-import com.minew.beaconplus.sdk.frames.TlmFrame
 import com.permissionx.guolindev.PermissionX
 import org.osmdroid.config.Configuration
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.context.startKoin
 
 class MainActivity : AppCompatActivity() {
 
@@ -67,7 +45,7 @@ class MainActivity : AppCompatActivity() {
         setBleManagerListener()
         initBlePermission()
         setContent {
-            MainScreen(beaconViewModel)
+            MainScreen(beaconViewModel, { refresh() })
 
         }
         val ctx = applicationContext
@@ -172,6 +150,22 @@ class MainActivity : AppCompatActivity() {
             mMTCentralManager.stopScan()
             mObjectAnimator!!.cancel()
         }
+    }
+
+    fun refresh() {
+        if (mMTCentralManager.isScanning) {
+            mMTCentralManager.stopScan()
+            mMTCentralManager.clear()
+            mMTCentralManager.startScan()
+        }
+        else {
+            mMTCentralManager.clear()
+            mMTCentralManager.startScan()
+        }
+    }
+
+    fun connect() {
+        TODO()
     }
 
     override fun onDestroy() {

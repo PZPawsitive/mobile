@@ -3,7 +3,6 @@ package com.example.pawsitive.navigation
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,10 +11,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -41,7 +38,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 import com.example.pawsitive.viewmodel.BeaconViewModel
@@ -56,7 +52,7 @@ val exampleContract = Contract("kacper", 15.6, 3, true, GeoPoint(52.237049, 21.0
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ContractScreen(beaconViewModel: BeaconViewModel) {
+fun ContractScreen(beaconViewModel: BeaconViewModel, refresh: () -> Unit) {
     var walkActive by remember {
         mutableStateOf<Boolean>(false)
     }
@@ -65,7 +61,7 @@ fun ContractScreen(beaconViewModel: BeaconViewModel) {
         walkActive = !walkActive
     }
     if (walkActive) {
-        WalkActiveView(beaconViewModel = beaconViewModel, setWalk = { setWalk() })
+        WalkActiveView(beaconViewModel = beaconViewModel, setWalk = { setWalk() }, refresh)
     } else {
         WalkNotActiveView(setWalk = { setWalk() })
     }
@@ -113,7 +109,7 @@ fun PeripheralList(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WalkActiveView(beaconViewModel: BeaconViewModel, setWalk: () -> Unit) {
+fun WalkActiveView(beaconViewModel: BeaconViewModel, setWalk: () -> Unit, refresh: () -> Unit) {
     var connected by remember {
         mutableStateOf(false)
     }
@@ -127,6 +123,7 @@ fun WalkActiveView(beaconViewModel: BeaconViewModel, setWalk: () -> Unit) {
 
     fun onRefresh() {
         scope.launch {
+            refresh()
             isRefreshing = true
             delay(3000L)
             isRefreshing = false
