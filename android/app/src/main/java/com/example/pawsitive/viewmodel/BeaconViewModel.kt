@@ -1,6 +1,7 @@
 package com.example.pawsitive.viewmodel
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import com.minew.beaconplus.sdk.MTPeripheral
@@ -14,6 +15,7 @@ class BeaconViewModel : ViewModel(){
     val mlist : List<MTPeripheral> = _mlist
 
     fun setBeaconList(list: List<MTPeripheral>) {
+        Log.d("beaconData", list.toString())
         _mlist.clear()
         list.forEach {
             _mlist.add(it)

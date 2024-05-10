@@ -22,9 +22,7 @@ import kotlinx.coroutines.delay
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun FollowScreen(
-    beaconViewModel: BeaconViewModel
-) {
+fun FollowScreen() {
 
     Scaffold {
         Box(modifier = Modifier.fillMaxSize()) {

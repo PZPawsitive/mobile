@@ -48,7 +48,7 @@ var LocalGlobalState = compositionLocalOf<Boolean> { error("not composed") }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(beaconViewModel: BeaconViewModel, refresh: () -> Unit) {
+fun MainScreen() {
     val navController = rememberNavController()
     val currentSelectedScreen by navController.currentScreenAsState()
     val currentRoute by navController.currentRouteAsState()
@@ -115,7 +115,7 @@ fun MainScreen(beaconViewModel: BeaconViewModel, refresh: () -> Unit) {
                     .fillMaxSize()
                     .padding(it)
             ) {
-                AppNavGraph(navController = navController, beaconViewModel = beaconViewModel, refresh)
+                AppNavGraph(navController = navController)
             }
         }
 

@@ -12,13 +12,11 @@ import com.example.pawsitive.viewmodel.BeaconViewModel
 @Composable
 fun AppNavGraph(
     navController: NavHostController,
-    beaconViewModel: BeaconViewModel,
-    refresh: () -> Unit
 ) {
     NavHost(navController = navController, startDestination = RootScreen.Home.route) {
         addHomeRoute(navController)
-        addFollowRoute(navController, beaconViewModel)
-        addPetRoute(navController, beaconViewModel, refresh)
+        addFollowRoute(navController)
+        addPetRoute(navController)
         addMessagesRoute(navController)
         addProfileRoute(navController)
     }
@@ -34,19 +32,17 @@ private fun NavGraphBuilder.addHomeRoute(navController: NavController) {
         showHomeDetail(navController)
     }
 }
-private fun NavGraphBuilder.addFollowRoute(navController: NavHostController, beaconViewModel: BeaconViewModel) {
+private fun NavGraphBuilder.addFollowRoute(navController: NavHostController) {
     navigation(
         route = RootScreen.Follow.route,
         startDestination = LeafScreen.Follow.route
     ) {
-        showFollow(navController, beaconViewModel)
+        showFollow(navController)
     }
 }
 
 private fun NavGraphBuilder.addPetRoute(
-    navController: NavController,
-    beaconViewModel: BeaconViewModel,
-    refresh: () -> Unit
+    navController: NavController
 ) {
     navigation(
         route = RootScreen.Pet.route,
@@ -57,7 +53,7 @@ private fun NavGraphBuilder.addPetRoute(
         showPetHistory(navController)
         showPetHistoryMap(navController)
         showPetAddForm(navController)
-        showContractScreen(navController, beaconViewModel, refresh)
+        showContractScreen(navController)
     }
 }
 
@@ -95,9 +91,9 @@ private fun NavGraphBuilder.showHomeDetail(navController: NavController) {
         )
     }
 }
-private fun NavGraphBuilder.showFollow(navController: NavHostController, beaconViewModel: BeaconViewModel) {
+private fun NavGraphBuilder.showFollow(navController: NavHostController) {
     composable(route = LeafScreen.Follow.route) {
-        FollowScreen(beaconViewModel)
+        FollowScreen()
     }
 }
 private fun NavGraphBuilder.showPet(navController: NavController) {
@@ -145,12 +141,10 @@ private fun NavGraphBuilder.showPetAddForm(navController: NavController) {
     }
 }
 private fun NavGraphBuilder.showContractScreen(
-    navController: NavController,
-    beaconViewModel: BeaconViewModel,
-    refresh: () -> Unit
+    navController: NavController
 ) {
     composable(route = LeafScreen.ContractScreen.route) {
-        ContractScreen(beaconViewModel, refresh)
+        ContractScreen()
     }
 }
 private fun NavGraphBuilder.showMessages(navController: NavController) {

@@ -39,6 +39,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.pawsitive.view.WalkActivity
 
 import com.example.pawsitive.viewmodel.BeaconViewModel
 import com.minew.beaconplus.sdk.MTFrameHandler
@@ -52,7 +53,7 @@ val exampleContract = Contract("kacper", 15.6, 3, true, GeoPoint(52.237049, 21.0
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ContractScreen(beaconViewModel: BeaconViewModel, refresh: () -> Unit) {
+fun ContractScreen() {
     var walkActive by remember {
         mutableStateOf<Boolean>(false)
     }
@@ -61,7 +62,7 @@ fun ContractScreen(beaconViewModel: BeaconViewModel, refresh: () -> Unit) {
         walkActive = !walkActive
     }
     if (walkActive) {
-        WalkActiveView(beaconViewModel = beaconViewModel, setWalk = { setWalk() }, refresh)
+        WalkActiveView(setWalk = { setWalk() })
     } else {
         WalkNotActiveView(setWalk = { setWalk() })
     }
@@ -74,7 +75,7 @@ fun PeripheralList(
 ) {
     val mlist = beaconViewModel.mlist
 //    Log.d("beaconData","mlist: ${mlist.toList()}")
-
+    val context = LocalContext.current
     LazyColumn(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -83,7 +84,14 @@ fun PeripheralList(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(10.dp)
+                    .padding(10.dp),
+                onClick = {
+                    if (mtFrameHandler.name == "D15N") {
+                        Toast.makeText(context, "polaczono", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(context, "wait for device to configure", Toast.LENGTH_SHORT).show()
+                    }
+                }
             ) {
                 Box(modifier = Modifier.padding(10.dp)) {
                     if (mtFrameHandler.name == "D15N") {
@@ -109,7 +117,7 @@ fun PeripheralList(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WalkActiveView(beaconViewModel: BeaconViewModel, setWalk: () -> Unit, refresh: () -> Unit) {
+fun WalkActiveView(setWalk: () -> Unit) {
     var connected by remember {
         mutableStateOf(false)
     }
@@ -123,7 +131,7 @@ fun WalkActiveView(beaconViewModel: BeaconViewModel, setWalk: () -> Unit, refres
 
     fun onRefresh() {
         scope.launch {
-            refresh()
+//            refresh()
             isRefreshing = true
             delay(3000L)
             isRefreshing = false
@@ -146,7 +154,7 @@ fun WalkActiveView(beaconViewModel: BeaconViewModel, setWalk: () -> Unit, refres
                     Text(text = "Zrezygnuj ze zlecenia")
                 }
             }
-            PeripheralList(beaconViewModel = beaconViewModel)
+//            PeripheralList(beaconViewModel = beaconViewModel)
         }
         FloatingActionButton(
             onClick = { onRefresh() },
@@ -226,7 +234,9 @@ fun WalkNotActiveView(setWalk: () -> Unit) {
                         confirmButton = {
                             Button(onClick = {
                                 openAlertDialog.value = false
-                                setWalk()
+//                                setWalk()
+                                val intent = Intent(context, WalkActivity::class.java)
+                                context.startActivity(intent)
                             }) {
                                 Text(text = "Tak")
                             }
