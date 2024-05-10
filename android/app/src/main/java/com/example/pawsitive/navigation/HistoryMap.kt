@@ -17,6 +17,8 @@ import org.osmdroid.views.overlay.ItemizedOverlayWithFocus
 import org.osmdroid.views.overlay.OverlayItem
 import com.example.pawsitive.navigation.History
 import org.osmdroid.views.overlay.Polyline
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import java.util.Date
 
 val exampleHistory = History(
@@ -63,6 +65,12 @@ fun HistoryMap() {
                     return false
                 }
             }, it)
+            // my location
+//            val mLocationOverlay = MyLocationNewOverlay(GpsMyLocationProvider(it), mapView)
+//            mLocationOverlay.enableMyLocation()
+//            mapView.overlays.add(mLocationOverlay)
+
+
             val line = Polyline()
             line.width = 4f
             line.setPoints(items.map { GeoPoint(it.point.latitude, it.point.longitude) })

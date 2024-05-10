@@ -68,6 +68,8 @@ dependencies {
         exclude(group = "androidx.appcompat", module = "appcompat")
     }
 
+    implementation(platform("androidx.compose:compose-bom:2024.02.01"))
+
     implementation(libs.koin.android)
 
     implementation(libs.androidx.ui)

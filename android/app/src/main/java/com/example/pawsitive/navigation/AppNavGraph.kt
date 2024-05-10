@@ -1,8 +1,6 @@
 package com.example.pawsitive.navigation
 
-import android.util.Log
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -19,7 +17,7 @@ fun AppNavGraph(
     NavHost(navController = navController, startDestination = RootScreen.Home.route) {
         addHomeRoute(navController)
         addFollowRoute(navController, beaconViewModel)
-        addPetRoute(navController)
+        addPetRoute(navController, beaconViewModel)
         addMessagesRoute(navController)
         addProfileRoute(navController)
     }
@@ -44,7 +42,7 @@ private fun NavGraphBuilder.addFollowRoute(navController: NavHostController, bea
     }
 }
 
-private fun NavGraphBuilder.addPetRoute(navController: NavController) {
+private fun NavGraphBuilder.addPetRoute(navController: NavController, beaconViewModel: BeaconViewModel) {
     navigation(
         route = RootScreen.Pet.route,
         startDestination = LeafScreen.Pet.route
@@ -54,7 +52,7 @@ private fun NavGraphBuilder.addPetRoute(navController: NavController) {
         showPetHistory(navController)
         showPetHistoryMap(navController)
         showPetAddForm(navController)
-        showContractScreen(navController)
+        showContractScreen(navController, beaconViewModel)
     }
 }
 
@@ -141,9 +139,12 @@ private fun NavGraphBuilder.showPetAddForm(navController: NavController) {
         PetAddForm()
     }
 }
-private fun NavGraphBuilder.showContractScreen(navController: NavController) {
+private fun NavGraphBuilder.showContractScreen(
+    navController: NavController,
+    beaconViewModel: BeaconViewModel
+) {
     composable(route = LeafScreen.ContractScreen.route) {
-        ContractScreen()
+        ContractScreen(beaconViewModel)
     }
 }
 private fun NavGraphBuilder.showMessages(navController: NavController) {
