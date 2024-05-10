@@ -47,7 +47,8 @@ fun ContractScreen() {
             Text(text = "Sprawdź lokalizację") //
             Icon(imageVector = Icons.Default.Map, contentDescription = "open map with localization")
         }
-        val location = Uri.parse("geo:52.237049,21.017532?q=52.237049,21.017532")
+        val location =
+            Uri.parse("geo:${exampleContract.localization.latitude},${exampleContract.localization.longitude}?q=${exampleContract.localization.latitude},${exampleContract.localization.longitude}")
         val mapIntent = Intent(Intent.ACTION_VIEW, location)
         val chooser = Intent.createChooser(mapIntent, "choose map")
 //        openAlertDialog.value = true
@@ -55,7 +56,8 @@ fun ContractScreen() {
             try {
                 context.startActivity(chooser)
             } catch (e: ActivityNotFoundException) {
-                Toast.makeText(context, "Cannot find application to handle maps", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Cannot find application to handle maps", Toast.LENGTH_LONG)
+                    .show()
             }
         }) {
             Text(text = "Rozpocznij spacer")

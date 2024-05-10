@@ -35,15 +35,17 @@ import com.example.pawsitive.navigation.LocalGlobalState
 import com.example.pawsitive.navigation.MainScreen
 import com.example.pawsitive.viewmodel.BeaconViewModel
 import com.minew.beaconplus.sdk.MTCentralManager
+import com.minew.beaconplus.sdk.MTFrameHandler
 import com.minew.beaconplus.sdk.MTPeripheral
 import com.minew.beaconplus.sdk.Utils.BLETool
+import com.minew.beaconplus.sdk.enums.FrameType
+import com.minew.beaconplus.sdk.frames.IBeaconFrame
+import com.minew.beaconplus.sdk.frames.TlmFrame
 import com.permissionx.guolindev.PermissionX
 import org.osmdroid.config.Configuration
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.context.startKoin
 
-
-val LocalBeaconViewModel = compositionLocalOf<BeaconViewModel> { error("No ViewModel provided") }
 class MainActivity : AppCompatActivity() {
 
     val mObjectAnimator: ObjectAnimator? = null
@@ -53,7 +55,11 @@ class MainActivity : AppCompatActivity() {
     val beaconViewModel by viewModel<BeaconViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.INTERNET
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.INTERNET), 0)
         }
         super.onCreate(savedInstanceState)
@@ -61,9 +67,8 @@ class MainActivity : AppCompatActivity() {
         setBleManagerListener()
         initBlePermission()
         setContent {
-            CompositionLocalProvider(LocalBeaconViewModel provides beaconViewModel) {
-                MainScreen()
-            }
+            MainScreen(beaconViewModel)
+
         }
         val ctx = applicationContext
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx))
@@ -76,9 +81,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun setBleManagerListener() {
-        mMTCentralManager.setMTCentralManagerListener {
-            Log.d("items", it.toString())
-            beaconViewModel.setBeaconList(it.toMutableStateList())
+        mMTCentralManager.setMTCentralManagerListener { it ->
+            for (beacon in it) {
+                val mtFrameHandler: MTFrameHandler = beacon.mMTFrameHandler
+                val mac = mtFrameHandler.mac
+                val name = mtFrameHandler.name
+                val battery = mtFrameHandler.battery
+                val rssi = mtFrameHandler.rssi
+                val frames = mtFrameHandler.advFrames
+                for (frame in frames) {
+                    val frametype = frame.frameType
+                    if (frametype == FrameType.FrameiBeacon) {
+                        val tlmFrame: IBeaconFrame = frame as IBeaconFrame
+                        Log.v(
+                            "beaconplus",
+                            tlmFrame.battery.toString()
+                        );
+                    }
+
+                    Log.d("beaconData", "frametype: $frametype")
+                }
+                Log.d("beaconData", "$mac, $name, $battery, $rssi")
+            }
+            beaconViewModel.setBeaconList(it)
         }
         mMTCentralManager.setBluetoothChangedListener {
             Log.d("items", "bluetooth changed")
@@ -141,10 +166,6 @@ class MainActivity : AppCompatActivity() {
 //        mObjectAnimator!!.start()
     }
 
-    fun checkItems() {
-        Log.d("items", beaconViewModel.mlist.toList().toString())
-    }
-
     private fun stopScan() {
         Log.d("SCAN", "stopScan")
         if (mMTCentralManager.isScanning()) {
@@ -152,11 +173,13 @@ class MainActivity : AppCompatActivity() {
             mObjectAnimator!!.cancel()
         }
     }
+
     override fun onDestroy() {
         super.onDestroy()
         mMTCentralManager.stopService()
         stopScan()
     }
+
 }
 
 

@@ -37,6 +37,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
+import com.example.pawsitive.viewmodel.BeaconViewModel
 import compose.icons.FontAwesomeIcons
 import compose.icons.fontawesomeicons.Solid
 import compose.icons.fontawesomeicons.solid.Paw
@@ -46,7 +48,7 @@ var LocalGlobalState = compositionLocalOf<Boolean> { error("not composed") }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen() {
+fun MainScreen(beaconViewModel: BeaconViewModel) {
     val navController = rememberNavController()
     val currentSelectedScreen by navController.currentScreenAsState()
     val currentRoute by navController.currentRouteAsState()
@@ -113,7 +115,7 @@ fun MainScreen() {
                     .fillMaxSize()
                     .padding(it)
             ) {
-                AppNavGraph(navController = navController)
+                AppNavGraph(navController = navController, beaconViewModel = beaconViewModel)
             }
         }
 
@@ -123,7 +125,7 @@ fun MainScreen() {
 
 @Composable
 private fun BottomNavBar(
-    navController: NavController,
+    navController: NavHostController,
     currentSelectedScreen: RootScreen
 ) {
 

@@ -1,20 +1,24 @@
 package com.example.pawsitive.navigation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.example.pawsitive.viewmodel.BeaconViewModel
 
 @Composable
 fun AppNavGraph(
-    navController: NavHostController
+    navController: NavHostController,
+    beaconViewModel: BeaconViewModel
 ) {
     NavHost(navController = navController, startDestination = RootScreen.Home.route) {
         addHomeRoute(navController)
-        addFollowRoute(navController)
+        addFollowRoute(navController, beaconViewModel)
         addPetRoute(navController)
         addMessagesRoute(navController)
         addProfileRoute(navController)
@@ -31,12 +35,12 @@ private fun NavGraphBuilder.addHomeRoute(navController: NavController) {
         showHomeDetail(navController)
     }
 }
-private fun NavGraphBuilder.addFollowRoute(navController: NavController) {
+private fun NavGraphBuilder.addFollowRoute(navController: NavHostController, beaconViewModel: BeaconViewModel) {
     navigation(
         route = RootScreen.Follow.route,
         startDestination = LeafScreen.Follow.route
     ) {
-        showFollow(navController)
+        showFollow(navController, beaconViewModel)
     }
 }
 
@@ -88,9 +92,9 @@ private fun NavGraphBuilder.showHomeDetail(navController: NavController) {
         )
     }
 }
-private fun NavGraphBuilder.showFollow(navController: NavController) {
+private fun NavGraphBuilder.showFollow(navController: NavHostController, beaconViewModel: BeaconViewModel) {
     composable(route = LeafScreen.Follow.route) {
-        FollowScreen()
+        FollowScreen(beaconViewModel)
     }
 }
 private fun NavGraphBuilder.showPet(navController: NavController) {
