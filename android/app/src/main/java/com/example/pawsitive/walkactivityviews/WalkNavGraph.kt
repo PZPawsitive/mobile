@@ -61,7 +61,7 @@ private fun NavGraphBuilder.showInfo(
     disconnect: (MTPeripheral) -> Unit
 ) {
     composable(route = LeafScreen.Info.route) {
-        InfoScreen(beaconViewModel, refresh, connect, disconnect)
+        InfoScreen(beaconViewModel, refresh, connect, disconnect, navController)
     }
 }
 
@@ -69,7 +69,7 @@ private fun NavGraphBuilder.showDeviceConnected(
     navController: NavHostController, beaconViewModel: BeaconViewModel
 ) {
     composable(route = LeafScreen.DeviceConnected.route) {
-        DeviceConnectedScreen(beaconViewModel = beaconViewModel)
+        DeviceConnectedScreen(beaconViewModel = beaconViewModel, navController)
     }
 }
 

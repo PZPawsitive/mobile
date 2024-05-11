@@ -88,7 +88,7 @@ fun OverlayScreen(
 @Composable
 fun BottomAppBar(
     navController: NavHostController,
-    currentSelectedScreen: RootScreen
+    currentSelectedScreen: RootScreen,
 ) {
     NavigationBar {
         NavigationBarItem(
@@ -96,12 +96,12 @@ fun BottomAppBar(
             onClick = { navController.navigateToRootScreen(RootScreen.Info) },
             alwaysShowLabel = true,
             label = {
-                Text(text = "Info")
+                Text(text = "Devices")
             },
             icon = {
                 Icon(
                     imageVector = if (currentSelectedScreen == RootScreen.Info) Icons.Default.Info else Icons.Outlined.Info,
-                    contentDescription = "info"
+                    contentDescription = "devices"
                 )
             }
         )

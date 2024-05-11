@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -36,6 +37,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.pawsitive.viewmodel.BeaconViewModel
 import com.minew.beaconplus.sdk.MTFrameHandler
 import com.minew.beaconplus.sdk.MTPeripheral
@@ -49,7 +51,8 @@ fun InfoScreen(
     beaconViewModel: BeaconViewModel,
     refresh: () -> Unit,
     connect: (MTPeripheral) -> Unit,
-    disconnect: (MTPeripheral) -> Unit
+    disconnect: (MTPeripheral) -> Unit,
+    navController: NavHostController
 ) {
     var connected by remember {
         mutableStateOf(false)
@@ -83,6 +86,11 @@ fun InfoScreen(
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
+            if (beaconViewModel.connectedMTPeripheral != null) {
+                Button(onClick = { navController.navigate(LeafScreen.DeviceConnected.route) }) {
+                    Text(text = "Wróć do podłączonego urządzenia")
+                }
+            }
             PeripheralList(beaconViewModel = beaconViewModel, connect, disconnect)
         }
         FloatingActionButton(
