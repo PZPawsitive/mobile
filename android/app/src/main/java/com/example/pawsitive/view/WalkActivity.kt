@@ -33,9 +33,13 @@ class WalkActivity : AppCompatActivity() {
     val mObjectAnimator: ObjectAnimator? = null
 
     lateinit var mMTCentralManager: MTCentralManager
-    lateinit var mtPeripheralConnected: MTPeripheral
 
     val beaconViewModel by viewModel<BeaconViewModel>()
+    private var onNavigateAction: (() -> Unit)? = null
+
+    fun performNavigation() {
+        onNavigateAction?.invoke()
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         if (ContextCompat.checkSelfPermission(
                 this,
@@ -59,7 +63,9 @@ class WalkActivity : AppCompatActivity() {
 //
 //                Text(text = "back")
 //            }
-            OverlayScreen(beaconViewModel, { refresh() }, ::connect, ::disconnect )
+            OverlayScreen(beaconViewModel, { refresh() }, ::connect, ::disconnect ) {
+                navigateAction -> onNavigateAction = navigateAction
+            }
         }
         val ctx = applicationContext
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx))
@@ -177,9 +183,6 @@ class WalkActivity : AppCompatActivity() {
     }
 
     fun connect(mtPeripheral: MTPeripheral) {
-        mtPeripheralConnected = mtPeripheral
-        Log.d("tag", mtPeripheral.toString())
-
         mMTCentralManager.connect(mtPeripheral,object : ConnectionStatueListener {
             override fun onUpdateConnectionStatus(
                 connectionStatus: ConnectionStatus,
@@ -289,6 +292,8 @@ class WalkActivity : AppCompatActivity() {
                                 "COMPLETED",
                                 Toast.LENGTH_SHORT
                             ).show()
+                            beaconViewModel.setConnectedPeripheral(mtPeripheral)
+                            performNavigation()
 //                            val intent = Intent()
 //                            intent.setClass(
 //                                this@MainActivity,
@@ -318,6 +323,10 @@ class WalkActivity : AppCompatActivity() {
             }
         })
 //        Config.mConnectedMTPeripheral = mtPeripheral
+    }
+
+    fun navigateToDeviceConnected(action: () -> Unit) {
+        action()
     }
 
     fun disconnect(mtPeripheral: MTPeripheral) {

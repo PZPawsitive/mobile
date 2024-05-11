@@ -20,7 +20,7 @@ fun WalkNavGraph(
 ) {
     NavHost(navController = navController, startDestination = RootScreen.Info.route) {
         addInfoRoute(navController, beaconViewModel, refresh, connect, disconnect)
-        addMapRoute(navController)
+        addMapRoute(navController, beaconViewModel)
         addMessagesRoute(navController)
     }
 }
@@ -34,12 +34,16 @@ private fun NavGraphBuilder.addInfoRoute(
 ) {
     navigation(route = RootScreen.Info.route, startDestination = LeafScreen.Info.route) {
         showInfo(navController, beaconViewModel, refresh, connect, disconnect)
+        showDeviceConnected(navController, beaconViewModel)
     }
 }
 
-private fun NavGraphBuilder.addMapRoute(navController: NavHostController) {
+private fun NavGraphBuilder.addMapRoute(
+    navController: NavHostController,
+    beaconViewModel: BeaconViewModel
+) {
     navigation(route = RootScreen.Map.route, startDestination = LeafScreen.Map.route) {
-        showMap(navController)
+        showMap(navController, beaconViewModel)
     }
 }
 
@@ -61,9 +65,20 @@ private fun NavGraphBuilder.showInfo(
     }
 }
 
-private fun NavGraphBuilder.showMap(navController: NavHostController) {
+private fun NavGraphBuilder.showDeviceConnected(
+    navController: NavHostController, beaconViewModel: BeaconViewModel
+) {
+    composable(route = LeafScreen.DeviceConnected.route) {
+        DeviceConnectedScreen(beaconViewModel = beaconViewModel)
+    }
+}
+
+private fun NavGraphBuilder.showMap(
+    navController: NavHostController,
+    beaconViewModel: BeaconViewModel
+) {
     composable(route = LeafScreen.Map.route) {
-        MapScreen()
+        MapScreen(beaconViewModel)
     }
 }
 

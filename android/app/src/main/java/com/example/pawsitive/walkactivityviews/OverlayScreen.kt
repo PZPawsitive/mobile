@@ -26,6 +26,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -49,11 +50,20 @@ fun OverlayScreen(
     beaconViewModel: BeaconViewModel,
     refresh: () -> Unit,
     connect: (MTPeripheral) -> Unit,
-    disconnect: (MTPeripheral) -> Unit
+    disconnect: (MTPeripheral) -> Unit,
+    registerNavigateAction: (() -> Unit) -> Unit,
 ) {
     val navController = rememberNavController()
     val currentSelectedScreen by navController.currentScreenAsState()
     val currentRoute by navController.currentRouteAsState()
+
+    fun navigateToDeviceConnected() {
+        navController.navigate(LeafScreen.DeviceConnected.route)
+    }
+
+    LaunchedEffect(Unit) {
+        registerNavigateAction { navigateToDeviceConnected() }
+    }
 
     Scaffold(
         topBar = { TopNavBar(navController = navController) },

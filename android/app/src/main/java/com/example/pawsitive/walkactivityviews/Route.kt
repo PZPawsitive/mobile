@@ -10,6 +10,7 @@ sealed class RootScreen(val route: String) {
 
 sealed class LeafScreen(val route: String) {
     data object Info : LeafScreen("info")
+    data object DeviceConnected : LeafScreen("device_connected")
     data object Map : LeafScreen("map")
     data object Messages : LeafScreen("messages")
 }
