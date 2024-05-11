@@ -20,7 +20,7 @@ fun WalkNavGraph(
 ) {
     NavHost(navController = navController, startDestination = RootScreen.Info.route) {
         addInfoRoute(navController, beaconViewModel, refresh, connect, disconnect)
-        addMapRoute(navController, beaconViewModel)
+        addMapRoute(navController)
         addMessagesRoute(navController)
     }
 }
@@ -40,10 +40,9 @@ private fun NavGraphBuilder.addInfoRoute(
 
 private fun NavGraphBuilder.addMapRoute(
     navController: NavHostController,
-    beaconViewModel: BeaconViewModel
 ) {
     navigation(route = RootScreen.Map.route, startDestination = LeafScreen.Map.route) {
-        showMap(navController, beaconViewModel)
+        showMap(navController)
     }
 }
 
@@ -74,11 +73,10 @@ private fun NavGraphBuilder.showDeviceConnected(
 }
 
 private fun NavGraphBuilder.showMap(
-    navController: NavHostController,
-    beaconViewModel: BeaconViewModel
+    navController: NavHostController
 ) {
     composable(route = LeafScreen.Map.route) {
-        MapScreen(beaconViewModel)
+        MapScreen()
     }
 }
 
