@@ -86,22 +86,19 @@ fun InfoScreen(
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
-            if (beaconViewModel.connectedMTPeripheral != null) {
-                Button(onClick = { navController.navigate(LeafScreen.DeviceConnected.route) }) {
-                    Text(text = "Wróć do podłączonego urządzenia")
-                }
-            }
             PeripheralList(beaconViewModel = beaconViewModel, connect, disconnect)
         }
-        FloatingActionButton(
-            onClick = { onRefresh() },
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 10.dp)
-                .size(width = 100.dp, 50.dp)
-        ) {
-            Text(text = "Refresh")
+        if (beaconViewModel.connectedMTPeripheral != null) {
+            FloatingActionButton(
+                onClick = { navController.navigate(LeafScreen.DeviceConnected.route) },
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 10.dp)
+            ) {
+                Text(text = "Go to connected device", modifier = Modifier.padding(10.dp))
+            }
         }
+
         if (pullToRefreshState.isRefreshing) {
             LaunchedEffect(true) {
                 onRefresh()

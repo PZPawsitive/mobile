@@ -304,6 +304,7 @@ class WalkActivity : AppCompatActivity() {
 
                         ConnectionStatus.CONNECTFAILED, ConnectionStatus.DISCONNECTED -> {
                             Log.e("tag", "DISCONNECTED")
+                            beaconViewModel.connectedMTPeripheral = null
                             Toast.makeText(
                                 this@WalkActivity,
                                 "DISCONNECTED",
