@@ -13,21 +13,27 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.pawsitive.R
-import com.example.pawsitive.walkactivityviews.OverlayScreen
 import com.example.pawsitive.viewmodel.BeaconViewModel
+import com.example.pawsitive.walkactivityviews.OverlayScreen
+import com.minew.beaconplus.sdk.ConnectService
 import com.minew.beaconplus.sdk.MTCentralManager
 import com.minew.beaconplus.sdk.MTFrameHandler
 import com.minew.beaconplus.sdk.MTPeripheral
 import com.minew.beaconplus.sdk.Utils.BLETool
 import com.minew.beaconplus.sdk.enums.ConnectionStatus
 import com.minew.beaconplus.sdk.enums.FrameType
+import com.minew.beaconplus.sdk.enums.TriggerType
 import com.minew.beaconplus.sdk.exception.MTException
 import com.minew.beaconplus.sdk.frames.IBeaconFrame
+import com.minew.beaconplus.sdk.frames.UidFrame
 import com.minew.beaconplus.sdk.interfaces.ConnectionStatueListener
 import com.minew.beaconplus.sdk.interfaces.GetPasswordListener
+import com.minew.beaconplus.sdk.model.Trigger
 import com.permissionx.guolindev.PermissionX
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.osmdroid.config.Configuration
+import java.util.Date
+
 
 class WalkActivity : AppCompatActivity() {
     val mObjectAnimator: ObjectAnimator? = null
@@ -40,6 +46,7 @@ class WalkActivity : AppCompatActivity() {
     fun performNavigation() {
         onNavigateAction?.invoke()
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         if (ContextCompat.checkSelfPermission(
                 this,
@@ -63,14 +70,20 @@ class WalkActivity : AppCompatActivity() {
 //
 //                Text(text = "back")
 //            }
-            OverlayScreen(beaconViewModel, { refresh() }, ::connect, ::disconnect ) {
-                navigateAction -> onNavigateAction = navigateAction
+            OverlayScreen(
+                beaconViewModel,
+                { refresh() },
+                ::connect,
+                ::disconnect
+            ) { navigateAction ->
+                onNavigateAction = navigateAction
             }
         }
         val ctx = applicationContext
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx))
         Configuration.getInstance().userAgentValue = "Pawsitive"
     }
+
     fun initBleManager() {
         mMTCentralManager = MTCentralManager.getInstance(this)
         mMTCentralManager.startService()
@@ -78,27 +91,42 @@ class WalkActivity : AppCompatActivity() {
 
     fun setBleManagerListener() {
         mMTCentralManager.setMTCentralManagerListener { it ->
-            for (beacon in it) {
-                val mtFrameHandler: MTFrameHandler = beacon.mMTFrameHandler
-                val mac = mtFrameHandler.mac
-                val name = mtFrameHandler.name
-                val battery = mtFrameHandler.battery
-                val rssi = mtFrameHandler.rssi
-                val frames = mtFrameHandler.advFrames
-                for (frame in frames) {
-                    val frametype = frame.frameType
-                    if (frametype == FrameType.FrameiBeacon) {
-                        val tlmFrame: IBeaconFrame = frame as IBeaconFrame
-                        Log.v(
-                            "beaconplus",
-                            tlmFrame.battery.toString()
-                        );
+            Log.d("trigger", it.toString())
+
+                for (beacon in it) {
+                    if (beacon == beaconViewModel.connectedMTPeripheral) {
+                        val mtFrameHandler: MTFrameHandler = beacon.mMTFrameHandler
+
+                        val connectionHandler = beacon.mMTConnectionHandler
+                        val smth = connectionHandler.allFrames.size
+                        val idk = connectionHandler.triggers
+                        val mac = mtFrameHandler.mac
+                        val name = mtFrameHandler.name
+                        val battery = mtFrameHandler.battery
+                        val rssi = mtFrameHandler.rssi
+                        val frames = mtFrameHandler.advFrames
+
+                        Log.d("trigger",Date().toGMTString())
+
+                        for (frame in frames) {
+                            val slots = frame.curSlot
+                            val frametype = frame.frameType
+//                        if (frametype == FrameType.) {
+//                            val tlmFrame: IBeaconFrame = frame as IBeaconFrame
+//                            Log.v(
+//                                "beaconplus",
+//                                tlmFrame.battery.toString()
+//                            );
+//                        }
+                            Log.d("trigger", "beacon: $beacon frame: $frame slot: $slots slotattitude: $idk")
+
+                            Log.d("beaconData", "frames: $frames")
                     }
 
-                    Log.d("beaconData", "frametype: $frametype")
-                }
-                Log.d("beaconData", "$mac, $name, $battery, $rssi")
+                    }
+//                Log.d("beaconData", "$mac, $name, $battery, $rssi")
             }
+
             beaconViewModel.setBeaconList(it)
         }
         mMTCentralManager.setBluetoothChangedListener {
@@ -175,20 +203,20 @@ class WalkActivity : AppCompatActivity() {
             mMTCentralManager.stopScan()
             mMTCentralManager.clear()
             mMTCentralManager.startScan()
-        }
-        else {
+        } else {
             mMTCentralManager.clear()
             mMTCentralManager.startScan()
         }
     }
 
     fun connect(mtPeripheral: MTPeripheral) {
-        mMTCentralManager.connect(mtPeripheral,object : ConnectionStatueListener {
+        mMTCentralManager.connect(mtPeripheral, object : ConnectionStatueListener {
             override fun onUpdateConnectionStatus(
                 connectionStatus: ConnectionStatus,
                 getPasswordListener: GetPasswordListener?
             ) {
                 Log.d("tag", "thread")
+
                 runOnUiThread {
                     when (connectionStatus) {
                         ConnectionStatus.CONNECTING -> {
@@ -292,7 +320,13 @@ class WalkActivity : AppCompatActivity() {
                                 "COMPLETED",
                                 Toast.LENGTH_SHORT
                             ).show()
+
+                            mtPeripheral.mMTConnectionHandler.resetFactorySetting {
+                                s, _ -> Log.d("beaconplus", "resetted")
+                            }
+                            mtPeripheral.mMTConnectionHandler.mTConnectionFeature
                             beaconViewModel.setConnectedPeripheral(mtPeripheral)
+
                             performNavigation()
 //                            val intent = Intent()
 //                            intent.setClass(

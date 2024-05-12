@@ -65,14 +65,14 @@ fun MessageScreen() {
                         .padding(10.dp)
                 )
                 Icon(
-                    imageVector = Icons.Filled.Send,  // Asumując, że masz odpowiednią ikonę
+                    imageVector = Icons.Filled.Send,
                     contentDescription = "send message",
                     modifier = Modifier
                         .padding(10.dp)
                         .clickable {
                             if (inputText.isNotEmpty()) {
                                 rememberedMessages.add(Message("me", inputText))
-                                inputText = ""  // Resetowanie pola tekstowego po wysłaniu
+                                inputText = ""
                             }
                         }
                 )

@@ -19,7 +19,7 @@ class BeaconViewModel : ViewModel(){
 
     var connectedMTPeripheral by mutableStateOf<MTPeripheral?>(null)
     fun setBeaconList(list: List<MTPeripheral>) {
-        Log.d("beaconData", list.toString())
+//        Log.d("beaconData", list.toString())
         _mlist.clear()
         list.forEach {
             _mlist.add(it)
