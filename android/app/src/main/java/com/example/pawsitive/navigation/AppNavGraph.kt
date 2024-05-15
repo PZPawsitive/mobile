@@ -7,7 +7,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.example.pawsitive.viewmodel.BeaconViewModel
 
 @Composable
 fun AppNavGraph(
@@ -63,6 +62,7 @@ private fun NavGraphBuilder.addMessagesRoute(navController: NavController) {
         startDestination = LeafScreen.Messages.route
     ) {
         showMessages(navController)
+        showChat(navController)
     }
 }
 private fun NavGraphBuilder.addProfileRoute(navController: NavController) {
@@ -149,7 +149,13 @@ private fun NavGraphBuilder.showContractScreen(
 }
 private fun NavGraphBuilder.showMessages(navController: NavController) {
     composable(route = LeafScreen.Messages.route) {
-        MessagesScreen()
+        MessagesScreen(navController)
+    }
+}
+
+private fun NavGraphBuilder.showChat(navController: NavController) {
+    composable(route = LeafScreen.Chat.route) {
+        ChatScreen()
     }
 }
 

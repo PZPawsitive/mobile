@@ -1,10 +1,9 @@
-package com.example.pawsitive.walkactivityviews
+package com.example.pawsitive.navigation
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,8 +12,8 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Send
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
@@ -29,13 +28,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.material3.BottomAppBar
-
-data class Message(val owner: String, val content: String)
+import com.example.pawsitive.walkactivityviews.Message
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MessageScreen() {
+fun ChatScreen() {
+
+
     var inputText by remember { mutableStateOf("") }
     val rememberedMessages = remember {
         mutableStateListOf(
@@ -52,7 +51,10 @@ fun MessageScreen() {
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(modifier = Modifier.fillMaxSize(), bottomBar = {
             BottomAppBar {
-                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f)
+                ) {
                     OutlinedTextField(
                         value = inputText,
                         onValueChange = { inputText = it },
@@ -75,9 +77,18 @@ fun MessageScreen() {
                 }
             }
         }) {
-            LazyColumn(modifier = Modifier.padding(bottom = it.calculateBottomPadding(), start = 10.dp, end = 10.dp)) {
+            LazyColumn(
+                modifier = Modifier.padding(
+                    bottom = it.calculateBottomPadding(),
+                    start = 10.dp,
+                    end = 10.dp
+                )
+            ) {
                 items(rememberedMessages) { message ->
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = if (message.owner == "owner") Arrangement.Start else Arrangement.End) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = if (message.owner == "owner") Arrangement.Start else Arrangement.End
+                    ) {
                         Card(onClick = { /*TODO*/ }, modifier = Modifier.widthIn(max = 250.dp)) {
                             Text(text = message.content, modifier = Modifier.padding(10.dp))
                         }

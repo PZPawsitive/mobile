@@ -1,5 +1,6 @@
 package com.example.pawsitive.walkactivityviews
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -34,6 +35,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -41,6 +43,7 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.pawsitive.view.MainActivity
 import com.example.pawsitive.viewmodel.BeaconViewModel
 import com.minew.beaconplus.sdk.MTPeripheral
 
@@ -146,10 +149,12 @@ fun TopNavBar(navController: NavHostController) {
     var expandedSettings by remember {
         mutableStateOf(false)
     }
+
+    val context = LocalContext.current
     CenterAlignedTopAppBar(
         title = { Text(text = "Pawsitive", fontWeight = FontWeight.Bold) },
         navigationIcon = {
-            IconButton(onClick = { navController.navigateUp() }) {
+            IconButton(onClick = { context.startActivity(Intent(context,MainActivity::class.java)) }) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
                     contentDescription = "Localized description"

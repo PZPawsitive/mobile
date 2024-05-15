@@ -3,6 +3,7 @@ package com.example.pawsitive.view
 import android.content.Intent
 import android.app.Activity
 import android.os.Bundle
+import android.provider.CalendarContract.Colors
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
@@ -21,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,6 +31,8 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,14 +58,15 @@ class RegisterActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            PawsitiveTheme {
-                RegisterView()
-            }
-//            RegisterView()
+//            PawsitiveTheme {
+//                RegisterView()
+//            }
+            RegisterView()
         }
     }
 
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun RegisterView() {
 
@@ -72,6 +77,12 @@ class RegisterActivity : ComponentActivity() {
         }
         var passwordInput by rememberSaveable {
             mutableStateOf("")
+        }
+        var repeatPasswordInput by rememberSaveable {
+            mutableStateOf("")
+        }
+        var showRepeatedPassword by rememberSaveable {
+            mutableStateOf(false)
         }
 
         var showPassword by rememberSaveable {
@@ -114,11 +125,16 @@ class RegisterActivity : ComponentActivity() {
                         Spacer(modifier = Modifier.height(20.dp))
                         OutlinedTextField(
                             value = passwordInput,
-                            label = { Text(text = "Hasło") },
+                            label = { Text(text = "Password") },
                             visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                             onValueChange = { passwordInput = it },
                             modifier = Modifier
                                 .fillMaxWidth(),
+                            colors = TextFieldDefaults.outlinedTextFieldColors(
+                                errorBorderColor = Color.Red,
+                                errorTrailingIconColor = Color.Black
+                            ),
+                            isError = passwordInput != repeatPasswordInput,
                             trailingIcon = {
                                 IconButton(onClick = { showPassword = !showPassword }) {
                                     Icon(
@@ -129,26 +145,39 @@ class RegisterActivity : ComponentActivity() {
                             }
                         )
                         OutlinedTextField(
-                            value = passwordInput,
-                            label = { Text(text = "Powtórz hasło") },
-                            visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
-                            onValueChange = { passwordInput = it },
+                            value = repeatPasswordInput,
+                            label = { Text(text = "Repeat password") },
+                            visualTransformation = if (showRepeatedPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                            onValueChange = { repeatPasswordInput = it },
                             modifier = Modifier
                                 .fillMaxWidth(),
+                            isError = passwordInput != repeatPasswordInput,
+                            colors = TextFieldDefaults.outlinedTextFieldColors(
+                                errorBorderColor = Color.Red,
+                                errorTrailingIconColor = Color.Black
+                            ),
+                            supportingText = {
+                                if (passwordInput != repeatPasswordInput) {
+                                    Text(text = "Password don't match!", textAlign = TextAlign.Center)
+                                }
+                            },
                             trailingIcon = {
-                                IconButton(onClick = { showPassword = !showPassword }) {
+                                IconButton(onClick = { showRepeatedPassword = !showRepeatedPassword }) {
                                     Icon(
-                                        imageVector = if (showPassword) Icons.Outlined.Lock else Icons.Filled.Lock,
+                                        imageVector = if (showRepeatedPassword) Icons.Outlined.Lock else Icons.Filled.Lock,
                                         contentDescription = "show password"
                                     )
                                 }
                             }
                         )
                         Spacer(modifier = Modifier.height(10.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
                         Row(
-                            modifier = Modifier.align(
-                                Alignment.CenterHorizontally
-                            ).fillMaxWidth(),
+                            modifier = Modifier
+                                .align(
+                                    Alignment.CenterHorizontally
+                                )
+                                .fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
                             OutlinedButton(
@@ -157,11 +186,11 @@ class RegisterActivity : ComponentActivity() {
                                     startActivity(intent)
                                 },
                             ) {
-                                Text(text = "Masz już konto?")
+                                Text(text = "Already have an account?")
                             }
                             Button(onClick = {}
                             ) {
-                                Text(text = "Zarejestruj")
+                                Text(text = "Register")
                             }
 
                         }

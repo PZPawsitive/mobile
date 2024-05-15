@@ -104,7 +104,7 @@ class LoginActivity : ComponentActivity() {
                         Spacer(modifier = Modifier.height(20.dp))
                         OutlinedTextField(
                             value = passwordInput,
-                            label = { Text(text = "Hasło") },
+                            label = { Text(text = "Password") },
                             visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                             onValueChange = { passwordInput = it },
                             modifier = Modifier
@@ -132,7 +132,7 @@ class LoginActivity : ComponentActivity() {
                                 },
 
                                 ) {
-                                Text(text = "Nie masz jeszcze konta?")
+                                Text(text = "Don't have account?")
                             }
                             Button(
                                 onClick = {
@@ -140,7 +140,7 @@ class LoginActivity : ComponentActivity() {
                                     startActivity(intent)
                                 },
                             ) {
-                                Text(text = "Zaloguj")
+                                Text(text = "Login")
                             }
 
                         }
