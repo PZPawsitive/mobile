@@ -2,6 +2,7 @@ package com.example.pawsitive.view
 
 import android.os.Handler
 import android.util.Log
+import org.osmdroid.util.GeoPoint
 
 class SendGeolocationTask() {
     private val handler = Handler()

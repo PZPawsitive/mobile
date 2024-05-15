@@ -17,12 +17,14 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.getSystemService
 import com.example.pawsitive.R
 import com.example.pawsitive.viewmodel.BeaconViewModel
 import com.example.pawsitive.walkactivityviews.OverlayScreen
+import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.tasks.CancellationToken
+import com.google.android.gms.tasks.CancellationTokenSource
 import com.minew.beaconplus.sdk.MTCentralManager
 import com.minew.beaconplus.sdk.MTFrameHandler
 import com.minew.beaconplus.sdk.MTPeripheral
@@ -35,6 +37,7 @@ import com.minew.beaconplus.sdk.interfaces.GetPasswordListener
 import com.permissionx.guolindev.PermissionX
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.osmdroid.config.Configuration
+import org.osmdroid.util.GeoPoint
 
 
 class WalkActivity : AppCompatActivity() {
@@ -66,14 +69,15 @@ class WalkActivity : AppCompatActivity() {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.INTERNET), 0)
         }
         initBleManager()
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        getCurrentLocation()
         setBleManagerListener()
         initBlePermission()
         task = SendGeolocationTask()
         mMTCentralManager.startService()
 
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
-        getCurrentLocation()
+
 
         super.onCreate(savedInstanceState)
 //        enableEdgeToEdge()
@@ -112,14 +116,13 @@ class WalkActivity : AppCompatActivity() {
                     ) != PackageManager.PERMISSION_GRANTED
                 ) {
                     requestPermission()
-                    return
                 }
                 fusedLocationProviderClient.lastLocation.addOnCompleteListener(this) {
                     val location: Location? = it.result
                     if (location==null) {
                         Toast.makeText(this, "Null reveived", Toast.LENGTH_SHORT).show()
                     } else {
-                        Toast.makeText(this, "get success", Toast.LENGTH_SHORT).show()
+//                        Toast.makeText(this, "get success", Toast.LENGTH_SHORT).show()
                         latitude = location.latitude
                         longtitude = location.longitude
                     }
@@ -195,8 +198,20 @@ class WalkActivity : AppCompatActivity() {
         var i = 0
         mMTCentralManager.setMTCentralManagerListener { it ->
             Log.d("trigger", it.toString())
+
+            var setListen: Boolean = false
+            var listToListen = mutableListOf<MTPeripheral>()
             for (beacon in it) {
+
                 val connectionHandler = beacon.mMTConnectionHandler
+//                connectionHandler.resetFactorySetting {
+//                    success, exception ->
+//                    if (success) {
+//                        Log.d("test", "succes")
+//                    } else {
+//                        Log.d("test", exception.message)
+//                    }
+//                }
                 val mtFrameHandler: MTFrameHandler = beacon.mMTFrameHandler
                 val frames = connectionHandler.allFrames
                 val c = mtFrameHandler.advFrames
@@ -212,19 +227,31 @@ class WalkActivity : AppCompatActivity() {
                     if (currSlot == 5 && frame.frameType == FrameType.FrameTLM) {
 //                        Log.d("result", "result!!! $i")
 //                        i += 1
-                        beaconViewModel.setListenedList(it)
-                        getCurrentLocation()
-                        task.setGeolocation(latitude, longtitude)
-                        task.start() // broken
+                        setListen = true
+//                        listToListen.plus(beacon)
+                        listToListen.add(beacon)
+//                        beaconViewModel.setListenedList(it)
+//                        getCurrentLocation()
+//                        task.setGeolocation(latitude, longtitude)
+//                        task.start() // broken
                     } else {
                         if (currSlot == 5 && frame.frameType == FrameType.FrameNone) {
-                            beaconViewModel.setListenedList(emptyList())
-                            task.stop() // broken
+//                            beaconViewModel.setListenedList(emptyList())
+//                            task.stop() // broken
+                            listToListen.remove(beacon)
                         }
                     }
                 }
             }
-
+            if (listToListen.isNotEmpty()) {
+                getCurrentLocation()
+//                beaconViewModel.setListenedList(listToListen)
+                task.setGeolocation(latitude, longtitude)
+                task.start()
+            } else {
+                task.stop()
+            }
+            beaconViewModel.setListenedList(listToListen)
             beaconViewModel.setBeaconList(it)
         }
         mMTCentralManager.setBluetoothChangedListener {
