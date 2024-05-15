@@ -10,31 +10,25 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.pawsitive.R
 import com.example.pawsitive.viewmodel.BeaconViewModel
 import com.example.pawsitive.walkactivityviews.OverlayScreen
-import com.minew.beaconplus.sdk.ConnectService
 import com.minew.beaconplus.sdk.MTCentralManager
 import com.minew.beaconplus.sdk.MTFrameHandler
 import com.minew.beaconplus.sdk.MTPeripheral
-import com.minew.beaconplus.sdk.MTSlotHandler
 import com.minew.beaconplus.sdk.Utils.BLETool
 import com.minew.beaconplus.sdk.enums.ConnectionStatus
 import com.minew.beaconplus.sdk.enums.FrameType
-import com.minew.beaconplus.sdk.enums.TriggerType
 import com.minew.beaconplus.sdk.exception.MTException
-import com.minew.beaconplus.sdk.frames.IBeaconFrame
-import com.minew.beaconplus.sdk.frames.MinewFrame
-import com.minew.beaconplus.sdk.frames.UidFrame
 import com.minew.beaconplus.sdk.interfaces.ConnectionStatueListener
 import com.minew.beaconplus.sdk.interfaces.GetPasswordListener
-import com.minew.beaconplus.sdk.model.Trigger
 import com.permissionx.guolindev.PermissionX
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.osmdroid.config.Configuration
-import java.util.Date
+
 
 
 class WalkActivity : AppCompatActivity() {
@@ -44,6 +38,8 @@ class WalkActivity : AppCompatActivity() {
 
     val beaconViewModel by viewModel<BeaconViewModel>()
     private var onNavigateAction: (() -> Unit)? = null
+
+    lateinit var task: SendGeolocationTask
 
     fun performNavigation() {
         onNavigateAction?.invoke()
@@ -60,6 +56,7 @@ class WalkActivity : AppCompatActivity() {
         initBleManager()
         setBleManagerListener()
         initBlePermission()
+        task = SendGeolocationTask()
         mMTCentralManager.startService()
         super.onCreate(savedInstanceState)
 //        enableEdgeToEdge()
@@ -113,10 +110,12 @@ class WalkActivity : AppCompatActivity() {
 //                        Log.d("result", "result!!! $i")
 //                        i += 1
                         beaconViewModel.setListenedList(it)
+                        task.start() // broken
                     }
                     else {
                         if (currSlot == 5 && frame.frameType == FrameType.FrameNone) {
                             beaconViewModel.setListenedList(emptyList())
+                            task.stop() // broken
                         }
                     }
                 }

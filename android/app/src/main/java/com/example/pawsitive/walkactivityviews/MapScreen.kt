@@ -38,7 +38,6 @@ fun MapScreen() {
             mLocationOverlay.enableMyLocation()
             mapView.overlays.add(mLocationOverlay)
 
-            // test if works?
             mLocationOverlay.enableFollowLocation()
 
 
