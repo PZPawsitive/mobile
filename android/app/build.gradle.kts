@@ -69,6 +69,7 @@ dependencies {
     }
 
     implementation(libs.play.services.location)
+    implementation(libs.androidx.constraintlayout.compose)
 
     implementation(platform("androidx.compose:compose-bom:2024.02.01"))
 
