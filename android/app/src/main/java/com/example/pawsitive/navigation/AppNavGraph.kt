@@ -28,7 +28,6 @@ private fun NavGraphBuilder.addHomeRoute(navController: NavController) {
         startDestination = LeafScreen.Home.route
     ) {
         showHome(navController)
-        showHomeDetail(navController)
     }
 }
 private fun NavGraphBuilder.addFollowRoute(navController: NavHostController) {
@@ -75,20 +74,7 @@ private fun NavGraphBuilder.addProfileRoute(navController: NavController) {
 }
 private fun NavGraphBuilder.showHome(navController: NavController) {
     composable(route = LeafScreen.Home.route) {
-        HomeScreen(
-            showDetail = {
-                navController.navigate(LeafScreen.HomeDetail.route)
-            }
-        )
-    }
-}
-private fun NavGraphBuilder.showHomeDetail(navController: NavController) {
-    composable(route = LeafScreen.HomeDetail.route) {
-        HomeDetailScreen(
-            onBack = {
-                navController.navigateUp()
-            }
-        )
+        HomeScreen()
     }
 }
 private fun NavGraphBuilder.showFollow(navController: NavHostController) {

@@ -1,5 +1,6 @@
 package com.example.pawsitive.navigation
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -33,11 +34,13 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import com.example.pawsitive.view.LoginActivity
 import com.example.pawsitive.viewmodel.BeaconViewModel
 import compose.icons.FontAwesomeIcons
 import compose.icons.fontawesomeicons.Solid
@@ -59,6 +62,8 @@ fun MainScreen() {
     var state by remember {
         mutableStateOf(false)
     }
+
+    val context = LocalContext.current
 
     CompositionLocalProvider(LocalGlobalState provides state) {
 
@@ -93,7 +98,9 @@ fun MainScreen() {
                                 text = { Text(text = "Settings") },
                                 onClick = { /*TODO*/ })
                             Divider()
-                            DropdownMenuItem(text = { Text(text = "...") }, onClick = { /*TODO*/ })
+                            DropdownMenuItem(text = { Text(text = "Logout") }, onClick = { context.startActivity(
+                                Intent(context, LoginActivity::class.java)
+                            ) })
                         }
                     }
                 )
