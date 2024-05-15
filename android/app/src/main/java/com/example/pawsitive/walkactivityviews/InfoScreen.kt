@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.pawsitive.viewmodel.BeaconViewModel
 import com.minew.beaconplus.sdk.MTFrameHandler
+import com.minew.beaconplus.sdk.MTOTAManager
 import com.minew.beaconplus.sdk.MTPeripheral
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -87,6 +88,17 @@ fun InfoScreen(
                 textAlign = TextAlign.Center
             )
             PeripheralList(beaconViewModel = beaconViewModel, connect, disconnect)
+            Text(
+                text = "Podłączone urządzenia",
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
+            ListenedDevicesList(
+                beaconViewModel = beaconViewModel,
+                connect = connect,
+                disconnect = disconnect
+            )
         }
         if (beaconViewModel.connectedMTPeripheral != null) {
             FloatingActionButton(
@@ -126,48 +138,75 @@ fun PeripheralList(
     disconnect: (MTPeripheral) -> Unit
 ) {
     val mlist = beaconViewModel.mlist
-    val context = LocalContext.current
     LazyColumn(
-        modifier = Modifier.fillMaxSize()
+//        modifier = Modifier.fillMaxSize()
     ) {
         items(items = mlist) {
-            val mtFrameHandler: MTFrameHandler = it.mMTFrameHandler
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp),
-                onClick = {
-                    if (mtFrameHandler.name == "D15N") {
-                        connect(it)
-                    } else {
-                        Toast.makeText(context, "wait for device to configure", Toast.LENGTH_SHORT)
-                            .show()
-                    }
-                }
-            ) {
-                Box(modifier = Modifier.padding(10.dp)) {
-                    if (mtFrameHandler.name == "D15N") {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(text = mtFrameHandler.name)
-                            Text(text = "battery: ${mtFrameHandler.battery}%")
-                            Icon(imageVector = Icons.Default.Clear, contentDescription = "disconnect", Modifier.clickable { disconnect(it) })
-                        }
-                    } else {
-
-                        Text(
-                            text = "Poczekaj aż się skonfiguruje",
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
-
-                }
-
-            }
-
+            Device(connect = connect, disconnect = disconnect, mtPeripheral = it)
         }
     }
 }
+
+@Composable
+fun ListenedDevicesList(
+    beaconViewModel: BeaconViewModel,
+    connect: (MTPeripheral) -> Unit,
+    disconnect: (MTPeripheral) -> Unit,
+) {
+    val listenedDevicesList = beaconViewModel.listenedDevices
+    LazyColumn {
+        items(items = listenedDevicesList) {
+            Device(connect = connect, disconnect = disconnect, mtPeripheral = it)
+        }
+    }
+}
+
+@Composable
+fun Device(
+    connect: (MTPeripheral) -> Unit,
+    disconnect: (MTPeripheral) -> Unit,
+    mtPeripheral: MTPeripheral
+) {
+    val context = LocalContext.current
+    val mtFrameHandler: MTFrameHandler = mtPeripheral.mMTFrameHandler
+    Card(
+        modifier = Modifier
+            .padding(10.dp)
+            .fillMaxWidth(),
+
+        onClick = {
+            if (mtFrameHandler.name == "D15N") {
+                connect(mtPeripheral)
+            } else {
+                Toast.makeText(context, "wait for device to configure", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
+    ) {
+        Box(modifier = Modifier.padding(10.dp)) {
+            if (mtFrameHandler.name == "D15N") {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(text = mtFrameHandler.name)
+                    Text(text = "battery: ${mtFrameHandler.battery}%")
+                    Icon(
+                        imageVector = Icons.Default.Clear,
+                        contentDescription = "disconnect",
+                        Modifier.clickable { disconnect(mtPeripheral) })
+                }
+            } else {
+
+                Text(
+                    text = "Poczekaj aż się skonfiguruje",
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+        }
+
+    }
+}
+

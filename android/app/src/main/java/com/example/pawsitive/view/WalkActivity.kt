@@ -19,12 +19,14 @@ import com.minew.beaconplus.sdk.ConnectService
 import com.minew.beaconplus.sdk.MTCentralManager
 import com.minew.beaconplus.sdk.MTFrameHandler
 import com.minew.beaconplus.sdk.MTPeripheral
+import com.minew.beaconplus.sdk.MTSlotHandler
 import com.minew.beaconplus.sdk.Utils.BLETool
 import com.minew.beaconplus.sdk.enums.ConnectionStatus
 import com.minew.beaconplus.sdk.enums.FrameType
 import com.minew.beaconplus.sdk.enums.TriggerType
 import com.minew.beaconplus.sdk.exception.MTException
 import com.minew.beaconplus.sdk.frames.IBeaconFrame
+import com.minew.beaconplus.sdk.frames.MinewFrame
 import com.minew.beaconplus.sdk.frames.UidFrame
 import com.minew.beaconplus.sdk.interfaces.ConnectionStatueListener
 import com.minew.beaconplus.sdk.interfaces.GetPasswordListener
@@ -90,41 +92,34 @@ class WalkActivity : AppCompatActivity() {
     }
 
     fun setBleManagerListener() {
+        var i = 0
         mMTCentralManager.setMTCentralManagerListener { it ->
             Log.d("trigger", it.toString())
-
-                for (beacon in it) {
-                    if (beacon == beaconViewModel.connectedMTPeripheral) {
-                        val mtFrameHandler: MTFrameHandler = beacon.mMTFrameHandler
-
-                        val connectionHandler = beacon.mMTConnectionHandler
-                        val smth = connectionHandler.allFrames.size
-                        val idk = connectionHandler.triggers
-                        val mac = mtFrameHandler.mac
-                        val name = mtFrameHandler.name
-                        val battery = mtFrameHandler.battery
-                        val rssi = mtFrameHandler.rssi
-                        val frames = mtFrameHandler.advFrames
-
-                        Log.d("trigger",Date().toGMTString())
-
-                        for (frame in frames) {
-                            val slots = frame.curSlot
-                            val frametype = frame.frameType
-//                        if (frametype == FrameType.) {
-//                            val tlmFrame: IBeaconFrame = frame as IBeaconFrame
-//                            Log.v(
-//                                "beaconplus",
-//                                tlmFrame.battery.toString()
-//                            );
-//                        }
-                            Log.d("trigger", "beacon: $beacon frame: $frame slot: $slots slotattitude: $idk")
-
-                            Log.d("beaconData", "frames: $frames")
+            for (beacon in it) {
+                val connectionHandler = beacon.mMTConnectionHandler
+                val mtFrameHandler: MTFrameHandler = beacon.mMTFrameHandler
+                val frames = connectionHandler.allFrames
+                val c = mtFrameHandler.advFrames
+                var count = 0
+//                c.forEach {
+//                    Log.d("result", "currslot: ${it}")
+//                    val smth = it.frameType
+//                    Log.d("result", "frame: ${smth} count: $count")
+//                    count += 1
+//                }
+                for (frame in frames) {
+                    val currSlot = frame.curSlot
+                    if (currSlot == 5 && frame.frameType == FrameType.FrameTLM) {
+//                        Log.d("result", "result!!! $i")
+//                        i += 1
+                        beaconViewModel.setListenedList(it)
                     }
-
+                    else {
+                        if (currSlot == 5 && frame.frameType == FrameType.FrameNone) {
+                            beaconViewModel.setListenedList(emptyList())
+                        }
                     }
-//                Log.d("beaconData", "$mac, $name, $battery, $rssi")
+                }
             }
 
             beaconViewModel.setBeaconList(it)
@@ -321,8 +316,8 @@ class WalkActivity : AppCompatActivity() {
                                 Toast.LENGTH_SHORT
                             ).show()
 
-                            mtPeripheral.mMTConnectionHandler.resetFactorySetting {
-                                s, _ -> Log.d("beaconplus", "resetted")
+                            mtPeripheral.mMTConnectionHandler.resetFactorySetting { s, _ ->
+                                Log.d("beaconplus", "resetted")
                             }
                             mtPeripheral.mMTConnectionHandler.mTConnectionFeature
                             beaconViewModel.setConnectedPeripheral(mtPeripheral)

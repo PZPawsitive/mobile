@@ -18,11 +18,29 @@ class BeaconViewModel : ViewModel(){
     val mlist : List<MTPeripheral> = _mlist
 
     var connectedMTPeripheral by mutableStateOf<MTPeripheral?>(null)
+
+    var _listenedDevices = mutableStateListOf<MTPeripheral>()
+    val listenedDevices: List<MTPeripheral> = _listenedDevices
+
     fun setBeaconList(list: List<MTPeripheral>) {
 //        Log.d("beaconData", list.toString())
         _mlist.clear()
         list.forEach {
             _mlist.add(it)
+        }
+    }
+
+    fun addListenedDevice(device: MTPeripheral) {
+        _listenedDevices.add(device)
+    }
+    fun removeListenedDevice(device: MTPeripheral) {
+        _listenedDevices.remove(device)
+    }
+
+    fun setListenedList(list: List<MTPeripheral>) {
+        _listenedDevices.clear()
+        list.forEach {
+            _listenedDevices.add(it)
         }
     }
 
