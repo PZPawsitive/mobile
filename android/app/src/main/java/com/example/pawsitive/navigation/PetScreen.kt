@@ -212,7 +212,7 @@ fun Contracts(
                         onClick = { navController.navigate(LeafScreen.Chat.route) })
                     HorizontalDivider()
                     DropdownMenuItem(
-                        text = { Text(text = "Przyjmij zlecenie") },
+                        text = { Text(text = "Pokaż szczegóły") },
                         onClick = { navController.navigate(LeafScreen.ContractScreen.route) })
                 }
             }

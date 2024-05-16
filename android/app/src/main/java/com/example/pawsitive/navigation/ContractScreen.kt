@@ -9,20 +9,26 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -55,6 +61,7 @@ val exampleContract = Contract("kacper", 15.6, 3, true, GeoPoint(52.237049, 21.0
 fun ContractScreen() {
     WalkNotActiveView()
 }
+
 @Composable
 fun WalkNotActiveView() {
     val openAlertDialog = remember { mutableStateOf(false) }
@@ -68,34 +75,35 @@ fun WalkNotActiveView() {
                 Uri.parse("geo:${exampleContract.localization.latitude},${exampleContract.localization.longitude}?q=${exampleContract.localization.latitude},${exampleContract.localization.longitude}")
             val mapIntent = Intent(Intent.ACTION_VIEW, location)
             val chooser = Intent.createChooser(mapIntent, "choose map")
-            Text(text = "Zlecenie")
-            Text(text = "Właściciel: ${exampleContract.owner}")
-            Text(text = "Ilość psów: ${exampleContract.petNumber}")
-            Text(text = "Wynagrodzenie: ${exampleContract.price}$")
-            Row {
-                Text(text = "Sprawdź lokalizację") //
-                Icon(
-                    imageVector = Icons.Default.Map,
-                    contentDescription = "open map with localization",
-                    Modifier.clickable {
-                        try {
-                            context.startActivity(chooser)
-                        } catch (e: ActivityNotFoundException) {
-                            Toast.makeText(
-                                context,
-                                "Cannot find application to handle maps",
-                                Toast.LENGTH_LONG
-                            )
-                                .show()
-                        }
-                    })
-            }
 
-            Button(onClick = {
-                openAlertDialog.value = true
-            }) {
-                Text(text = "Rozpocznij spacer")
+            Text(text = "Contract", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center, style = MaterialTheme.typography.headlineLarge)
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(text = "Owner: ${exampleContract.owner}", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center,  style = MaterialTheme.typography.headlineSmall)
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(text = "Pet quantity: ${exampleContract.petNumber}", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center,  style = MaterialTheme.typography.headlineSmall)
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(text = "Payment: ${exampleContract.price}$", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center,  style = MaterialTheme.typography.headlineSmall)
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Row(Modifier.fillMaxWidth().clickable {
+                try {
+                    context.startActivity(chooser)
+                } catch (e: ActivityNotFoundException) {
+                    Toast.makeText(
+                        context,
+                        "Cannot find application to handle maps",
+                        Toast.LENGTH_LONG
+                    )
+                        .show()
+                }
+            }, horizontalArrangement = Arrangement.Center) {
+                Text(text = "Show location", style = MaterialTheme.typography.headlineSmall) //
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                    contentDescription = "open map with localization", Modifier.size(30.dp, 30.dp).align(Alignment.CenterVertically))
             }
+            Spacer(modifier = Modifier.height(10.dp))
+
             when {
                 openAlertDialog.value -> {
                     AlertDialog(
@@ -121,6 +129,11 @@ fun WalkNotActiveView() {
                 }
             }
 
+        }
+        FloatingActionButton(onClick = { openAlertDialog.value = !openAlertDialog.value }, modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 15.dp)) {
+            Box(modifier = Modifier.padding(15.dp)) {
+                Text(text = "Accept contract")
+            }
         }
 
     }
