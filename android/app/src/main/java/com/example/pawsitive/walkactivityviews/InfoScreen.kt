@@ -88,28 +88,31 @@ fun InfoScreen(
                 textAlign = TextAlign.Center
             )
             PeripheralList(beaconViewModel = beaconViewModel, connect, disconnect)
-            Text(
-                text = "Podłączone urządzenia",
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
-            )
-            ListenedDevicesList(
-                beaconViewModel = beaconViewModel,
-                connect = connect,
-                disconnect = disconnect
-            )
-        }
-        if (beaconViewModel.connectedMTPeripheral != null) {
-            FloatingActionButton(
-                onClick = { navController.navigate(LeafScreen.DeviceConnected.route) },
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 10.dp)
-            ) {
-                Text(text = "Go to connected device", modifier = Modifier.padding(10.dp))
+            if (beaconViewModel.listenedDevices.isNotEmpty()) {
+                Text(
+                    text = "Podłączone urządzenia",
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+                ListenedDevicesList(
+                    beaconViewModel = beaconViewModel,
+                    connect = connect,
+                    disconnect = disconnect
+                )
             }
         }
+
+//        if (beaconViewModel.connectedMTPeripheral != null) {
+//            FloatingActionButton(
+//                onClick = { navController.navigate(LeafScreen.DeviceConnected.route) },
+//                modifier = Modifier
+//                    .align(Alignment.BottomCenter)
+//                    .padding(bottom = 10.dp)
+//            ) {
+//                Text(text = "Go to connected device", modifier = Modifier.padding(10.dp))
+//            }
+//        }
 
         if (pullToRefreshState.isRefreshing) {
             LaunchedEffect(true) {

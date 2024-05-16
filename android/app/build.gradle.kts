@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    id("kotlin-kapt")
 }
 
 android {
@@ -73,6 +74,13 @@ dependencies {
     implementation(platform("androidx.compose:compose-bom:2024.02.01"))
 
     implementation(libs.koin.android)
+
+    implementation(libs.retrofit)
+
+    implementation(libs.moshi.kotlin)
+    kapt("com.squareup.moshi:moshi-kotlin-codegen:1.15.1")
+
+    implementation(libs.converter.moshi)
 
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
