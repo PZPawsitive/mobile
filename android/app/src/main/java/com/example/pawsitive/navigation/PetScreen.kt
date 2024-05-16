@@ -1,7 +1,5 @@
 package com.example.pawsitive.navigation
 
-import android.util.Log
-import androidx.compose.animation.core.animateIntOffsetAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 
@@ -11,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -23,6 +20,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,6 +39,7 @@ import compose.icons.fontawesomeicons.solid.Cat
 import compose.icons.fontawesomeicons.solid.Dog
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.navigation.NavController
 import org.osmdroid.util.GeoPoint
 
 enum class PetType {
@@ -86,21 +85,18 @@ val contracts = listOf(
 
 @Composable
 fun PetScreen(
-    showPetHistory: () -> Unit,
-    showPetInfo: () -> Unit,
-    showPetAddForm: () -> Unit,
-    showContractScreen: () -> Unit
+    navController: NavController
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
         if (LocalGlobalState.current) {
-            Contracts(showContractScreen)
+            Contracts(
+                navController)
         } else {
             MyPetsColumn(
-                showPetHistory = showPetHistory,
-                showPetInfo = showPetInfo,
-                showPetAddForm = showPetAddForm
+
+                navController
             )
         }
     }
@@ -111,9 +107,7 @@ fun PetScreen(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun MyPetsColumn(
-    showPetHistory: () -> Unit,
-    showPetInfo: () -> Unit,
-    showPetAddForm: () -> Unit
+    navController: NavController
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn() {
@@ -151,11 +145,11 @@ fun MyPetsColumn(
 
                             DropdownMenuItem(
                                 text = { Text(text = "Info") },
-                                onClick = { showPetInfo() })
+                                onClick = { navController.navigate(LeafScreen.PetInfo.route) })
                             Divider()
                             DropdownMenuItem(
                                 text = { Text(text = "Historia spacerów") },
-                                onClick = { showPetHistory() })
+                                onClick = { navController.navigate(LeafScreen.PetHistory.route) })
                         }
                     }
 
@@ -165,7 +159,7 @@ fun MyPetsColumn(
 
         }
         FloatingActionButton(
-            onClick = { showPetAddForm() },
+            onClick = { navController.navigate(LeafScreen.PetAddForm.route) },
             modifier = Modifier
                 .align(alignment = Alignment.BottomEnd)
                 .padding(20.dp)
@@ -176,10 +170,10 @@ fun MyPetsColumn(
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun Contracts(
-    showContractScreen: () -> Unit
+    navController: NavController
 ) {
     LazyColumn(
         modifier = Modifier.padding(10.dp)
@@ -217,11 +211,11 @@ fun Contracts(
 
                     DropdownMenuItem(
                         text = { Text(text = "Napisz wiadomość") },
-                        onClick = { TODO() })
-                    Divider()
+                        onClick = { navController.navigate(LeafScreen.Chat.route) })
+                    HorizontalDivider()
                     DropdownMenuItem(
                         text = { Text(text = "Przyjmij zlecenie") },
-                        onClick = { showContractScreen() })
+                        onClick = { navController.navigate(LeafScreen.ContractScreen.route) })
                 }
             }
 

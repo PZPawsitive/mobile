@@ -85,18 +85,7 @@ private fun NavGraphBuilder.showFollow(navController: NavHostController) {
 private fun NavGraphBuilder.showPet(navController: NavController) {
     composable(route = LeafScreen.Pet.route) {
         PetScreen(
-            showPetHistory = {
-                navController.navigate(LeafScreen.PetHistory.route)
-            },
-            showPetInfo = {
-                navController.navigate(LeafScreen.PetInfo.route)
-            },
-            showPetAddForm = {
-                navController.navigate(LeafScreen.PetAddForm.route)
-            },
-            showContractScreen = {
-                navController.navigate(LeafScreen.ContractScreen.route)
-            }
+            navController
         )
     }
 }
