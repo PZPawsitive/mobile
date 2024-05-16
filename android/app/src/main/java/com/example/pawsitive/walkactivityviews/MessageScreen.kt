@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Send
@@ -30,6 +32,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 
 data class Message(val owner: String, val content: String)
 
@@ -50,6 +55,8 @@ fun MessageScreen() {
         )
     }
     Box(modifier = Modifier.fillMaxSize()) {
+        val state = rememberLazyListState()
+        val coroutineScope = rememberCoroutineScope()
         Scaffold(modifier = Modifier.fillMaxSize(), bottomBar = {
             BottomAppBar {
                 Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
@@ -69,13 +76,16 @@ fun MessageScreen() {
                                 if (inputText.isNotEmpty()) {
                                     rememberedMessages.add(Message("me", inputText))
                                     inputText = ""
+                                    coroutineScope.launch {
+                                        state.animateScrollToItem(rememberedMessages.size - 1)
+                                    }
                                 }
                             }
                     )
                 }
             }
         }) {
-            LazyColumn(modifier = Modifier.padding(bottom = it.calculateBottomPadding(), start = 10.dp, end = 10.dp)) {
+            LazyColumn(modifier = Modifier.padding(bottom = it.calculateBottomPadding(), start = 10.dp, end = 10.dp), state = state) {
                 items(rememberedMessages) { message ->
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = if (message.owner == "owner") Arrangement.Start else Arrangement.End) {
                         Card(onClick = { /*TODO*/ }, modifier = Modifier.widthIn(max = 250.dp)) {

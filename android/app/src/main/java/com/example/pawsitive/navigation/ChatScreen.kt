@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.BottomAppBar
@@ -24,11 +25,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.pawsitive.walkactivityviews.Message
+import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -49,6 +52,8 @@ fun ChatScreen() {
         )
     }
     Box(modifier = Modifier.fillMaxSize()) {
+        val state = rememberLazyListState()
+        val coroutineScope = rememberCoroutineScope()
         Scaffold(modifier = Modifier.fillMaxSize(), bottomBar = {
             BottomAppBar {
                 Row(
@@ -71,6 +76,9 @@ fun ChatScreen() {
                                 if (inputText.isNotEmpty()) {
                                     rememberedMessages.add(Message("me", inputText))
                                     inputText = ""
+                                    coroutineScope.launch {
+                                        state.animateScrollToItem(rememberedMessages.size - 1)
+                                    }
                                 }
                             }
                     )
@@ -82,7 +90,8 @@ fun ChatScreen() {
                     bottom = it.calculateBottomPadding(),
                     start = 10.dp,
                     end = 10.dp
-                )
+                ),
+                state = state
             ) {
                 items(rememberedMessages) { message ->
                     Row(
