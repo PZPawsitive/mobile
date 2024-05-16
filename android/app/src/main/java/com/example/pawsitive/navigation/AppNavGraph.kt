@@ -125,7 +125,7 @@ private fun NavGraphBuilder.showPetHistoryMap(navController: NavController) {
 }
 private fun NavGraphBuilder.showPetAddForm(navController: NavController) {
     composable(route = LeafScreen.PetAddForm.route) {
-        PetAddForm()
+        PetAddForm(navController)
     }
 }
 private fun NavGraphBuilder.showContractScreen(

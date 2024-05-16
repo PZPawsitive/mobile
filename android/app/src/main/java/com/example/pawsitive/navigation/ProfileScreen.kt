@@ -1,24 +1,20 @@
 package com.example.pawsitive.navigation
 
-import android.content.Intent
+
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
-import com.example.pawsitive.beacon.ScanDeviceListActivity
-import com.example.pawsitive.view.RegisterActivity
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 
-// CHECKOUT BRANCH
+
 @Composable
 fun ProfileScreen() {
-    val context = LocalContext.current
     Column {
-        Button(onClick = {
-            val intent = Intent(context, ScanDeviceListActivity::class.java)
-            context.startActivity(intent)
-        }) {
-            Text(text = "klikaj")
-        }
+        Text(text = "My profile", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center, style = MaterialTheme.typography.headlineLarge)
     }
 }
