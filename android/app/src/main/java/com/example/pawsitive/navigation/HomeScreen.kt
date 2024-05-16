@@ -1,24 +1,19 @@
 package com.example.pawsitive.navigation
 
 import android.annotation.SuppressLint
-import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
@@ -33,14 +28,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.content.res.ResourcesCompat
+import androidx.navigation.NavController
 import com.example.pawsitive.R
-import compose.icons.AllIcons
 import compose.icons.FontAwesomeIcons
 import compose.icons.fontawesomeicons.Solid
 import compose.icons.fontawesomeicons.solid.List
@@ -68,28 +61,31 @@ val posts = listOf(
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavController) {
 
     Scaffold {
         Box(modifier = Modifier.fillMaxSize()) {
             if (LocalGlobalState.current) {
-                PostsScreen()
+                PostsScreen(navController)
             } else {
-                DogWalkersScreen()
+                DogWalkersScreen(navController)
             }
         }
     }
 }
 
 @Composable
-fun PostsScreen() {
+fun PostsScreen(navController: NavController) {
     LazyColumn {
         items(items = posts) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(10.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.Green)
+                colors = CardDefaults.cardColors(containerColor = Color.Green),
+                onClick = {
+                    navController.navigate(LeafScreen.Chat.route)
+                }
             ) {
                 Column(
                     modifier = Modifier.padding(10.dp)
@@ -113,7 +109,7 @@ val dogWalkers = listOf(
 
 @SuppressLint("UseCompatLoadingForDrawables")
 @Composable
-fun DogWalkersScreen() {
+fun DogWalkersScreen(navController: NavController) {
     var viewMode by remember {
         mutableStateOf(true)
     }
@@ -128,27 +124,16 @@ fun DogWalkersScreen() {
     }
 
     Box(Modifier.fillMaxSize()) {
-//        Row(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(10.dp),
-//            horizontalArrangement = Arrangement.SpaceEvenly
-//        ) {
-//            Button(onClick = { viewMode = true }, enabled = !viewMode) {
-//                Text(text = "List")
-//            }
-//            Button(onClick = { viewMode = false }, enabled = viewMode) {
-//                Text(text = "Map")
-//            }
-//
-//        }
         if (viewMode) {
             LazyColumn {
                 items(items = dogWalkers) {
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(10.dp)
+                            .padding(10.dp),
+                        onClick = {
+                            navController.navigate(LeafScreen.Chat.route)
+                        }
                     ) {
                         Text(text = it.name)
                         Text(text = "${it.geoPoint}")
@@ -200,7 +185,6 @@ fun DogWalkersScreen() {
                         mapView.overlays.add(mLocationOverlay)
                         mapView
                     }
-                    // CHECKOUT BRANCH
                 )
             }
 

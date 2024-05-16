@@ -74,7 +74,7 @@ private fun NavGraphBuilder.addProfileRoute(navController: NavController) {
 }
 private fun NavGraphBuilder.showHome(navController: NavController) {
     composable(route = LeafScreen.Home.route) {
-        HomeScreen()
+        HomeScreen(navController)
     }
 }
 private fun NavGraphBuilder.showFollow(navController: NavHostController) {
