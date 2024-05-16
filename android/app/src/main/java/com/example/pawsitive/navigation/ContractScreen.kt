@@ -51,143 +51,12 @@ import org.osmdroid.util.GeoPoint
 
 val exampleContract = Contract("kacper", 15.6, 3, true, GeoPoint(52.237049, 21.017532))
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContractScreen() {
-    var walkActive by remember {
-        mutableStateOf<Boolean>(false)
-    }
-
-    fun setWalk() {
-        walkActive = !walkActive
-    }
-    if (walkActive) {
-        WalkActiveView(setWalk = { setWalk() })
-    } else {
-        WalkNotActiveView(setWalk = { setWalk() })
-    }
+    WalkNotActiveView()
 }
-
-
 @Composable
-fun PeripheralList(
-    beaconViewModel: BeaconViewModel
-) {
-    val mlist = beaconViewModel.mlist
-//    Log.d("beaconData","mlist: ${mlist.toList()}")
-    val context = LocalContext.current
-    LazyColumn(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        items(items = mlist) {
-            val mtFrameHandler: MTFrameHandler = it.mMTFrameHandler
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp),
-                onClick = {
-                    if (mtFrameHandler.name == "D15N") {
-                        Toast.makeText(context, "polaczono", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(context, "wait for device to configure", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            ) {
-                Box(modifier = Modifier.padding(10.dp)) {
-                    if (mtFrameHandler.name == "D15N") {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(text = mtFrameHandler.name)
-                            Text(text = "battery: ${mtFrameHandler.battery}%")
-                        }
-                    } else {
-
-                        Text(text = "Poczekaj aż się skonfiguruje", textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
-                    }
-
-                }
-
-            }
-            
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun WalkActiveView(setWalk: () -> Unit) {
-    var connected by remember {
-        mutableStateOf(false)
-    }
-    val pullToRefreshState = rememberPullToRefreshState()
-    val scope = rememberCoroutineScope()
-
-
-    var isRefreshing by remember {
-        mutableStateOf<Boolean>(false)
-    }
-
-    fun onRefresh() {
-        scope.launch {
-//            refresh()
-            isRefreshing = true
-            delay(3000L)
-            isRefreshing = false
-        }
-    }
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .nestedScroll(pullToRefreshState.nestedScrollConnection)
-    ) {
-        Column {
-            Text(text = if (!connected) "Podłącz się do urządzenia żeby rozpocząć spacer" else "Spacer aktywny")
-
-            if (connected) {
-                Button(onClick = { connected = false }) {
-                    Text(text = "Zakończ Spacer")
-                }
-            } else {
-                Button(onClick = { setWalk() }) {
-                    Text(text = "Zrezygnuj ze zlecenia")
-                }
-            }
-//            PeripheralList(beaconViewModel = beaconViewModel)
-        }
-        FloatingActionButton(
-            onClick = { onRefresh() },
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 10.dp)
-                .size(width = 100.dp, 50.dp)
-        ) {
-            Text(text = "Refresh")
-        }
-        if (pullToRefreshState.isRefreshing) {
-            LaunchedEffect(true) {
-                onRefresh()
-            }
-        }
-
-        LaunchedEffect(isRefreshing) {
-            if (isRefreshing) {
-                pullToRefreshState.startRefresh()
-            } else {
-                pullToRefreshState.endRefresh()
-            }
-        }
-        PullToRefreshContainer(
-            state = pullToRefreshState,
-            modifier = Modifier.align(Alignment.TopCenter)
-        )
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun WalkNotActiveView(setWalk: () -> Unit) {
+fun WalkNotActiveView() {
     val openAlertDialog = remember { mutableStateOf(false) }
     val context = LocalContext.current
     Box(
@@ -234,7 +103,6 @@ fun WalkNotActiveView(setWalk: () -> Unit) {
                         confirmButton = {
                             Button(onClick = {
                                 openAlertDialog.value = false
-//                                setWalk()
                                 val intent = Intent(context, WalkActivity::class.java)
                                 context.startActivity(intent)
                             }) {
