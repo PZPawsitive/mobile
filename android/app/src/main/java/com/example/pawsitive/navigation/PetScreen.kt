@@ -95,7 +95,6 @@ fun PetScreen(
                 navController)
         } else {
             MyPetsColumn(
-
                 navController
             )
         }
@@ -104,7 +103,6 @@ fun PetScreen(
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun MyPetsColumn(
     navController: NavController
@@ -146,7 +144,7 @@ fun MyPetsColumn(
                             DropdownMenuItem(
                                 text = { Text(text = "Info") },
                                 onClick = { navController.navigate(LeafScreen.PetInfo.route) })
-                            Divider()
+                            HorizontalDivider()
                             DropdownMenuItem(
                                 text = { Text(text = "Historia spacerów") },
                                 onClick = { navController.navigate(LeafScreen.PetHistory.route) })
