@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Chat
+import androidx.compose.material.icons.automirrored.outlined.Chat
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Favorite
@@ -21,6 +23,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
@@ -96,8 +99,8 @@ fun MainScreen() {
                         ) {
                             DropdownMenuItem(
                                 text = { Text(text = "Settings") },
-                                onClick = { /*TODO*/ })
-                            Divider()
+                                onClick = { navController.navigate(RootScreen.Settings.route) })
+                            HorizontalDivider()
                             DropdownMenuItem(text = { Text(text = "Logout") }, onClick = { context.startActivity(
                                 Intent(context, LoginActivity::class.java)
                             ) })
@@ -186,7 +189,7 @@ private fun BottomNavBar(
             },
             icon = {
                 Icon(
-                    imageVector = if (currentSelectedScreen == RootScreen.Messages) Icons.Default.Chat else Icons.Outlined.Chat,
+                    imageVector = if (currentSelectedScreen == RootScreen.Messages) Icons.AutoMirrored.Filled.Chat else Icons.AutoMirrored.Outlined.Chat,
                     contentDescription = "home"
                 )
             }
@@ -234,6 +237,9 @@ private fun NavController.currentScreenAsState(): State<RootScreen> {
 
                 destination.hierarchy.any { it.route == RootScreen.Profile.route } -> {
                     selectedItem.value = RootScreen.Profile
+                }
+                destination.hierarchy.any {it.route == RootScreen.Settings.route} -> {
+                    selectedItem.value = RootScreen.Settings
                 }
             }
 

@@ -6,6 +6,7 @@ sealed class RootScreen(val route: String) {
     data object Pet : RootScreen("pet_root")
     data object Messages : RootScreen("messages_root")
     data object Profile : RootScreen("profile_root")
+    data object Settings : RootScreen("settings_root")
 }
 
 sealed class LeafScreen(val route: String) {
@@ -20,4 +21,5 @@ sealed class LeafScreen(val route: String) {
     data object PetHistoryMap : LeafScreen("pet_history_map")
     data object PetAddForm : LeafScreen("pet_add_form")
     data object ContractScreen : LeafScreen("contract_screen")
+    data object Settings : LeafScreen("settings")
 }
