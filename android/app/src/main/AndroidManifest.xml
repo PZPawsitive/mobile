@@ -26,27 +26,22 @@
         android:theme="@style/Theme.Pawsitive"
         tools:targetApi="31">
         <activity
-            android:name=".view.WalkActivity"
+            android:name=".view.walk.WalkActivity"
             android:exported="false"
             android:label="@string/title_activity_walk"
             android:theme="@style/Theme.Pawsitive" />
         <activity
-            android:name=".view.MainActivity"
+            android:name=".view.main.MainActivity"
             android:exported="false"
             android:label="@string/title_activity_main_screen"
             android:theme="@style/Theme.Pawsitive" />
         <activity
-            android:name=".beacon.ScanDeviceListActivity"
-            android:exported="false"
-            android:label="scan_device_list"
-            android:theme="@style/Theme.Pawsitive" />
-        <activity
-            android:name=".view.RegisterActivity"
+            android:name=".view.auth.RegisterActivity"
             android:exported="false"
             android:label="@string/title_activity_register"
             android:theme="@style/Theme.Pawsitive" />
         <activity
-            android:name=".view.LoginActivity"
+            android:name=".view.auth.LoginActivity"
             android:exported="true"
             android:label="@string/title_activity_login"
             android:theme="@style/Theme.Pawsitive">
@@ -56,11 +51,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".MainActivity"
-            android:exported="false"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.Pawsitive" />
         <service android:name="com.minew.beaconplus.sdk.ConnectService"/>
         <service android:name="com.minew.beaconplus.sdk.services.DfuService"/>
         <receiver android:name="com.minew.beaconplus.sdk.receivers.BluetoothChangedReceiver"
