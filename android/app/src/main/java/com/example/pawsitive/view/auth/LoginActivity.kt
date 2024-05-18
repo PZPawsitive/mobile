@@ -2,6 +2,7 @@ package com.example.pawsitive.view.auth
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -41,9 +42,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.pawsitive.api.NetworkRepository
 import com.example.pawsitive.api.ServiceConfiguration
+import com.example.pawsitive.models.LoginRequest
+import com.example.pawsitive.models.User
 import com.example.pawsitive.view.main.MainActivity
+import kotlinx.coroutines.runBlocking
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-val networkRepository = NetworkRepository(ServiceConfiguration.service)
+val networkRepository = NetworkRepository(ServiceConfiguration.userService, ServiceConfiguration.petService, ServiceConfiguration.walkService)
 
 class LoginActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -140,29 +147,29 @@ class LoginActivity : ComponentActivity() {
                             }
                             Button(
                                 onClick = {
-                                    val intent = Intent(context, MainActivity::class.java)
-                                    startActivity(intent)
-//                                    runBlocking {
-//                                        val call: Call<LoginResponse> = networkRepository.login(LoginRequest("example@example.com", "admin"))
-//                                        call.enqueue(object : Callback<LoginResponse> {
-//                                            override fun onResponse(
-//                                                p0: Call<LoginResponse>,
-//                                                p1: Response<LoginResponse>
-//                                            ) {
-////                                                Log.d("retrofit", p1.body().toString())
-//                                                val intent = Intent(context, MainActivity::class.java)
-//                                                startActivity(intent)
-//                                            }
-//
-//                                            override fun onFailure(
-//                                                p0: Call<LoginResponse>,
-//                                                p1: Throwable
-//                                            ) {
-//                                                Log.d("retrofit", p1.message.toString())
-//                                            }
-//
-//                                        })
-//                                    }
+//                                    val intent = Intent(context, MainActivity::class.java)
+//                                    startActivity(intent)
+                                    runBlocking {
+                                        val call: Call<User> = networkRepository.login(LoginRequest("example@example.com", "admin"))
+                                        call.enqueue(object : Callback<User> {
+                                            override fun onResponse(
+                                                p0: Call<User>,
+                                                p1: Response<User>
+                                            ) {
+                                                Log.d("retrofit", p1.body().toString())
+                                                val intent = Intent(context, MainActivity::class.java)
+                                                startActivity(intent)
+                                            }
+
+                                            override fun onFailure(
+                                                p0: Call<User>,
+                                                p1: Throwable
+                                            ) {
+                                                Log.d("retrofit", p1.message.toString())
+                                            }
+
+                                        })
+                                    }
 
                                 },
                             ) {

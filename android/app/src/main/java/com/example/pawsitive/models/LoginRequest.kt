@@ -1,4 +1,4 @@
-package com.example.pawsitive.api
+package com.example.pawsitive.models
 
 import com.squareup.moshi.JsonClass
 import java.io.Serializable
@@ -7,4 +7,4 @@ import java.io.Serializable
 data class LoginRequest(
     val email: String,
     val password: String
-) : Serializable
+)

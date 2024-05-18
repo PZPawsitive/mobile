@@ -1,10 +1,11 @@
-package com.example.pawsitive.api
+package com.example.pawsitive.models
 
 import com.squareup.moshi.JsonClass
 import java.time.LocalDate
 import java.util.UUID
+
 @JsonClass(generateAdapter = true)
-data class LoginResponse(
+data class User(
     val token: String,
     val id: UUID,
     val email: String,
