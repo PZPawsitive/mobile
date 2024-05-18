@@ -1,10 +1,13 @@
 package com.example.pawsitive.view.auth
 
+import android.app.Application
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,21 +43,35 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.pawsitive.api.NetworkRepository
-import com.example.pawsitive.api.ServiceConfiguration
+import androidx.lifecycle.ViewModelProvider
 import com.example.pawsitive.models.LoginRequest
 import com.example.pawsitive.models.User
+import com.example.pawsitive.util.PreferencesManager
 import com.example.pawsitive.view.main.MainActivity
+import com.example.pawsitive.viewmodel.ApiViewModel
 import kotlinx.coroutines.runBlocking
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-val networkRepository = NetworkRepository(ServiceConfiguration.userService, ServiceConfiguration.petService, ServiceConfiguration.walkService)
+//val networkRepository = NetworkRepository(ServiceConfiguration.userService, ServiceConfiguration.petService, ServiceConfiguration.walkService)
 
 class LoginActivity : ComponentActivity() {
+
+//    val apiViewModel: ApiViewModel by viewModels()
+    private lateinit var apiViewModel: ApiViewModel
+
+//    private val preferencesManager = PreferencesManager(applicationContext)
+    private lateinit var preferencesManager: PreferencesManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        apiViewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+        )[ApiViewModel::class.java]
+        preferencesManager = PreferencesManager(applicationContext)
+
         setContent {
 
             LoginView()
@@ -147,16 +164,20 @@ class LoginActivity : ComponentActivity() {
                             }
                             Button(
                                 onClick = {
-//                                    val intent = Intent(context, MainActivity::class.java)
-//                                    startActivity(intent)
                                     runBlocking {
-                                        val call: Call<User> = networkRepository.login(LoginRequest("example@example.com", "admin"))
+                                        val call: Call<User> = apiViewModel.userService.login(LoginRequest("example@example.com", "admin"))
                                         call.enqueue(object : Callback<User> {
                                             override fun onResponse(
                                                 p0: Call<User>,
                                                 p1: Response<User>
                                             ) {
                                                 Log.d("retrofit", p1.body().toString())
+                                                p1.body()
+                                                    ?.let { preferencesManager.saveToken(it.token) }
+                                                p1.body()
+                                                    ?.let {
+                                                        preferencesManager.setUserId(it.id.toString())
+                                                    }
                                                 val intent = Intent(context, MainActivity::class.java)
                                                 startActivity(intent)
                                             }
@@ -166,6 +187,7 @@ class LoginActivity : ComponentActivity() {
                                                 p1: Throwable
                                             ) {
                                                 Log.d("retrofit", p1.message.toString())
+                                                Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
                                             }
 
                                         })

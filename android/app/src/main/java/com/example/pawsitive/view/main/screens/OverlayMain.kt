@@ -43,6 +43,7 @@ import androidx.navigation.NavHostController
 import com.example.pawsitive.navigation.main.MainNavGraph
 import com.example.pawsitive.navigation.main.MainRootScreen
 import com.example.pawsitive.view.auth.LoginActivity
+import com.example.pawsitive.viewmodel.ApiViewModel
 import compose.icons.FontAwesomeIcons
 import compose.icons.fontawesomeicons.Solid
 import compose.icons.fontawesomeicons.solid.Paw
@@ -52,7 +53,7 @@ var LocalGlobalState = compositionLocalOf<Boolean> { error("not composed") }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OverlayMain() {
+fun OverlayMain(apiViewModel: ApiViewModel) {
     val navController = rememberNavController()
     val currentSelectedScreen by navController.currentScreenAsState()
     val currentRoute by navController.currentRouteAsState()
@@ -120,7 +121,7 @@ fun OverlayMain() {
                     .fillMaxSize()
                     .padding(it)
             ) {
-                MainNavGraph(navController = navController)
+                MainNavGraph(navController = navController, apiViewModel)
             }
         }
 

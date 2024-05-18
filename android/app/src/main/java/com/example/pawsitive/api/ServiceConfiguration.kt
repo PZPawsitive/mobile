@@ -1,39 +1,53 @@
 package com.example.pawsitive.api
 
+import android.content.Context
+import android.content.SharedPreferences
 import com.example.pawsitive.util.LocalDateJsonAdapter
+import com.example.pawsitive.util.PreferencesManager
 import com.example.pawsitive.util.UUIDJsonAdapter
 import com.squareup.moshi.Moshi
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
+class RetrofitClient(context: Context) {
+    private val preferencesManager = PreferencesManager(context)
 
-object ServiceConfiguration {
+    private val authInterceptor = AuthInterceptor(preferencesManager)
+
     private val moshi = Moshi.Builder()
         .add(UUIDJsonAdapter())
         .add(LocalDateJsonAdapter())
         .build()
-    private val retrofit: Retrofit = Retrofit.Builder()
-        .baseUrl("http://localhost:8080/")
-        .client(getHttpClient())
-        .addConverterFactory(MoshiConverterFactory.create(moshi))
+
+    private val okHttpClient = OkHttpClient.Builder()
+        .addInterceptor(authInterceptor)
         .build()
 
-    val userService: UserService = retrofit.create(UserService::class.java)
-
-    val petService: PetService = retrofit.create(PetService::class.java)
-
-    val walkService: WalkService = retrofit.create(WalkService::class.java)
+    val retrofit: Retrofit = Retrofit.Builder()
+        .baseUrl("http://localhost:8080/")
+        .client(okHttpClient)
+        .addConverterFactory(MoshiConverterFactory.create(moshi))
+        .build()
 }
 
-private fun getHttpClient(): OkHttpClient {
-    val okHttpBuilder = OkHttpClient.Builder()
+class AuthInterceptor(private val preferencesManager: PreferencesManager): Interceptor {
+    override fun intercept(chain: Interceptor.Chain): Response {
+        val requestBuilder = chain.request().newBuilder()
 
-    okHttpBuilder.addInterceptor { chain ->
-        val requestWithUserAgent = chain.request().newBuilder()
-            .header("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGFtcGxlQGV4YW1wbGUuY29tIiwiaWF0IjoxNzE2MDI1OTEzLCJleHAiOjE3MTYwMjk1MTN9.nmsB1r5gmH1FJVQEmL2PZTmmXbUI4hlYf6qG3sG0D1Q")
-            .build()
-        chain.proceed(requestWithUserAgent)
+        preferencesManager.getToken()?.let {
+            requestBuilder.addHeader("Authorization", "Bearer $it")
+        }
+        return chain.proceed(requestBuilder.build())
     }
-    return okHttpBuilder.build()
+
+//    okHttpBuilder.addInterceptor { chain ->
+//        val requestWithUserAgent = chain.request().newBuilder()
+//            .header("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGFtcGxlQGV4YW1wbGUuY29tIiwiaWF0IjoxNzE2MDI1OTEzLCJleHAiOjE3MTYwMjk1MTN9.nmsB1r5gmH1FJVQEmL2PZTmmXbUI4hlYf6qG3sG0D1Q")
+//            .build()
+//        chain.proceed(requestWithUserAgent)
+//    }
+//    return okHttpBuilder.build()
 }

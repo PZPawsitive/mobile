@@ -19,15 +19,17 @@ import com.example.pawsitive.view.main.screens.PetInfoScreen
 import com.example.pawsitive.view.main.screens.PetScreen
 import com.example.pawsitive.view.main.screens.ProfileScreen
 import com.example.pawsitive.view.main.screens.Settings
+import com.example.pawsitive.viewmodel.ApiViewModel
 
 @Composable
 fun MainNavGraph(
     navController: NavHostController,
+    apiViewModel: ApiViewModel,
 ) {
     NavHost(navController = navController, startDestination = MainRootScreen.Home.route) {
         addHomeRoute(navController)
         addFollowRoute(navController)
-        addPetRoute(navController)
+        addPetRoute(navController, apiViewModel)
         addMessagesRoute(navController)
         addProfileRoute(navController)
         addSettingsRoute(navController)
@@ -53,7 +55,8 @@ private fun NavGraphBuilder.addFollowRoute(navController: NavHostController) {
 }
 
 private fun NavGraphBuilder.addPetRoute(
-    navController: NavController
+    navController: NavController,
+    apiViewModel: ApiViewModel
 ) {
     navigation(
         route = MainRootScreen.Pet.route,
@@ -63,7 +66,7 @@ private fun NavGraphBuilder.addPetRoute(
         showPetInfo(navController)
         showPetHistory(navController)
         showPetHistoryMap(navController)
-        showPetAddForm(navController)
+        showPetAddForm(navController, apiViewModel)
         showContractScreen(navController)
     }
 }
@@ -135,9 +138,9 @@ private fun NavGraphBuilder.showPetHistoryMap(navController: NavController) {
         HistoryMap()
     }
 }
-private fun NavGraphBuilder.showPetAddForm(navController: NavController) {
+private fun NavGraphBuilder.showPetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
     composable(route = MainLeafScreen.PetAddForm.route) {
-        PetAddForm(navController)
+        PetAddForm(navController, apiViewModel)
     }
 }
 private fun NavGraphBuilder.showContractScreen(
