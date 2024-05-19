@@ -31,7 +31,7 @@ fun MainNavGraph(
         addFollowRoute(navController)
         addPetRoute(navController, apiViewModel)
         addMessagesRoute(navController)
-        addProfileRoute(navController)
+        addProfileRoute(navController, apiViewModel)
         addSettingsRoute(navController)
     }
     
@@ -80,12 +80,15 @@ private fun NavGraphBuilder.addMessagesRoute(navController: NavController) {
         showChat(navController)
     }
 }
-private fun NavGraphBuilder.addProfileRoute(navController: NavController) {
+private fun NavGraphBuilder.addProfileRoute(
+    navController: NavController,
+    apiViewModel: ApiViewModel
+) {
     navigation(
         route = MainRootScreen.Profile.route,
         startDestination = MainLeafScreen.Profile.route
     ) {
-        showProfile(navController)
+        showProfile(navController, apiViewModel)
     }
 }
 
@@ -162,8 +165,8 @@ private fun NavGraphBuilder.showChat(navController: NavController) {
     }
 }
 
-private fun NavGraphBuilder.showProfile(navController: NavController) {
+private fun NavGraphBuilder.showProfile(navController: NavController, apiViewModel: ApiViewModel) {
     composable(route = MainLeafScreen.Profile.route) {
-        ProfileScreen()
+        ProfileScreen(apiViewModel)
     }
 }

@@ -172,7 +172,7 @@ class LoginActivity : ComponentActivity() {
                                             ) {
                                                 Log.d("retrofit", p1.body().toString())
                                                 if (p1.body() != null) {
-                                                    preferencesManager.saveToken(p1.body()!!.token)
+                                                    preferencesManager.saveToken(p1.body()!!.token!!)
                                                     preferencesManager.setUserId(p1.body()!!.id.toString())
                                                     val intent = Intent(context, MainActivity::class.java)
                                                     startActivity(intent)

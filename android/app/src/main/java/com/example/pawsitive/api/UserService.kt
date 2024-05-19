@@ -8,7 +8,9 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
+import java.util.UUID
 
 interface UserService {
     @POST("api/auth/authenticate")
@@ -25,4 +27,14 @@ interface UserService {
 
     @POST("api/auth/resend")
     fun resend(email: String): Call<Void>
+
+    @GET("api/users/{id}")
+    fun getUserById(@Path("id") id: String): Call<User>
+
+    @GET("api/users")
+    fun getDogWalkersNearby(
+        @Query("latitude") latitude: Double,
+        @Query("longtitude") longtitude: Double
+    ): Call<List<User>>
+
 }

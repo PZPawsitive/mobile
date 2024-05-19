@@ -395,7 +395,7 @@ class RegisterActivity : ComponentActivity() {
                                                 Log.d("retrofit", p1.message().toString())
                                                 Log.d("retrofit", p1.errorBody().toString())
                                                 if (p1.body() != null) {
-                                                    preferencesManager.saveToken(p1.body()!!.token)
+                                                    preferencesManager.saveToken(p1.body()!!.token!!)
                                                     preferencesManager.setUserId(p1.body()!!.id.toString())
                                                     preferencesManager.setEmail(p1.body()!!.email)
 //                                                    val intent = Intent(context, MainActivity::class.java)
@@ -481,7 +481,6 @@ class RegisterActivity : ComponentActivity() {
                         Text(text = "Resend")
                     }
                     Button(enabled = tokenInput.isNotEmpty(),onClick = {
-//                        apiViewModel.userService.verify(tokenInput, preferencesManager.getEmail()!!)
                         runBlocking {
                             val call: Call<Void> = apiViewModel.userService.verify(tokenInput, preferencesManager.getEmail()!!)
                             call.enqueue(object : Callback<Void> {

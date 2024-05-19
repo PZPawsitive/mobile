@@ -42,12 +42,4 @@ class AuthInterceptor(private val preferencesManager: PreferencesManager): Inter
         }
         return chain.proceed(requestBuilder.build())
     }
-
-//    okHttpBuilder.addInterceptor { chain ->
-//        val requestWithUserAgent = chain.request().newBuilder()
-//            .header("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGFtcGxlQGV4YW1wbGUuY29tIiwiaWF0IjoxNzE2MDI1OTEzLCJleHAiOjE3MTYwMjk1MTN9.nmsB1r5gmH1FJVQEmL2PZTmmXbUI4hlYf6qG3sG0D1Q")
-//            .build()
-//        chain.proceed(requestWithUserAgent)
-//    }
-//    return okHttpBuilder.build()
 }

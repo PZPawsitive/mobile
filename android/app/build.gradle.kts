@@ -61,6 +61,8 @@ dependencies {
 
     implementation(files("libs/MTBeaconPlus.aar"))
 
+    implementation(libs.coil.compose)
+
     implementation(libs.osmdroid.android)
     //noinspection UseTomlInstead
     implementation("androidx.compose.material:material-icons-extended")
