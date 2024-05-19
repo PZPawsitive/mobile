@@ -40,6 +40,7 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -58,6 +59,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.pawsitive.models.LoginRequest
 import com.example.pawsitive.models.RegisterRequest
 import com.example.pawsitive.models.User
+import com.example.pawsitive.models.VerificationRequest
 import com.example.pawsitive.util.DateUtils
 import com.example.pawsitive.util.PreferencesManager
 import com.example.pawsitive.view.main.MainActivity
@@ -72,6 +74,8 @@ class RegisterActivity : ComponentActivity() {
     private lateinit var apiViewModel: ApiViewModel
     private lateinit var preferencesManager: PreferencesManager
 
+    var registerView = mutableStateOf(true)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         apiViewModel = ViewModelProvider(
@@ -84,6 +88,7 @@ class RegisterActivity : ComponentActivity() {
 //            PawsitiveTheme {
 //                RegisterView()
 //            }
+//
             RegisterView()
         }
     }
@@ -92,7 +97,15 @@ class RegisterActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun RegisterView() {
-
+        if (registerView.value) {
+            RegisterScreen()
+        } else {
+            VerificationScreen()
+        }
+    }
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun RegisterScreen() {
         val context = LocalContext.current
 
         var emailInput by rememberSaveable {
@@ -379,12 +392,19 @@ class RegisterActivity : ComponentActivity() {
                                                 p1: Response<User>
                                             ) {
                                                 Log.d("retrofit", p1.body().toString())
+                                                Log.d("retrofit", p1.message().toString())
+                                                Log.d("retrofit", p1.errorBody().toString())
                                                 if (p1.body() != null) {
                                                     preferencesManager.saveToken(p1.body()!!.token)
                                                     preferencesManager.setUserId(p1.body()!!.id.toString())
-                                                    val intent = Intent(context, MainActivity::class.java)
-                                                    startActivity(intent)
+                                                    preferencesManager.setEmail(p1.body()!!.email)
+//                                                    val intent = Intent(context, MainActivity::class.java)
+//                                                    startActivity(intent)
+
+                                                    registerView.value = false
                                                 } else {
+
+                                                    Log.d("retrofit", p1.body().toString())
                                                     Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
                                                 }
                                             }
@@ -444,13 +464,58 @@ class RegisterActivity : ComponentActivity() {
 
     @Composable
     fun VerificationScreen() {
+        val context = LocalContext.current
         var tokenInput by rememberSaveable {
             mutableStateOf("")
         }
         Box(modifier = Modifier.fillMaxSize()) {
-            Row() {
-                OutlinedTextField(value = tokenInput, onValueChange = {tokenInput = it})
+            Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
+                Row(Modifier.fillMaxWidth().padding(10.dp), horizontalArrangement = Arrangement.Center) {
+                    Text(text = "Verification code was sent to your email, type it to verify account", textAlign = TextAlign.Center)
+                }
+                Row(Modifier.fillMaxWidth().padding(10.dp), horizontalArrangement = Arrangement.Center) {
+                    OutlinedTextField(value = tokenInput, onValueChange = {tokenInput = it})
+                }
+                Row(Modifier.fillMaxWidth().padding(10.dp), horizontalArrangement = Arrangement.SpaceEvenly) {
+                    OutlinedButton(onClick = { apiViewModel.userService.resend(preferencesManager.getEmail()!!) }) {
+                        Text(text = "Resend")
+                    }
+                    Button(enabled = tokenInput.isNotEmpty(),onClick = {
+//                        apiViewModel.userService.verify(tokenInput, preferencesManager.getEmail()!!)
+                        runBlocking {
+                            val call: Call<Void> = apiViewModel.userService.verify(tokenInput, preferencesManager.getEmail()!!)
+                            call.enqueue(object : Callback<Void> {
+                                override fun onResponse(
+                                    p0: Call<Void>,
+                                    p1: Response<Void>
+                                ) {
+                                    Log.d("retrofit", "message ${p1.message()}")
+                                    Log.d("retrofit", "is succesful ${p1.isSuccessful}")
+                                    Log.d("retrofit", "code ${p1.code()}")
+                                    Log.d("retrofit", "body ${p1.body()}")
+                                    if (p1.code() == 200) {
+                                        val intent = Intent(context, LoginActivity::class.java)
+                                        startActivity(intent)
+                                    } else {
+                                        Toast.makeText(context, "Could not verify, try again", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+
+                                override fun onFailure(
+                                    p0: Call<Void>,
+                                    p1: Throwable
+                                ) {
+                                    Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+                                }
+
+                            })
+                        }
+                    }) {
+                        Text(text = "Submit")
+                    }
+                }
             }
+
         }
     }
 }

@@ -27,4 +27,12 @@ class PreferencesManager(context: Context) {
     fun setUserId(id: String) {
         return preferences.edit().putString("user_id", id).apply()
     }
+
+    fun setEmail(email: String) {
+        preferences.edit().putString("email", email).apply()
+    }
+
+    fun getEmail(): String? {
+        return preferences.getString("email", null)
+    }
 }
