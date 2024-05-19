@@ -58,10 +58,8 @@ import retrofit2.Response
 
 class LoginActivity : ComponentActivity() {
 
-//    val apiViewModel: ApiViewModel by viewModels()
     private lateinit var apiViewModel: ApiViewModel
 
-//    private val preferencesManager = PreferencesManager(applicationContext)
     private lateinit var preferencesManager: PreferencesManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,6 +69,7 @@ class LoginActivity : ComponentActivity() {
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         )[ApiViewModel::class.java]
         preferencesManager = PreferencesManager(applicationContext)
+        preferencesManager.clear()
 
         setContent {
 
@@ -85,7 +84,7 @@ class LoginActivity : ComponentActivity() {
 
         val context = LocalContext.current
 
-        var loginInput by rememberSaveable {
+        var emailInput by rememberSaveable {
             mutableStateOf("")
         }
         var passwordInput by rememberSaveable {
@@ -123,9 +122,9 @@ class LoginActivity : ComponentActivity() {
 
                     ) {
                         OutlinedTextField(
-                            value = loginInput,
-                            label = { Text(text = "Login") },
-                            onValueChange = { loginInput = it },
+                            value = emailInput,
+                            label = { Text(text = "Email") },
+                            onValueChange = { emailInput = it },
                             modifier = Modifier
                                 .fillMaxWidth()
                         )
@@ -165,21 +164,21 @@ class LoginActivity : ComponentActivity() {
                             Button(
                                 onClick = {
                                     runBlocking {
-                                        val call: Call<User> = apiViewModel.userService.login(LoginRequest("example@example.com", "admin"))
+                                        val call: Call<User> = apiViewModel.userService.login(LoginRequest(emailInput, passwordInput))
                                         call.enqueue(object : Callback<User> {
                                             override fun onResponse(
                                                 p0: Call<User>,
                                                 p1: Response<User>
                                             ) {
                                                 Log.d("retrofit", p1.body().toString())
-                                                p1.body()
-                                                    ?.let { preferencesManager.saveToken(it.token) }
-                                                p1.body()
-                                                    ?.let {
-                                                        preferencesManager.setUserId(it.id.toString())
-                                                    }
-                                                val intent = Intent(context, MainActivity::class.java)
-                                                startActivity(intent)
+                                                if (p1.body() != null) {
+                                                    preferencesManager.saveToken(p1.body()!!.token)
+                                                    preferencesManager.setUserId(p1.body()!!.id.toString())
+                                                    val intent = Intent(context, MainActivity::class.java)
+                                                    startActivity(intent)
+                                                } else {
+                                                    Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
+                                                }
                                             }
 
                                             override fun onFailure(
@@ -192,12 +191,10 @@ class LoginActivity : ComponentActivity() {
 
                                         })
                                     }
-
                                 },
                             ) {
                                 Text(text = "Login")
                             }
-
                         }
 
                     }

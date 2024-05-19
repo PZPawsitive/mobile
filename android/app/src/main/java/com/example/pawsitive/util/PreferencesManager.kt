@@ -13,6 +13,9 @@ class PreferencesManager(context: Context) {
         return preferences.getString("token", null)
     }
 
+    fun clear() {
+        return preferences.edit().clear().apply()
+    }
     fun saveToken(token: String) {
         preferences.edit().putString("token", token).apply()
     }
