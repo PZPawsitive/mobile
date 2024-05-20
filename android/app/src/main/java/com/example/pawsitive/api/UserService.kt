@@ -19,14 +19,17 @@ interface UserService {
     @POST("api/auth/register")
     fun register(@Body request: RegisterRequest): Call<User>
 
-    @GET("api/auth/verify")
+    @POST("api/auth/verify")
     fun verify(
         @Query("token") token: String,
         @Query("email") email: String
-    ): Call<Void>
+    ): Call<String>
 
     @POST("api/auth/resend")
-    fun resend(email: String): Call<Void>
+    fun resend(@Body email: String): Call<String>
+
+    @GET("api/auth/checkSession")
+    fun checkSession(@Query("token") token: String): Call<String>
 
     @GET("api/users/{id}")
     fun getUserById(@Path("id") id: String): Call<User>

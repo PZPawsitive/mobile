@@ -11,6 +11,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import retrofit2.converter.scalars.ScalarsConverterFactory
 
 class RetrofitClient(context: Context) {
     private val preferencesManager = PreferencesManager(context)
@@ -29,6 +30,7 @@ class RetrofitClient(context: Context) {
     val retrofit: Retrofit = Retrofit.Builder()
         .baseUrl("http://localhost:8080/")
         .client(okHttpClient)
+        .addConverterFactory(ScalarsConverterFactory.create())
         .addConverterFactory(MoshiConverterFactory.create(moshi))
         .build()
 }

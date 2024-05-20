@@ -80,6 +80,7 @@ dependencies {
     implementation(libs.retrofit)
 
     implementation(libs.moshi.kotlin)
+    implementation(libs.converter.scalars)
     kapt("com.squareup.moshi:moshi-kotlin-codegen:1.15.1")
 
     implementation(libs.converter.moshi)

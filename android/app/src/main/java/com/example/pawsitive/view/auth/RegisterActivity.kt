@@ -477,16 +477,46 @@ class RegisterActivity : ComponentActivity() {
                     OutlinedTextField(value = tokenInput, onValueChange = {tokenInput = it})
                 }
                 Row(Modifier.fillMaxWidth().padding(10.dp), horizontalArrangement = Arrangement.SpaceEvenly) {
-                    OutlinedButton(onClick = { apiViewModel.userService.resend(preferencesManager.getEmail()!!) }) {
+                    OutlinedButton(onClick = {
+//                        apiViewModel.userService.resend(preferencesManager.getEmail()!!)
+                        runBlocking {
+                            val call: Call<String> = apiViewModel.userService.resend(preferencesManager.getEmail()!!)
+                            call.enqueue(object : Callback<String> {
+                                override fun onResponse(
+                                    p0: Call<String>,
+                                    p1: Response<String>
+                                ) {
+                                    Log.d("retrofit", "message ${p1.message()}")
+                                    Log.d("retrofit", "is succesful ${p1.isSuccessful}")
+                                    Log.d("retrofit", "code ${p1.code()}")
+                                    Log.d("retrofit", "body ${p1.body()}")
+                                    if (p1.code() == 200) {
+                                        Toast.makeText(context, p1.body().toString(), Toast.LENGTH_SHORT).show()
+                                    } else {
+                                        Toast.makeText(context, "Could not resend, try again", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+
+                                override fun onFailure(
+                                    p0: Call<String>,
+                                    p1: Throwable
+                                ) {
+                                    Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+                                }
+
+                            })
+                        }
+                    }) {
                         Text(text = "Resend")
                     }
                     Button(enabled = tokenInput.isNotEmpty(),onClick = {
+                        Log.d("retrofit", "$tokenInput ${preferencesManager.getEmail()}")
                         runBlocking {
-                            val call: Call<Void> = apiViewModel.userService.verify(tokenInput, preferencesManager.getEmail()!!)
-                            call.enqueue(object : Callback<Void> {
+                            val call: Call<String> = apiViewModel.userService.verify(tokenInput, preferencesManager.getEmail()!!)
+                            call.enqueue(object : Callback<String> {
                                 override fun onResponse(
-                                    p0: Call<Void>,
-                                    p1: Response<Void>
+                                    p0: Call<String>,
+                                    p1: Response<String>
                                 ) {
                                     Log.d("retrofit", "message ${p1.message()}")
                                     Log.d("retrofit", "is succesful ${p1.isSuccessful}")
@@ -501,9 +531,12 @@ class RegisterActivity : ComponentActivity() {
                                 }
 
                                 override fun onFailure(
-                                    p0: Call<Void>,
+                                    p0: Call<String>,
                                     p1: Throwable
                                 ) {
+                                    Log.d("retrofit", "message ${p1.localizedMessage}")
+                                    Log.d("retrofit", "message ${p1.message}")
+                                    Log.d("retrofit", "message ${p1.cause}")
                                     Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
                                 }
 
