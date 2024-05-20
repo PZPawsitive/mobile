@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.pawsitive.viewmodel.ApiViewModel
 import org.osmdroid.util.GeoPoint
 import java.util.Date
 
@@ -47,7 +48,7 @@ val histories = mutableStateListOf(
 
 @SuppressLint("UnrememberedMutableState")
 @Composable
-fun PetHistoryScreen(showHistoryMap: () -> Unit) {
+fun PetHistoryScreen(showHistoryMap: () -> Unit, apiViewModel: ApiViewModel) {
     val openAlertDialog = remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize()) {

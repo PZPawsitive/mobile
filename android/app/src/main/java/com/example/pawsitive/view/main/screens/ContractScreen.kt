@@ -32,6 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.pawsitive.view.walk.WalkActivity
+import com.example.pawsitive.viewmodel.ApiViewModel
 
 import org.osmdroid.util.GeoPoint
 
@@ -39,7 +40,7 @@ import org.osmdroid.util.GeoPoint
 val exampleContract = Contract("kacper", 15.6, 3, true, GeoPoint(52.237049, 21.017532))
 
 @Composable
-fun ContractScreen() {
+fun ContractScreen(apiViewModel: ApiViewModel) {
     WalkNotActiveView()
 }
 

@@ -16,5 +16,5 @@ data class User(
     val role: String?,
     val description: String,
     val profilePic: String,
-    val animals: List<Any>
+    val pets: List<String>
 )

@@ -41,8 +41,6 @@ fun ProfileScreen(apiViewModel: ApiViewModel) {
 
     val context = LocalContext.current
     val preferencesManager = PreferencesManager(context)
-    Log.d("retrofit", preferencesManager.getToken().toString())
-    Log.d("retrofit", preferencesManager.getUserId().toString())
     var user: User? by remember {
         mutableStateOf(null)
     }

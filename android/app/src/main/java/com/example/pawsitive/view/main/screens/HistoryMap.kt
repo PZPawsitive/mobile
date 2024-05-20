@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.example.pawsitive.viewmodel.ApiViewModel
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
@@ -22,7 +23,7 @@ val exampleHistory = History(
 )
 
 @Composable
-fun HistoryMap() {
+fun HistoryMap(apiViewModel: ApiViewModel) {
     AndroidView(
         modifier = Modifier.padding(10.dp),
         factory = { it ->

@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.pawsitive.models.AddPetRequest
 import com.example.pawsitive.models.IdWrapper
+import com.example.pawsitive.models.User
 import com.example.pawsitive.navigation.main.MainLeafScreen
 import com.example.pawsitive.util.DateUtils
 import com.example.pawsitive.util.PreferencesManager
@@ -71,7 +72,7 @@ fun PetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
     var expandedSpecies by rememberSaveable { mutableStateOf(false) }
     var expandedBreed by rememberSaveable { mutableStateOf(false) }
 
-    val species = arrayOf("dog", "cat", "hamster")
+    val species = arrayOf("DOG", "CAT", "HAMSTER")
     val breed = arrayOf("labrador", "bulldog", "alaskan malamute")
 
     var selectedSpecies by rememberSaveable {
@@ -201,47 +202,82 @@ fun PetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
         if (nameInput.isNotEmpty() && birthDate.selectedDateMillis != null)
             FloatingActionButton(
                 onClick = {
+//                    runBlocking {
+//                        val userId = preferencesManager.getUserId()
+//                        val call: Call<String>? = userId?.let { IdWrapper(it) }?.let {
+//                            AddPetRequest(
+//                                nameInput,
+//                                selectedSpecies,
+//                                selectedBreed,
+//                                millisToLocalDate!!,
+//                                it
+//                            )
+//                        }?.let {
+//                            apiViewModel.petService.addPet(
+//                                it
+//                            )
+//                        }
+//                        call?.enqueue(object : Callback<String> {
+//                            override fun onResponse(p0: Call<String>, p1: Response<String>) {
+//
+//                                Log.d("retrofit", p1.body().toString())
+//                                if (p1.body() != null) {
+//                                    Toast.makeText(
+//                                        context,
+//                                        "Succesfully added pet",
+//                                        Toast.LENGTH_SHORT
+//                                    ).show()
+//                                    navController.navigate(MainLeafScreen.Pet.route)
+//                                } else {
+//                                    Toast.makeText(context, "Adding pet failed", Toast.LENGTH_SHORT)
+//                                        .show()
+//                                }
+//
+//                            }
+//
+//                            override fun onFailure(p0: Call<String>, p1: Throwable) {
+//                                Log.d("retrofit", p1.message.toString())
+//                                Toast.makeText(
+//                                    context,
+//                                    "Connection error, try again later",
+//                                    Toast.LENGTH_SHORT
+//                                ).show()
+//                            }
+//                        })
+//                    }
                     runBlocking {
                         val userId = preferencesManager.getUserId()
-                        val call: Call<String>? = userId?.let { IdWrapper(it) }?.let {
+                        val call: Call<String> = apiViewModel.petService.addPet(
                             AddPetRequest(
                                 nameInput,
                                 selectedSpecies,
                                 selectedBreed,
                                 millisToLocalDate!!,
-                                it
+                                userId!!
                             )
-                        }?.let {
-                            apiViewModel.petService.addPet(
-                                it
-                            )
-                        }
-                        call?.enqueue(object : Callback<String> {
-                            override fun onResponse(p0: Call<String>, p1: Response<String>) {
-
+                        )
+                        call.enqueue(object : Callback<String> {
+                            override fun onResponse(
+                                p0: Call<String>,
+                                p1: Response<String>
+                            ) {
                                 Log.d("retrofit", p1.body().toString())
                                 if (p1.body() != null) {
-                                    Toast.makeText(
-                                        context,
-                                        "Succesfully added pet",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                    Toast.makeText(context, "Succesfully added pet", Toast.LENGTH_SHORT).show()
                                     navController.navigate(MainLeafScreen.Pet.route)
                                 } else {
-                                    Toast.makeText(context, "Adding pet failed", Toast.LENGTH_SHORT)
-                                        .show()
+                                    Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
                                 }
-
                             }
 
-                            override fun onFailure(p0: Call<String>, p1: Throwable) {
+                            override fun onFailure(
+                                p0: Call<String>,
+                                p1: Throwable
+                            ) {
                                 Log.d("retrofit", p1.message.toString())
-                                Toast.makeText(
-                                    context,
-                                    "Connection error, try again later",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
                             }
+
                         })
                     }
 

@@ -31,11 +31,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.pawsitive.view.walk.screens.Message
+import com.example.pawsitive.viewmodel.ApiViewModel
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun ChatScreen() {
+fun ChatScreen(apiViewModel: ApiViewModel) {
 
 
     var inputText by remember { mutableStateOf("") }

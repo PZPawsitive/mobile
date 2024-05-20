@@ -186,6 +186,7 @@ class LoginActivity : ComponentActivity() {
                                                 p1: Throwable
                                             ) {
                                                 Log.d("retrofit", p1.message.toString())
+//                                                Log.d("retrofit", p1.)
                                                 Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
                                             }
 

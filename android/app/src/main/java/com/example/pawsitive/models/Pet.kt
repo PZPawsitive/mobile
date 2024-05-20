@@ -10,5 +10,5 @@ data class Pet (
     val species: String,
     val breed: String,
     val birthdate: LocalDate,
-    val userId: String
+    val userId: String?
 )

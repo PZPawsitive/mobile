@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.pawsitive.navigation.main.MainLeafScreen
+import com.example.pawsitive.viewmodel.ApiViewModel
 
 
 // CHECKOUT BRANCH
@@ -40,7 +41,7 @@ val messages = listOf(
 
 
 @Composable
-fun MessagesScreen(navController: NavController) {
+fun MessagesScreen(navController: NavController, apiViewModel: ApiViewModel) {
     LazyColumn {
         items(items = messages) {
             Card(

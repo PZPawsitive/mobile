@@ -27,22 +27,22 @@ fun MainNavGraph(
     apiViewModel: ApiViewModel,
 ) {
     NavHost(navController = navController, startDestination = MainRootScreen.Home.route) {
-        addHomeRoute(navController)
+        addHomeRoute(navController, apiViewModel)
         addFollowRoute(navController)
         addPetRoute(navController, apiViewModel)
-        addMessagesRoute(navController)
+        addMessagesRoute(navController, apiViewModel)
         addProfileRoute(navController, apiViewModel)
         addSettingsRoute(navController)
     }
     
 }
 
-private fun NavGraphBuilder.addHomeRoute(navController: NavController) {
+private fun NavGraphBuilder.addHomeRoute(navController: NavController, apiViewModel: ApiViewModel) {
     navigation(
         route = MainRootScreen.Home.route,
         startDestination = MainLeafScreen.Home.route
     ) {
-        showHome(navController)
+        showHome(navController, apiViewModel)
     }
 }
 private fun NavGraphBuilder.addFollowRoute(navController: NavHostController) {
@@ -62,22 +62,25 @@ private fun NavGraphBuilder.addPetRoute(
         route = MainRootScreen.Pet.route,
         startDestination = MainLeafScreen.Pet.route
     ) {
-        showPet(navController)
-        showPetInfo(navController)
-        showPetHistory(navController)
-        showPetHistoryMap(navController)
+        showPet(navController, apiViewModel)
+        showPetInfo(navController, apiViewModel)
+        showPetHistory(navController, apiViewModel)
+        showPetHistoryMap(navController, apiViewModel)
         showPetAddForm(navController, apiViewModel)
-        showContractScreen(navController)
+        showContractScreen(navController, apiViewModel)
     }
 }
 
-private fun NavGraphBuilder.addMessagesRoute(navController: NavController) {
+private fun NavGraphBuilder.addMessagesRoute(
+    navController: NavController,
+    apiViewModel: ApiViewModel
+) {
     navigation(
         route = MainRootScreen.Messages.route,
         startDestination = MainLeafScreen.Messages.route
     ) {
-        showMessages(navController)
-        showChat(navController)
+        showMessages(navController, apiViewModel)
+        showChat(navController, apiViewModel)
     }
 }
 private fun NavGraphBuilder.addProfileRoute(
@@ -103,9 +106,9 @@ private fun NavGraphBuilder.showSettings(navController: NavController) {
         Settings(navController)
     }
 }
-private fun NavGraphBuilder.showHome(navController: NavController) {
+private fun NavGraphBuilder.showHome(navController: NavController, apiViewModel: ApiViewModel) {
     composable(route = MainLeafScreen.Home.route) {
-        HomeScreen(navController)
+        HomeScreen(navController, apiViewModel)
     }
 }
 private fun NavGraphBuilder.showFollow(navController: NavHostController) {
@@ -113,32 +116,36 @@ private fun NavGraphBuilder.showFollow(navController: NavHostController) {
         FollowScreen()
     }
 }
-private fun NavGraphBuilder.showPet(navController: NavController) {
+private fun NavGraphBuilder.showPet(navController: NavController, apiViewModel: ApiViewModel) {
     composable(route = MainLeafScreen.Pet.route) {
         PetScreen(
-            navController
+            navController, apiViewModel
         )
     }
 }
 
-private fun NavGraphBuilder.showPetInfo(navController: NavController) {
+private fun NavGraphBuilder.showPetInfo(navController: NavController, apiViewModel: ApiViewModel) {
     composable(route = MainLeafScreen.PetInfo.route) {
-        PetInfoScreen()
+        PetInfoScreen(apiViewModel)
     }
 }
 
-private fun NavGraphBuilder.showPetHistory(navController: NavController) {
+private fun NavGraphBuilder.showPetHistory(navController: NavController, apiViewModel: ApiViewModel) {
     composable(route = MainLeafScreen.PetHistory.route) {
         PetHistoryScreen(
             showHistoryMap = {
                 navController.navigate(MainLeafScreen.PetHistoryMap.route)
-            }
+            },
+            apiViewModel
         )
     }
 }
-private fun NavGraphBuilder.showPetHistoryMap(navController: NavController) {
+private fun NavGraphBuilder.showPetHistoryMap(
+    navController: NavController,
+    apiViewModel: ApiViewModel
+) {
     composable(route = MainLeafScreen.PetHistoryMap.route) {
-        HistoryMap()
+        HistoryMap(apiViewModel)
     }
 }
 private fun NavGraphBuilder.showPetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
@@ -147,21 +154,22 @@ private fun NavGraphBuilder.showPetAddForm(navController: NavController, apiView
     }
 }
 private fun NavGraphBuilder.showContractScreen(
-    navController: NavController
+    navController: NavController,
+    apiViewModel: ApiViewModel
 ) {
     composable(route = MainLeafScreen.ContractScreen.route) {
-        ContractScreen()
+        ContractScreen(apiViewModel)
     }
 }
-private fun NavGraphBuilder.showMessages(navController: NavController) {
+private fun NavGraphBuilder.showMessages(navController: NavController, apiViewModel: ApiViewModel) {
     composable(route = MainLeafScreen.Messages.route) {
-        MessagesScreen(navController)
+        MessagesScreen(navController, apiViewModel)
     }
 }
 
-private fun NavGraphBuilder.showChat(navController: NavController) {
+private fun NavGraphBuilder.showChat(navController: NavController, apiViewModel: ApiViewModel) {
     composable(route = MainLeafScreen.Chat.route) {
-        ChatScreen()
+        ChatScreen(apiViewModel)
     }
 }
 

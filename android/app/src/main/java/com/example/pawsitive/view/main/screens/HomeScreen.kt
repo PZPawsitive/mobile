@@ -35,6 +35,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import com.example.pawsitive.R
 import com.example.pawsitive.navigation.main.MainLeafScreen
+import com.example.pawsitive.viewmodel.ApiViewModel
 import compose.icons.FontAwesomeIcons
 import compose.icons.fontawesomeicons.Solid
 import compose.icons.fontawesomeicons.solid.List
@@ -62,7 +63,7 @@ val posts = listOf(
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(navController: NavController, apiViewModel: ApiViewModel) {
 
     Scaffold {
         Box(modifier = Modifier.fillMaxSize()) {

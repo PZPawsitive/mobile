@@ -1,5 +1,7 @@
 package com.example.pawsitive.view.main.screens
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 
@@ -36,35 +38,44 @@ import compose.icons.fontawesomeicons.Solid
 import compose.icons.fontawesomeicons.solid.Cat
 import compose.icons.fontawesomeicons.solid.Dog
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
+import com.example.pawsitive.models.Pet
+import com.example.pawsitive.models.User
 import com.example.pawsitive.navigation.main.MainLeafScreen
+import com.example.pawsitive.util.PreferencesManager
+import com.example.pawsitive.viewmodel.ApiViewModel
+import kotlinx.coroutines.runBlocking
 import org.osmdroid.util.GeoPoint
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 enum class PetType {
-    DOG,
+//    DOG("DOG"),
     CAT
 }
 
-data class Pet(val name: String, val type: PetType)
+//data class Pet(val name: String, val type: PetType)
 
-val pets =
-    listOf(
-        Pet("Kacper", PetType.DOG),
-        Pet("Franciszek", PetType.CAT),
-        Pet("Bogusław", PetType.DOG),
-        Pet("Kacper", PetType.DOG),
-        Pet("Franciszek", PetType.CAT),
-        Pet("Bogusław", PetType.DOG),
-        Pet("Kacper", PetType.DOG),
-        Pet("Franciszek", PetType.CAT),
-        Pet("Bogusław", PetType.DOG),
-        Pet("Kacper", PetType.DOG),
-        Pet("Franciszek", PetType.CAT),
-        Pet("Bogusław", PetType.DOG),
-        Pet("Kacper", PetType.DOG),
-        Pet("Franciszek", PetType.CAT),
-        Pet("Bogusław", PetType.DOG),
-    )
+//val pets =
+//    listOf(
+//        Pet("Kacper", PetType.DOG),
+//        Pet("Franciszek", PetType.CAT),
+//        Pet("Bogusław", PetType.DOG),
+//        Pet("Kacper", PetType.DOG),
+//        Pet("Franciszek", PetType.CAT),
+//        Pet("Bogusław", PetType.DOG),
+//        Pet("Kacper", PetType.DOG),
+//        Pet("Franciszek", PetType.CAT),
+//        Pet("Bogusław", PetType.DOG),
+//        Pet("Kacper", PetType.DOG),
+//        Pet("Franciszek", PetType.CAT),
+//        Pet("Bogusław", PetType.DOG),
+//        Pet("Kacper", PetType.DOG),
+//        Pet("Franciszek", PetType.CAT),
+//        Pet("Bogusław", PetType.DOG),
+//    )
 
 data class Contract(
     val owner: String,
@@ -83,7 +94,8 @@ val contracts = listOf(
 
 @Composable
 fun PetScreen(
-    navController: NavController
+    navController: NavController,
+    apiViewModel: ApiViewModel
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
@@ -93,7 +105,8 @@ fun PetScreen(
                 navController)
         } else {
             MyPetsColumn(
-                navController
+                navController,
+                apiViewModel
             )
         }
     }
@@ -103,65 +116,100 @@ fun PetScreen(
 
 @Composable
 fun MyPetsColumn(
-    navController: NavController
+    navController: NavController,
+    apiViewModel: ApiViewModel
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        LazyColumn() {
-            items(items = pets) {
-                var expandedSettings by remember {
-                    mutableStateOf(false)
-                }
-                Box() {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(10.dp),
-                        onClick = {
-                            expandedSettings = !expandedSettings
-                        }
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .padding(10.dp)
-                                .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(text = it.name)
-                            Icon(
-                                imageVector = if (it.type == PetType.DOG) FontAwesomeIcons.Solid.Dog else FontAwesomeIcons.Solid.Cat,
-                                contentDescription = "pet type",
-                                Modifier.size(30.dp)
-                            )
-                        }
-                        DropdownMenu(
-                            // ui broken - fix
-                            expanded = expandedSettings,
-                            onDismissRequest = { expandedSettings = false },
-                        ) {
+    var pets: List<Pet>? by remember {
+        mutableStateOf(null)
+    }
+    val context = LocalContext.current
+    val preferencesManager = PreferencesManager(context)
 
-                            DropdownMenuItem(
-                                text = { Text(text = "Info") },
-                                onClick = { navController.navigate(MainLeafScreen.PetInfo.route) })
-                            HorizontalDivider()
-                            DropdownMenuItem(
-                                text = { Text(text = "Historia spacerów") },
-                                onClick = { navController.navigate(MainLeafScreen.PetHistory.route) })
+    runBlocking {
+        val call: Call<List<Pet>> = apiViewModel.petService.getPetsByUserId(preferencesManager.getUserId()!!)
+        call.enqueue(object : Callback<List<Pet>> {
+            override fun onResponse(
+                p0: Call<List<Pet>>,
+                p1: Response<List<Pet>>
+            ) {
+                Log.d("retrofit", p1.body().toString())
+                if (p1.body() != null) {
+                    pets = p1.body()
+                } else {
+                    Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(
+                p0: Call<List<Pet>>,
+                p1: Throwable
+            ) {
+                Log.d("retrofit", p1.message.toString())
+                Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+            }
+
+        })
+    }
+    if (pets != null) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            LazyColumn() {
+                items(items = pets!!) {
+                    var expandedSettings by remember {
+                        mutableStateOf(false)
+                    }
+                    Box() {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(10.dp),
+                            onClick = {
+                                expandedSettings = !expandedSettings
+                            }
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .padding(10.dp)
+                                    .fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(text = it.name)
+                                Icon(
+                                    imageVector = if (it.species == "DOG") FontAwesomeIcons.Solid.Dog else FontAwesomeIcons.Solid.Cat,
+                                    contentDescription = "pet type",
+                                    Modifier.size(30.dp)
+                                )
+                            }
+                            DropdownMenu(
+                                // ui broken - fix
+                                expanded = expandedSettings,
+                                onDismissRequest = { expandedSettings = false },
+                            ) {
+
+                                DropdownMenuItem(
+                                    text = { Text(text = "Info") },
+                                    onClick = { navController.navigate(MainLeafScreen.PetInfo.route) })
+                                HorizontalDivider()
+                                DropdownMenuItem(
+                                    text = { Text(text = "Historia spacerów") },
+                                    onClick = { navController.navigate(MainLeafScreen.PetHistory.route) })
+                            }
                         }
+
                     }
 
                 }
 
             }
+            FloatingActionButton(
+                onClick = { navController.navigate(MainLeafScreen.PetAddForm.route) },
+                modifier = Modifier
+                    .align(alignment = Alignment.BottomEnd)
+                    .padding(20.dp)
+            ) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = "add my pet")
+            }
+        }
 
-        }
-        FloatingActionButton(
-            onClick = { navController.navigate(MainLeafScreen.PetAddForm.route) },
-            modifier = Modifier
-                .align(alignment = Alignment.BottomEnd)
-                .padding(20.dp)
-        ) {
-            Icon(imageVector = Icons.Default.Add, contentDescription = "add my pet")
-        }
     }
 
 }
