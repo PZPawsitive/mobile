@@ -17,10 +17,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -47,7 +49,6 @@ import retrofit2.Callback
 import retrofit2.Response
 
 
-//val exampleContract = Contract("kacper", 15.6, 3, true, GeoPoint(52.237049, 21.017532))
 
 @Composable
 fun ContractScreen(apiViewModel: ApiViewModel, id: String?) {
@@ -161,6 +162,14 @@ fun WalkNotActiveView(apiViewModel: ApiViewModel,id: String?) {
                 }
             }
 
+        }
+    } else {
+        Box(modifier = Modifier.fillMaxSize()) {
+            CircularProgressIndicator(
+                modifier = Modifier.width(64.dp).align(Alignment.Center),
+                color = MaterialTheme.colorScheme.secondary,
+                trackColor = MaterialTheme.colorScheme.surfaceVariant
+            )
         }
     }
 
