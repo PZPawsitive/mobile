@@ -26,6 +26,7 @@ import com.example.pawsitive.viewmodel.ApiViewModel
 fun MainNavGraph(
     navController: NavHostController,
     apiViewModel: ApiViewModel,
+    changeState: () -> Unit,
 ) {
     NavHost(navController = navController, startDestination = MainRootScreen.Home.route) {
         addHomeRoute(navController, apiViewModel)
@@ -33,7 +34,7 @@ fun MainNavGraph(
         addPetRoute(navController, apiViewModel)
         addMessagesRoute(navController, apiViewModel)
         addProfileRoute(navController, apiViewModel)
-        addSettingsRoute(navController)
+        addSettingsRoute(navController, changeState)
     }
     
 }
@@ -96,15 +97,15 @@ private fun NavGraphBuilder.addProfileRoute(
     }
 }
 
-private fun NavGraphBuilder.addSettingsRoute(navController: NavController) {
+private fun NavGraphBuilder.addSettingsRoute(navController: NavController, changeState: () -> Unit) {
     navigation(route = MainRootScreen.Settings.route, startDestination = MainLeafScreen.Settings.route) {
-        showSettings(navController)
+        showSettings(navController, changeState)
     }
 
 }
-private fun NavGraphBuilder.showSettings(navController: NavController) {
+private fun NavGraphBuilder.showSettings(navController: NavController, changeState: () -> Unit) {
     composable(route = MainLeafScreen.Settings.route) {
-        Settings(navController)
+        Settings(navController, changeState)
     }
 }
 private fun NavGraphBuilder.showHome(navController: NavController, apiViewModel: ApiViewModel) {

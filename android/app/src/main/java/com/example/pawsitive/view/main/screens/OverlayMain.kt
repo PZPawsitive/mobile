@@ -1,10 +1,15 @@
 package com.example.pawsitive.view.main.screens
 
 import android.content.Intent
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.automirrored.outlined.Chat
@@ -34,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -67,6 +73,10 @@ fun OverlayMain(apiViewModel: ApiViewModel) {
 
     val context = LocalContext.current
 
+    fun changeState() {
+        state = !state
+    }
+
     CompositionLocalProvider(LocalGlobalState provides state) {
 
 
@@ -83,8 +93,8 @@ fun OverlayMain(apiViewModel: ApiViewModel) {
                         }
                     },
                     actions = {
-                        Text(text = "Walker", modifier = Modifier.padding(end = 5.dp))
-                        Switch(checked = state, onCheckedChange = { state = !state })
+//                        Text(text = "Walker", modifier = Modifier.padding(end = 5.dp))
+//                        Switch(checked = state, onCheckedChange = { state = !state })
                         IconButton(onClick = { expandedSettings = !expandedSettings }) {
                             Icon(
                                 imageVector = Icons.Filled.Menu,
@@ -100,9 +110,11 @@ fun OverlayMain(apiViewModel: ApiViewModel) {
                                 text = { Text(text = "Settings") },
                                 onClick = { navController.navigate(MainRootScreen.Settings.route) })
                             HorizontalDivider()
-                            DropdownMenuItem(text = { Text(text = "Logout") }, onClick = { context.startActivity(
-                                Intent(context, LoginActivity::class.java)
-                            ) })
+                            DropdownMenuItem(text = { Text(text = "Logout") }, onClick = {
+                                context.startActivity(
+                                    Intent(context, LoginActivity::class.java)
+                                )
+                            })
                         }
                     }
                 )
@@ -121,7 +133,7 @@ fun OverlayMain(apiViewModel: ApiViewModel) {
                     .fillMaxSize()
                     .padding(it)
             ) {
-                MainNavGraph(navController = navController, apiViewModel)
+                MainNavGraph(navController = navController, apiViewModel, ::changeState)
             }
         }
 
@@ -169,7 +181,7 @@ private fun BottomNavBar(
             onClick = { navController.navigateToRootScreen(MainRootScreen.Pet) },
             alwaysShowLabel = true,
             label = {
-                Text(text = "Pet")
+                Text(text = "Pets")
             },
             icon = {
                 Icon(
@@ -237,7 +249,8 @@ private fun NavController.currentScreenAsState(): State<MainRootScreen> {
                 destination.hierarchy.any { it.route == MainRootScreen.Profile.route } -> {
                     selectedItem.value = MainRootScreen.Profile
                 }
-                destination.hierarchy.any {it.route == MainRootScreen.Settings.route} -> {
+
+                destination.hierarchy.any { it.route == MainRootScreen.Settings.route } -> {
                     selectedItem.value = MainRootScreen.Settings
                 }
             }

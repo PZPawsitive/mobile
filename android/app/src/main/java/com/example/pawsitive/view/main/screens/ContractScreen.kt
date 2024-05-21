@@ -140,16 +140,16 @@ fun WalkNotActiveView(apiViewModel: ApiViewModel,id: String?) {
                                     val intent = Intent(context, WalkActivity::class.java).apply { putExtras(bundle) }
                                     context.startActivity(intent)
                                 }) {
-                                    Text(text = "Tak")
+                                    Text(text = "Yes")
                                 }
                             },
                             dismissButton = {
                                 Button(onClick = { openAlertDialog.value = false }) {
-                                    Text(text = "Nie")
+                                    Text(text = "No")
                                 }
                             },
                             text = {
-                                Text(text = "Czy chcesz rozpocząć spacer?")
+                                Text(text = "Do you want to accept the contract and start the walk?")
                             }
                         )
                     }

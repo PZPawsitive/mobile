@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
@@ -48,6 +49,13 @@ import com.example.pawsitive.util.DateUtils
 import com.example.pawsitive.util.PreferencesManager
 import com.example.pawsitive.viewmodel.ApiViewModel
 import com.minew.beaconplus.sdk.MTPeripheral
+import compose.icons.FontAwesomeIcons
+import compose.icons.fontawesomeicons.Solid
+import compose.icons.fontawesomeicons.solid.Cat
+import compose.icons.fontawesomeicons.solid.Dog
+import compose.icons.fontawesomeicons.solid.Dove
+import compose.icons.fontawesomeicons.solid.Horse
+import compose.icons.fontawesomeicons.solid.Paw
 import kotlinx.coroutines.runBlocking
 import retrofit2.Call
 import retrofit2.Callback
@@ -83,8 +91,6 @@ fun PetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
     var breeds = mutableListOf("DOG", "CAT", "BIRD", "OTHER")
 
 
-
-
     var selectedSpecies by rememberSaveable {
         mutableStateOf(species[0])
     }
@@ -104,7 +110,7 @@ fun PetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
                 label = { Text(text = "Name") },
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
-            Spacer(modifier = Modifier.height(15.dp))
+            Spacer(modifier = Modifier.height(20.dp))
             Row(modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .clickable { showDialog.value = !showDialog.value }) {
@@ -119,6 +125,7 @@ fun PetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
             }
+            Spacer(modifier = Modifier.height(20.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -139,7 +146,22 @@ fun PetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
                         expanded = expandedSpecies,
                         onDismissRequest = { expandedSpecies = false }) {
                         species.forEach {
-                            DropdownMenuItem(text = { Text(text = it) }, onClick = {
+                            DropdownMenuItem(text = {
+                                Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+                                    Text(text = it)
+                                    Icon(
+                                        imageVector = when (it) {
+                                            "DOG" -> FontAwesomeIcons.Solid.Dog
+                                            "CAT" -> FontAwesomeIcons.Solid.Cat
+                                            "BIRD" -> FontAwesomeIcons.Solid.Dove
+                                            "HORSE" -> FontAwesomeIcons.Solid.Horse
+                                            else -> FontAwesomeIcons.Solid.Paw
+                                        },
+                                        contentDescription = "icon",
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
+                            }, onClick = {
                                 selectedSpecies = it
                                 expandedSpecies = false
                             })
@@ -148,25 +170,29 @@ fun PetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
                     }
                 }
             }
+            Spacer(modifier = Modifier.height(20.dp))
             when (selectedSpecies) {
                 "DOG" -> {
                     breeds.clear()
-                    dogBreeds.forEach{breeds.add(it)}
+                    dogBreeds.forEach { breeds.add(it) }
                     selectedBreed = dogBreeds[0]
                 }
+
                 "CAT" -> {
                     breeds.clear()
-                    catBreeds.forEach{breeds.add(it)}
+                    catBreeds.forEach { breeds.add(it) }
                     selectedBreed = catBreeds[0]
                 }
+
                 "BIRD" -> {
                     breeds.clear()
-                    birdBreeds.forEach{breeds.add(it)}
+                    birdBreeds.forEach { breeds.add(it) }
                     selectedBreed = birdBreeds[0]
                 }
+
                 "OTHER" -> {
                     breeds.clear()
-                    otherBreeds.forEach{breeds.add(it)}
+                    otherBreeds.forEach { breeds.add(it) }
                     selectedBreed = otherBreeds[0]
                 }
             }
@@ -191,7 +217,9 @@ fun PetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
                         expanded = expandedBreed,
                         onDismissRequest = { expandedBreed = false }) {
                         breeds.forEach {
-                            DropdownMenuItem(text = { Text(text = it) }, onClick = {
+                            DropdownMenuItem(text = {
+                                Text(text = it)
+                            }, onClick = {
                                 selectedBreed = it
                                 expandedBreed = false
                             })
@@ -252,10 +280,15 @@ fun PetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
                             ) {
                                 Log.d("retrofit", p1.body().toString())
                                 if (p1.body() != null) {
-                                    Toast.makeText(context, "Succesfully added pet", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        context,
+                                        "Succesfully added pet",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                     navController.navigate(MainLeafScreen.Pet.route)
                                 } else {
-                                    Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT)
+                                        .show()
                                 }
                             }
 
@@ -264,7 +297,8 @@ fun PetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
                                 p1: Throwable
                             ) {
                                 Log.d("retrofit", p1.message.toString())
-                                Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT)
+                                    .show()
                             }
 
                         })
