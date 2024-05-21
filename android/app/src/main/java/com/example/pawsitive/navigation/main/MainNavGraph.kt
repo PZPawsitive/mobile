@@ -6,6 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.pawsitive.view.main.screens.ChatScreen
 import com.example.pawsitive.view.main.screens.ContractScreen
@@ -125,18 +126,20 @@ private fun NavGraphBuilder.showPet(navController: NavController, apiViewModel: 
 }
 
 private fun NavGraphBuilder.showPetInfo(navController: NavController, apiViewModel: ApiViewModel) {
-    composable(route = MainLeafScreen.PetInfo.route) {
-        PetInfoScreen(apiViewModel)
+    composable(route = "${MainLeafScreen.PetInfo.route}?petId={petId}", arguments = listOf(
+        navArgument("petId") {})) { backStackEntry ->
+        PetInfoScreen(apiViewModel, backStackEntry.arguments?.getString("petId"))
     }
 }
 
 private fun NavGraphBuilder.showPetHistory(navController: NavController, apiViewModel: ApiViewModel) {
-    composable(route = MainLeafScreen.PetHistory.route) {
+    composable(route = "${MainLeafScreen.PetHistory.route}?petId={petId}", arguments = listOf(
+        navArgument("petId") {}
+    )) {backStackEntry ->
         PetHistoryScreen(
-            showHistoryMap = {
-                navController.navigate(MainLeafScreen.PetHistoryMap.route)
-            },
-            apiViewModel
+            navController,
+            apiViewModel,
+            backStackEntry.arguments?.getString("petId")
         )
     }
 }
@@ -157,8 +160,11 @@ private fun NavGraphBuilder.showContractScreen(
     navController: NavController,
     apiViewModel: ApiViewModel
 ) {
-    composable(route = MainLeafScreen.ContractScreen.route) {
-        ContractScreen(apiViewModel)
+    composable(route = "${MainLeafScreen.ContractScreen.route}?id={id}",
+        arguments = listOf(
+            navArgument("id") {}
+        )) {backStackEntry ->
+        ContractScreen(apiViewModel, backStackEntry.arguments?.getString("id"))
     }
 }
 private fun NavGraphBuilder.showMessages(navController: NavController, apiViewModel: ApiViewModel) {

@@ -17,10 +17,12 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import com.example.pawsitive.R
 import com.example.pawsitive.util.SendGeolocationTask
 import com.example.pawsitive.viewmodel.BeaconViewModel
 import com.example.pawsitive.view.walk.screens.OverlayWalk
+import com.example.pawsitive.viewmodel.ApiViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.minew.beaconplus.sdk.MTCentralManager
@@ -58,6 +60,10 @@ class WalkActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val apiViewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+        )[ApiViewModel::class.java]
         if (ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.INTERNET
@@ -70,7 +76,9 @@ class WalkActivity : AppCompatActivity() {
         getCurrentLocation()
         setBleManagerListener()
         initBlePermission()
-        task = SendGeolocationTask()
+        val historyId = intent.extras?.getString("historyId")
+        Log.d("retrofit", historyId.toString())
+        task = SendGeolocationTask(apiViewModel, historyId)
         mMTCentralManager.startService()
 
 
@@ -91,7 +99,8 @@ class WalkActivity : AppCompatActivity() {
                 beaconViewModel,
                 { refresh() },
                 ::connect,
-                ::disconnect
+                ::disconnect,
+                apiViewModel
             ) { navigateAction ->
                 onNavigateAction = navigateAction
             }

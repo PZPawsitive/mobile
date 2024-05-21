@@ -1,6 +1,8 @@
 package com.example.pawsitive.view.main.screens
 
 import android.annotation.SuppressLint
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,27 +31,71 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.example.pawsitive.models.History
+import com.example.pawsitive.navigation.main.MainLeafScreen
 import com.example.pawsitive.viewmodel.ApiViewModel
-import org.osmdroid.util.GeoPoint
-import java.util.Date
+import kotlinx.coroutines.runBlocking
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-data class History(val description: String, val date: Date, val geopoints: List<GeoPoint>)
+//data class History(val description: String, val date: Date, val geopoints: List<GeoPoint>)
 
-val histories = mutableStateListOf(
-    History("super spacer", Date(), listOf(GeoPoint(1, 1), GeoPoint(2, 2))),
-    History("lipny spacer", Date(), listOf(GeoPoint(1, 1))),
-    History("walka psów", Date(), listOf(GeoPoint(1, 1))),
-    History("super droga", Date(), listOf(GeoPoint(1, 1))),
-    History("piesek był zadowolony", Date(), listOf(GeoPoint(1, 1))),
-)
+//val histories = mutableStateListOf(
+//    History("super spacer", Date(), listOf(GeoPoint(1, 1), GeoPoint(2, 2))),
+//    History("lipny spacer", Date(), listOf(GeoPoint(1, 1))),
+//    History("walka psów", Date(), listOf(GeoPoint(1, 1))),
+//    History("super droga", Date(), listOf(GeoPoint(1, 1))),
+//    History("piesek był zadowolony", Date(), listOf(GeoPoint(1, 1))),
+//)
 
 @SuppressLint("UnrememberedMutableState")
 @Composable
-fun PetHistoryScreen(showHistoryMap: () -> Unit, apiViewModel: ApiViewModel) {
+fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, petId: String?) {
+
+    Log.d("retrofit", petId.toString())
+
+    val context = LocalContext.current
+
     val openAlertDialog = remember { mutableStateOf(false) }
+
+    var histories: List<History>? by remember {
+        mutableStateOf(null)
+    }
+    var histories1: List<History>? = remember {
+        mutableStateListOf()
+    }
+
+    runBlocking {
+        val call: Call<List<History>> = apiViewModel.petService.getAllPetWalkHistoryByPetId(id = petId!!)
+        call.enqueue(object : Callback<List<History>> {
+            override fun onResponse(
+                p0: Call<List<History>>,
+                p1: Response<List<History>>
+            ) {
+                Log.d("retrofit", p1.body().toString())
+                if (p1.body() != null) {
+                    histories1 = p1.body()
+                } else {
+                    Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(
+                p0: Call<List<History>>,
+                p1: Throwable
+            ) {
+                Log.d("retrofit", p1.message.toString())
+                Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+            }
+
+        })
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
@@ -62,53 +108,56 @@ fun PetHistoryScreen(showHistoryMap: () -> Unit, apiViewModel: ApiViewModel) {
                     .fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
-
-
-            LazyColumn(
-                modifier = Modifier
-                    .padding(10.dp)
-                    .fillMaxSize()
-            ) {
-                items(items = histories) {
-                    var expandedSettings by remember {
-                        mutableStateOf(false)
-                    }
-                    Box {
-                        DropdownMenu( // ui broken - fix
-                            expanded = expandedSettings,
-                            onDismissRequest = { expandedSettings = false }
-                        ) {
-                            DropdownMenuItem(
-                                text = { Text(text = "Zmień opis") },
-                                onClick = {
-                                    expandedSettings = !expandedSettings
-                                    openAlertDialog.value = !openAlertDialog.value
-                                })
-                            HorizontalDivider()
-                            DropdownMenuItem(text = { Text(text = "Usuń spacer") }, onClick = {
-                                expandedSettings = !expandedSettings
-                                histories.remove(it)
-                            })
-                            HorizontalDivider()
-                            DropdownMenuItem(
-                                text = { Text(text = "Zobacz na mapie") },
-                                onClick = { showHistoryMap() })
+            if (histories1 != null) {
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .fillMaxSize()
+                ) {
+                    items(items = histories1!!) {
+                        var expandedSettings by remember {
+                            mutableStateOf(false)
                         }
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(10.dp),
-                            onClick = { expandedSettings = !expandedSettings }
-                        ) {
-                            Column(modifier = Modifier.padding(5.dp)) {
-                                Text(text = it.description, fontWeight = FontWeight.Bold)
-                                Text(text = it.date.toString())
+                        Box {
+                            DropdownMenu( // ui broken - fix
+                                expanded = expandedSettings,
+                                onDismissRequest = { expandedSettings = false }
+                            ) {
+                                DropdownMenuItem(
+                                    text = { Text(text = "Zmień opis") },
+                                    onClick = {
+                                        expandedSettings = !expandedSettings
+                                        openAlertDialog.value = !openAlertDialog.value
+                                    })
+                                HorizontalDivider()
+                                DropdownMenuItem(text = { Text(text = "Usuń spacer") }, onClick = {
+                                    expandedSettings = !expandedSettings
+//                                histories1.remove(it)
+                                })
+                                HorizontalDivider()
+                                DropdownMenuItem(
+                                    text = { Text(text = "Zobacz na mapie") },
+                                    onClick = { navController.navigate("${MainLeafScreen.PetHistory.route}?petId=${it.id}") })
+                            }
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(10.dp),
+                                onClick = { expandedSettings = !expandedSettings }
+                            ) {
+                                Column(modifier = Modifier.padding(5.dp)) {
+                                    Text(text = it.description, fontWeight = FontWeight.Bold)
+                                    Text(text = it.date.toString())
+                                }
                             }
                         }
-                    }
 
+                    }
                 }
             }
+
+
+
         }
         when {
             openAlertDialog.value -> {

@@ -40,13 +40,12 @@ import compose.icons.fontawesomeicons.solid.Dog
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
+import com.example.pawsitive.models.Contract
 import com.example.pawsitive.models.Pet
-import com.example.pawsitive.models.User
 import com.example.pawsitive.navigation.main.MainLeafScreen
 import com.example.pawsitive.util.PreferencesManager
 import com.example.pawsitive.viewmodel.ApiViewModel
 import kotlinx.coroutines.runBlocking
-import org.osmdroid.util.GeoPoint
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -77,20 +76,20 @@ enum class PetType {
 //        Pet("Bogusław", PetType.DOG),
 //    )
 
-data class Contract(
-    val owner: String,
-    val price: Double,
-    val petNumber: Number,
-    val danger: Boolean,
-    val localization: GeoPoint
-)
-
-val contracts = listOf(
-    Contract("kacper", 15.6, 3, true, GeoPoint(1, 1)),
-    Contract("kacper", 15.6, 3, false, GeoPoint(1, 1)),
-    Contract("kacper", 15.6, 3, false, GeoPoint(1, 1)),
-    Contract("kacper", 15.6, 3, true, GeoPoint(1, 1))
-)
+//data class Contract(
+//    val owner: String,
+//    val price: Double,
+//    val petNumber: Number,
+//    val danger: Boolean,
+//    val localization: GeoPoint
+//)
+//
+//val contracts = listOf(
+//    Contract("kacper", 15.6, 3, true, GeoPoint(1, 1)),
+//    Contract("kacper", 15.6, 3, false, GeoPoint(1, 1)),
+//    Contract("kacper", 15.6, 3, false, GeoPoint(1, 1)),
+//    Contract("kacper", 15.6, 3, true, GeoPoint(1, 1))
+//)
 
 @Composable
 fun PetScreen(
@@ -102,7 +101,8 @@ fun PetScreen(
     ) {
         if (LocalGlobalState.current) {
             Contracts(
-                navController)
+                navController,
+                apiViewModel)
         } else {
             MyPetsColumn(
                 navController,
@@ -187,11 +187,11 @@ fun MyPetsColumn(
 
                                 DropdownMenuItem(
                                     text = { Text(text = "Info") },
-                                    onClick = { navController.navigate(MainLeafScreen.PetInfo.route) })
+                                    onClick = { navController.navigate("${MainLeafScreen.PetInfo.route}?petId=${it.id}") })
                                 HorizontalDivider()
                                 DropdownMenuItem(
                                     text = { Text(text = "Historia spacerów") },
-                                    onClick = { navController.navigate(MainLeafScreen.PetHistory.route) })
+                                    onClick = { navController.navigate("${MainLeafScreen.PetHistory.route}?petId=${it.id}") })
                             }
                         }
 
@@ -217,53 +217,86 @@ fun MyPetsColumn(
 
 @Composable
 fun Contracts(
-    navController: NavController
+    navController: NavController,
+    apiViewModel: ApiViewModel
 ) {
-    LazyColumn(
-        modifier = Modifier.padding(10.dp)
-    ) {
-        items(items = contracts) {
-            var expandedSettings by remember {
-                mutableStateOf(false)
+    val context = LocalContext.current
+    var contracts: List<Contract>? by remember {
+        mutableStateOf(null)
+    }
+    runBlocking {
+        val call: Call<List<Contract>> = apiViewModel.walkService.getContracts()
+        call.enqueue(object : Callback<List<Contract>> {
+            override fun onResponse(
+                p0: Call<List<Contract>>,
+                p1: Response<List<Contract>>
+            ) {
+                Log.d("retrofit", p1.body().toString())
+                if (p1.body() != null) {
+                    contracts = p1.body()
+                } else {
+                    Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
+                }
             }
-            Box() {
-                Card(
-                    onClick = { expandedSettings = !expandedSettings },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp),
-                    colors = if (it.danger) CardDefaults.cardColors(containerColor = Color.Red) else CardDefaults.cardColors(
-                        containerColor = Purple40
-                    )
-                ) {
-                    Row(
+
+            override fun onFailure(
+                p0: Call<List<Contract>>,
+                p1: Throwable
+            ) {
+                Log.d("retrofit", p1.message.toString())
+                Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+            }
+
+        })
+    }
+    if (contracts != null) {
+        LazyColumn(
+            modifier = Modifier.padding(10.dp)
+        ) {
+            items(items = contracts!!) {
+                var expandedSettings by remember {
+                    mutableStateOf(false)
+                }
+                Box() {
+                    Card(
+                        onClick = { expandedSettings = !expandedSettings },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(10.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        colors = if (it.dangerous) CardDefaults.cardColors(containerColor = Color.Red) else CardDefaults.cardColors(
+                            containerColor = Purple40
+                        )
                     ) {
-                        Text(text = it.owner, fontWeight = FontWeight.Bold)
-                        Text(text = "${it.petNumber} pets")
-                        Text(text = "${it.price} $", fontWeight = FontWeight.Bold)
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(10.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(text = it.user, fontWeight = FontWeight.Bold)
+                            Text(text = "${it.petAmount} pets")
+                            Text(text = "${it.reward} $", fontWeight = FontWeight.Bold)
+                        }
+                    }
+                    DropdownMenu(
+                        // ui broken - fix
+                        expanded = expandedSettings,
+                        onDismissRequest = { expandedSettings = false },
+                    ) {
+
+                        DropdownMenuItem(
+                            text = { Text(text = "Napisz wiadomość") },
+                            onClick = { navController.navigate(MainLeafScreen.Chat.route) })
+                        HorizontalDivider()
+                        DropdownMenuItem(
+                            text = { Text(text = "Pokaż szczegóły") },
+                            onClick = { navController.navigate("${MainLeafScreen.ContractScreen.route}?id=${it.id}") })
                     }
                 }
-                DropdownMenu(
-                    // ui broken - fix
-                    expanded = expandedSettings,
-                    onDismissRequest = { expandedSettings = false },
-                ) {
 
-                    DropdownMenuItem(
-                        text = { Text(text = "Napisz wiadomość") },
-                        onClick = { navController.navigate(MainLeafScreen.Chat.route) })
-                    HorizontalDivider()
-                    DropdownMenuItem(
-                        text = { Text(text = "Pokaż szczegóły") },
-                        onClick = { navController.navigate(MainLeafScreen.ContractScreen.route) })
-                }
             }
-
         }
     }
+
 }
 

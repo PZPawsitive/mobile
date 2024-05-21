@@ -16,11 +16,11 @@ import org.osmdroid.views.overlay.OverlayItem
 import org.osmdroid.views.overlay.Polyline
 import java.util.Date
 
-val exampleHistory = History(
-    "super spacer",
-    Date(),
-    listOf(GeoPoint(52.237049, 21.017532), GeoPoint(53.237049, 22.017532), GeoPoint(53.237049, 23.017532))
-)
+//val exampleHistory = History(
+//    "super spacer",
+//    Date(),
+//    listOf(GeoPoint(52.237049, 21.017532), GeoPoint(53.237049, 22.017532), GeoPoint(53.237049, 23.017532))
+//)
 
 @Composable
 fun HistoryMap(apiViewModel: ApiViewModel) {
@@ -39,15 +39,15 @@ fun HistoryMap(apiViewModel: ApiViewModel) {
 //                    mapView.getOverlays().add(mLocationOverlay)
 
             val items = ArrayList<OverlayItem>()
-            exampleHistory.geopoints.forEach {
-                items.add(
-                    OverlayItem(
-                        exampleHistory.date.toString(),
-                        exampleHistory.description,
-                        it
-                    )
-                )
-            }
+//            exampleHistory.geopoints.forEach {
+//                items.add(
+//                    OverlayItem(
+//                        exampleHistory.date.toString(),
+//                        exampleHistory.description,
+//                        it
+//                    )
+//                )
+//            }
             Log.d("items", items.toString())
             mapController.setCenter(items[0].point)
             val overlay = ItemizedOverlayWithFocus<OverlayItem>(items, object :

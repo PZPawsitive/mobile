@@ -48,6 +48,7 @@ import com.example.pawsitive.viewmodel.BeaconViewModel
 import com.example.pawsitive.navigation.walk.WalkLeafScreen
 import com.example.pawsitive.navigation.walk.WalkNavGraph
 import com.example.pawsitive.navigation.walk.WalkRootScreen
+import com.example.pawsitive.viewmodel.ApiViewModel
 import com.minew.beaconplus.sdk.MTPeripheral
 
 
@@ -57,6 +58,7 @@ fun OverlayWalk(
     refresh: () -> Unit,
     connect: (MTPeripheral) -> Unit,
     disconnect: (MTPeripheral) -> Unit,
+    apiViewModel: ApiViewModel,
     registerNavigateAction: (() -> Unit) -> Unit,
 ) {
     val navController = rememberNavController()
