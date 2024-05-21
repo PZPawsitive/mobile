@@ -48,6 +48,9 @@ import com.example.pawsitive.models.Pet
 import com.example.pawsitive.navigation.main.MainLeafScreen
 import com.example.pawsitive.util.PreferencesManager
 import com.example.pawsitive.viewmodel.ApiViewModel
+import compose.icons.fontawesomeicons.solid.Dove
+import compose.icons.fontawesomeicons.solid.Horse
+import compose.icons.fontawesomeicons.solid.Paw
 import kotlinx.coroutines.runBlocking
 import retrofit2.Call
 import retrofit2.Callback
@@ -177,7 +180,13 @@ fun MyPetsColumn(
                             ) {
                                 Text(text = it.name)
                                 Icon(
-                                    imageVector = if (it.species == "DOG") FontAwesomeIcons.Solid.Dog else FontAwesomeIcons.Solid.Cat,
+                                    imageVector = when (it.species) {
+                                        "DOG" -> FontAwesomeIcons.Solid.Dog
+                                        "CAT" -> FontAwesomeIcons.Solid.Cat
+                                        "BIRD" -> FontAwesomeIcons.Solid.Dove
+                                        "HORSE" -> FontAwesomeIcons.Solid.Horse
+                                        else -> FontAwesomeIcons.Solid.Paw
+                                    },
                                     contentDescription = "pet type",
                                     Modifier.size(30.dp)
                                 )

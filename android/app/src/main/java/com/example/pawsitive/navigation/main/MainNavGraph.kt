@@ -128,7 +128,7 @@ private fun NavGraphBuilder.showPet(navController: NavController, apiViewModel: 
 private fun NavGraphBuilder.showPetInfo(navController: NavController, apiViewModel: ApiViewModel) {
     composable(route = "${MainLeafScreen.PetInfo.route}?petId={petId}", arguments = listOf(
         navArgument("petId") {})) { backStackEntry ->
-        PetInfoScreen(apiViewModel, backStackEntry.arguments?.getString("petId"))
+        PetInfoScreen(apiViewModel, backStackEntry.arguments?.getString("petId"), navController)
     }
 }
 

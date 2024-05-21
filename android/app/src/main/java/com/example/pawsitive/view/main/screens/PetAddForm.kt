@@ -31,6 +31,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -46,6 +47,7 @@ import com.example.pawsitive.navigation.main.MainLeafScreen
 import com.example.pawsitive.util.DateUtils
 import com.example.pawsitive.util.PreferencesManager
 import com.example.pawsitive.viewmodel.ApiViewModel
+import com.minew.beaconplus.sdk.MTPeripheral
 import kotlinx.coroutines.runBlocking
 import retrofit2.Call
 import retrofit2.Callback
@@ -72,14 +74,22 @@ fun PetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
     var expandedSpecies by rememberSaveable { mutableStateOf(false) }
     var expandedBreed by rememberSaveable { mutableStateOf(false) }
 
-    val species = arrayOf("DOG", "CAT", "HAMSTER")
-    val breed = arrayOf("labrador", "bulldog", "alaskan malamute")
+    val species = listOf("DOG", "CAT", "BIRD", "OTHER")
+    val dogBreeds = listOf("Labrador", "Bulldog", "Alaskan Malamute", "Other")
+    val catBreeds = listOf("Birman", "Bombay", "Bengal", "Other")
+    val birdBreeds = listOf("Canary", "Columbidae", "Cockatiel", "Finch", "Lovebird", "Other")
+    val otherBreeds = listOf("Other")
+
+    var breeds = mutableListOf("DOG", "CAT", "BIRD", "OTHER")
+
+
+
 
     var selectedSpecies by rememberSaveable {
         mutableStateOf(species[0])
     }
     var selectedBreed by rememberSaveable {
-        mutableStateOf(breed[0])
+        mutableStateOf(dogBreeds[0])
     }
 
     val context = LocalContext.current
@@ -138,6 +148,28 @@ fun PetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
                     }
                 }
             }
+            when (selectedSpecies) {
+                "DOG" -> {
+                    breeds.clear()
+                    dogBreeds.forEach{breeds.add(it)}
+                    selectedBreed = dogBreeds[0]
+                }
+                "CAT" -> {
+                    breeds.clear()
+                    catBreeds.forEach{breeds.add(it)}
+                    selectedBreed = catBreeds[0]
+                }
+                "BIRD" -> {
+                    breeds.clear()
+                    birdBreeds.forEach{breeds.add(it)}
+                    selectedBreed = birdBreeds[0]
+                }
+                "OTHER" -> {
+                    breeds.clear()
+                    otherBreeds.forEach{breeds.add(it)}
+                    selectedBreed = otherBreeds[0]
+                }
+            }
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -158,7 +190,7 @@ fun PetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
                     ExposedDropdownMenu(
                         expanded = expandedBreed,
                         onDismissRequest = { expandedBreed = false }) {
-                        breed.forEach {
+                        breeds.forEach {
                             DropdownMenuItem(text = { Text(text = it) }, onClick = {
                                 selectedBreed = it
                                 expandedBreed = false
@@ -202,49 +234,6 @@ fun PetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
         if (nameInput.isNotEmpty() && birthDate.selectedDateMillis != null)
             FloatingActionButton(
                 onClick = {
-//                    runBlocking {
-//                        val userId = preferencesManager.getUserId()
-//                        val call: Call<String>? = userId?.let { IdWrapper(it) }?.let {
-//                            AddPetRequest(
-//                                nameInput,
-//                                selectedSpecies,
-//                                selectedBreed,
-//                                millisToLocalDate!!,
-//                                it
-//                            )
-//                        }?.let {
-//                            apiViewModel.petService.addPet(
-//                                it
-//                            )
-//                        }
-//                        call?.enqueue(object : Callback<String> {
-//                            override fun onResponse(p0: Call<String>, p1: Response<String>) {
-//
-//                                Log.d("retrofit", p1.body().toString())
-//                                if (p1.body() != null) {
-//                                    Toast.makeText(
-//                                        context,
-//                                        "Succesfully added pet",
-//                                        Toast.LENGTH_SHORT
-//                                    ).show()
-//                                    navController.navigate(MainLeafScreen.Pet.route)
-//                                } else {
-//                                    Toast.makeText(context, "Adding pet failed", Toast.LENGTH_SHORT)
-//                                        .show()
-//                                }
-//
-//                            }
-//
-//                            override fun onFailure(p0: Call<String>, p1: Throwable) {
-//                                Log.d("retrofit", p1.message.toString())
-//                                Toast.makeText(
-//                                    context,
-//                                    "Connection error, try again later",
-//                                    Toast.LENGTH_SHORT
-//                                ).show()
-//                            }
-//                        })
-//                    }
                     runBlocking {
                         val userId = preferencesManager.getUserId()
                         val call: Call<String> = apiViewModel.petService.addPet(
