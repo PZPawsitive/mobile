@@ -9,8 +9,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.pawsitive.view.main.screens.ChatScreen
+import com.example.pawsitive.view.main.screens.ContractListScreen
 import com.example.pawsitive.view.main.screens.ContractScreen
-import com.example.pawsitive.view.main.screens.FollowScreen
 import com.example.pawsitive.view.main.screens.HistoryMap
 import com.example.pawsitive.view.main.screens.HomeScreen
 import com.example.pawsitive.view.main.screens.MessagesScreen
@@ -30,7 +30,7 @@ fun MainNavGraph(
 ) {
     NavHost(navController = navController, startDestination = MainRootScreen.Home.route) {
         addHomeRoute(navController, apiViewModel)
-        addFollowRoute(navController)
+        addContractListRoute(navController, apiViewModel)
         addPetRoute(navController, apiViewModel)
         addMessagesRoute(navController, apiViewModel)
         addProfileRoute(navController, apiViewModel)
@@ -47,12 +47,15 @@ private fun NavGraphBuilder.addHomeRoute(navController: NavController, apiViewMo
         showHome(navController, apiViewModel)
     }
 }
-private fun NavGraphBuilder.addFollowRoute(navController: NavHostController) {
+private fun NavGraphBuilder.addContractListRoute(
+    navController: NavHostController,
+    apiViewModel: ApiViewModel
+) {
     navigation(
-        route = MainRootScreen.Follow.route,
-        startDestination = MainLeafScreen.Follow.route
+        route = MainRootScreen.ContractList.route,
+        startDestination = MainLeafScreen.ContractList.route
     ) {
-        showFollow(navController)
+        showContractList(navController, apiViewModel)
     }
 }
 
@@ -113,9 +116,12 @@ private fun NavGraphBuilder.showHome(navController: NavController, apiViewModel:
         HomeScreen(navController, apiViewModel)
     }
 }
-private fun NavGraphBuilder.showFollow(navController: NavHostController) {
-    composable(route = MainLeafScreen.Follow.route) {
-        FollowScreen()
+private fun NavGraphBuilder.showContractList(
+    navController: NavHostController,
+    apiViewModel: ApiViewModel
+) {
+    composable(route = MainLeafScreen.ContractList.route) {
+        ContractListScreen(navController, apiViewModel)
     }
 }
 private fun NavGraphBuilder.showPet(navController: NavController, apiViewModel: ApiViewModel) {

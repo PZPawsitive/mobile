@@ -25,4 +25,7 @@ interface WalkService {
 
     @PUT("api/contracts/{id}/complete")
     fun completeContract(@Path("id") id:String): Call<String>
+
+    @POST("api/contract")
+    fun addContract()
 }

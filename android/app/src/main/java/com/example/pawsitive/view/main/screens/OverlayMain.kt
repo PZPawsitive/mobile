@@ -53,6 +53,7 @@ import com.example.pawsitive.viewmodel.ApiViewModel
 import compose.icons.FontAwesomeIcons
 import compose.icons.fontawesomeicons.Solid
 import compose.icons.fontawesomeicons.solid.Paw
+import kotlin.math.exp
 
 
 var LocalGlobalState = compositionLocalOf<Boolean> { error("not composed") }
@@ -108,7 +109,11 @@ fun OverlayMain(apiViewModel: ApiViewModel) {
                         ) {
                             DropdownMenuItem(
                                 text = { Text(text = "Settings") },
-                                onClick = { navController.navigate(MainRootScreen.Settings.route) })
+                                onClick = {
+                                    navController.navigate(MainRootScreen.Settings.route)
+                                    expandedSettings = false
+                                }
+                            )
                             HorizontalDivider()
                             DropdownMenuItem(text = { Text(text = "Logout") }, onClick = {
                                 context.startActivity(
@@ -163,15 +168,15 @@ private fun BottomNavBar(
             }
         )
         NavigationBarItem(
-            selected = currentSelectedScreen == MainRootScreen.Follow,
-            onClick = { navController.navigateToRootScreen(MainRootScreen.Follow) },
+            selected = currentSelectedScreen == MainRootScreen.ContractList,
+            onClick = { navController.navigateToRootScreen(MainRootScreen.ContractList) },
             alwaysShowLabel = true,
             label = {
                 Text(text = "Follow")
             },
             icon = {
                 Icon(
-                    imageVector = if (currentSelectedScreen == MainRootScreen.Follow) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                    imageVector = if (currentSelectedScreen == MainRootScreen.ContractList) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                     contentDescription = "Follows"
                 )
             }
@@ -234,8 +239,8 @@ private fun NavController.currentScreenAsState(): State<MainRootScreen> {
                     selectedItem.value = MainRootScreen.Home
                 }
 
-                destination.hierarchy.any { it.route == MainRootScreen.Follow.route } -> {
-                    selectedItem.value = MainRootScreen.Follow
+                destination.hierarchy.any { it.route == MainRootScreen.ContractList.route } -> {
+                    selectedItem.value = MainRootScreen.ContractList
                 }
 
                 destination.hierarchy.any { it.route == MainRootScreen.Pet.route } -> {

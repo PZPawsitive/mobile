@@ -12,5 +12,5 @@ data class AddPetRequest(
     val species: String,
     val breed: String,
     val birthdate: LocalDate,
-    val user: String
+    val owner: String
 )

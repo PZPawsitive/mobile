@@ -2,6 +2,7 @@ package com.example.pawsitive.view.walk.screens
 
 import android.annotation.SuppressLint
 import android.widget.Toast
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,6 +31,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
@@ -74,11 +76,12 @@ fun InfoScreen(
         modifier = Modifier
             .fillMaxSize()
             .nestedScroll(pullToRefreshState.nestedScrollConnection)
+
     ) {
 
         Column {
             Text(
-                text = if (!connected) "Podłącz się do urządzenia" else "Spacer aktywny",
+                text = "Devices nearby",
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
@@ -86,7 +89,7 @@ fun InfoScreen(
             PeripheralList(beaconViewModel = beaconViewModel, connect, disconnect)
             if (beaconViewModel.listenedDevices.isNotEmpty()) {
                 Text(
-                    text = "Podłączone urządzenia",
+                    text = "Followed devices",
                     style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center
@@ -134,7 +137,7 @@ fun InfoScreen(
 fun PeripheralList(
     beaconViewModel: BeaconViewModel,
     connect: (MTPeripheral) -> Unit,
-    disconnect: (MTPeripheral) -> Unit
+    disconnect: (MTPeripheral) -> Unit,
 ) {
     val mlist = beaconViewModel.mlist
     LazyColumn(

@@ -2,7 +2,7 @@ package com.example.pawsitive.navigation.main
 
 sealed class MainRootScreen(val route: String) {
     data object Home : MainRootScreen("home_root")
-    data object Follow : MainRootScreen("follow_root")
+    data object ContractList : MainRootScreen("contract_list_root")
     data object Pet : MainRootScreen("pet_root")
     data object Messages : MainRootScreen("messages_root")
     data object Profile : MainRootScreen("profile_root")
@@ -11,7 +11,7 @@ sealed class MainRootScreen(val route: String) {
 
 sealed class MainLeafScreen(val route: String) {
     data object Home : MainLeafScreen("home")
-    data object Follow : MainLeafScreen("follow")
+    data object ContractList : MainLeafScreen("contract_list")
     data object Pet : MainLeafScreen("pet")
     data object Messages : MainLeafScreen("messages")
     data object Chat : MainLeafScreen("chat")
