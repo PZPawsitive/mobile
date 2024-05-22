@@ -36,8 +36,12 @@ interface UserService {
 
     @GET("api/users")
     fun getDogWalkersNearby(
+        @Query("range") range: Double,
         @Query("latitude") latitude: Double,
         @Query("longtitude") longtitude: Double
     ): Call<List<User>>
+
+    @GET("api/users/dogwalkers")
+    fun getDogWalkers() : Call<List<User>>
 
 }

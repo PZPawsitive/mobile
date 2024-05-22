@@ -23,7 +23,8 @@ import java.util.Date
 //)
 
 @Composable
-fun HistoryMap(apiViewModel: ApiViewModel) {
+fun HistoryMap(apiViewModel: ApiViewModel, contractId: String?) {
+    Log.d("retrofit", "kontrakt id ${contractId.toString()}")
     AndroidView(
         modifier = Modifier.padding(10.dp),
         factory = { it ->
@@ -38,7 +39,7 @@ fun HistoryMap(apiViewModel: ApiViewModel) {
 //                    mLocationOverlay.enableMyLocation()
 //                    mapView.getOverlays().add(mLocationOverlay)
 
-            val items = ArrayList<OverlayItem>()
+//            val items = ArrayList<OverlayItem>()
 //            exampleHistory.geopoints.forEach {
 //                items.add(
 //                    OverlayItem(
@@ -48,18 +49,18 @@ fun HistoryMap(apiViewModel: ApiViewModel) {
 //                    )
 //                )
 //            }
-            Log.d("items", items.toString())
-            mapController.setCenter(items[0].point)
-            val overlay = ItemizedOverlayWithFocus<OverlayItem>(items, object :
-                ItemizedIconOverlay.OnItemGestureListener<OverlayItem> {
-                override fun onItemSingleTapUp(index: Int, item: OverlayItem): Boolean {
-                    return true
-                }
-
-                override fun onItemLongPress(index: Int, item: OverlayItem): Boolean {
-                    return false
-                }
-            }, it)
+//            Log.d("items", items.toString())
+//            mapController.setCenter(items[0].point)
+//            val overlay = ItemizedOverlayWithFocus<OverlayItem>(items, object :
+//                ItemizedIconOverlay.OnItemGestureListener<OverlayItem> {
+//                override fun onItemSingleTapUp(index: Int, item: OverlayItem): Boolean {
+//                    return true
+//                }
+//
+//                override fun onItemLongPress(index: Int, item: OverlayItem): Boolean {
+//                    return false
+//                }
+//            }, it)
             // my location
 //            val mLocationOverlay = MyLocationNewOverlay(GpsMyLocationProvider(it), mapView)
 //            mLocationOverlay.enableMyLocation()
@@ -68,10 +69,10 @@ fun HistoryMap(apiViewModel: ApiViewModel) {
 
             val line = Polyline()
             line.width = 4f
-            line.setPoints(items.map { GeoPoint(it.point.latitude, it.point.longitude) })
+//            line.setPoints(items.map { GeoPoint(it.point.latitude, it.point.longitude) })
             mapView.overlays.add(line)
-            overlay.setFocusItemsOnTap(true);
-            mapView.overlays.add(overlay)
+//            overlay.setFocusItemsOnTap(true);
+//            mapView.overlays.add(overlay)
 
             mapView
         }

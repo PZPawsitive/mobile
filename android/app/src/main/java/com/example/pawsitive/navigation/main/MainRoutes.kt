@@ -12,6 +12,7 @@ sealed class MainRootScreen(val route: String) {
 sealed class MainLeafScreen(val route: String) {
     data object Home : MainLeafScreen("home")
     data object ContractList : MainLeafScreen("contract_list")
+    data object ContractAddForm : MainLeafScreen("contract_add_form")
     data object Pet : MainLeafScreen("pet")
     data object Messages : MainLeafScreen("messages")
     data object Chat : MainLeafScreen("chat")

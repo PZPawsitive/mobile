@@ -36,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.pawsitive.models.Contract
 import com.example.pawsitive.models.History
 import com.example.pawsitive.navigation.main.MainLeafScreen
 import com.example.pawsitive.viewmodel.ApiViewModel
@@ -64,30 +65,28 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
 
     val openAlertDialog = remember { mutableStateOf(false) }
 
-    var histories: List<History>? by remember {
+    var histories: List<Contract>? by remember {
         mutableStateOf(null)
-    }
-    var histories1: List<History>? = remember {
-        mutableStateListOf()
     }
 
     runBlocking {
-        val call: Call<List<History>> = apiViewModel.petService.getAllPetWalkHistoryByPetId(id = petId!!)
-        call.enqueue(object : Callback<List<History>> {
+        val call: Call<List<Contract>> = apiViewModel.petService.getAllPetWalkHistoryByPetId(id = petId!!)
+        call.enqueue(object : Callback<List<Contract>> {
             override fun onResponse(
-                p0: Call<List<History>>,
-                p1: Response<List<History>>
+                p0: Call<List<Contract>>,
+                p1: Response<List<Contract>>
             ) {
                 Log.d("retrofit", p1.body().toString())
                 if (p1.body() != null) {
-                    histories1 = p1.body()
+                    histories = p1.body()
+                    Log.d("retrofit", "histories ${p1.body()}")
                 } else {
                     Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(
-                p0: Call<List<History>>,
+                p0: Call<List<Contract>>,
                 p1: Throwable
             ) {
                 Log.d("retrofit", p1.message.toString())
@@ -108,13 +107,13 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                     .fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
-            if (histories1 != null) {
+            if (histories != null) {
                 LazyColumn(
                     modifier = Modifier
                         .padding(10.dp)
                         .fillMaxSize()
                 ) {
-                    items(items = histories1!!) {
+                    items(items = histories!!) {
                         var expandedSettings by remember {
                             mutableStateOf(false)
                         }
@@ -124,20 +123,20 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                                 onDismissRequest = { expandedSettings = false }
                             ) {
                                 DropdownMenuItem(
-                                    text = { Text(text = "Zmień opis") },
+                                    text = { Text(text = "Change description") },
                                     onClick = {
                                         expandedSettings = !expandedSettings
                                         openAlertDialog.value = !openAlertDialog.value
                                     })
                                 HorizontalDivider()
-                                DropdownMenuItem(text = { Text(text = "Usuń spacer") }, onClick = {
+                                DropdownMenuItem(text = { Text(text = "remove history") }, onClick = {
                                     expandedSettings = !expandedSettings
 //                                histories1.remove(it)
                                 })
                                 HorizontalDivider()
                                 DropdownMenuItem(
                                     text = { Text(text = "Zobacz na mapie") },
-                                    onClick = { navController.navigate("${MainLeafScreen.PetHistory.route}?petId=${it.id}") })
+                                    onClick = { navController.navigate("${MainLeafScreen.PetHistoryMap.route}?id=${it.id}") })
                             }
                             Card(
                                 modifier = Modifier
@@ -147,7 +146,7 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                             ) {
                                 Column(modifier = Modifier.padding(5.dp)) {
                                     Text(text = it.description, fontWeight = FontWeight.Bold)
-                                    Text(text = it.date.toString())
+//                                    Text(text = it.date.toString())
                                 }
                             }
                         }

@@ -52,6 +52,7 @@ import retrofit2.Response
 
 @Composable
 fun ContractScreen(apiViewModel: ApiViewModel, id: String?) {
+    Log.d("retrofit", "contract id screen ${id}")
     WalkNotActiveView(apiViewModel,id)
 }
 
@@ -101,9 +102,9 @@ fun WalkNotActiveView(apiViewModel: ApiViewModel,id: String?) {
 
                 Text(text = "Contract", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center, style = MaterialTheme.typography.headlineLarge)
                 Spacer(modifier = Modifier.height(10.dp))
-                Text(text = "Owner: ${contract!!.user}", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center,  style = MaterialTheme.typography.headlineSmall)
-                Spacer(modifier = Modifier.height(10.dp))
-                Text(text = "Pet quantity: ${contract!!.petAmount}", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center,  style = MaterialTheme.typography.headlineSmall)
+//                Text(text = "Owner: ${contract!!.user}", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center,  style = MaterialTheme.typography.headlineSmall)
+//                Spacer(modifier = Modifier.height(10.dp))
+                Text(text = "Pet quantity: ${contract!!.pets.size}", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center,  style = MaterialTheme.typography.headlineSmall)
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(text = "Payment: ${contract!!.reward}$", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center,  style = MaterialTheme.typography.headlineSmall)
                 Spacer(modifier = Modifier.height(10.dp))

@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.pawsitive.view.main.screens.ChatScreen
+import com.example.pawsitive.view.main.screens.ContractAddForm
 import com.example.pawsitive.view.main.screens.ContractListScreen
 import com.example.pawsitive.view.main.screens.ContractScreen
 import com.example.pawsitive.view.main.screens.HistoryMap
@@ -56,6 +57,7 @@ private fun NavGraphBuilder.addContractListRoute(
         startDestination = MainLeafScreen.ContractList.route
     ) {
         showContractList(navController, apiViewModel)
+        showContractAddForm(navController, apiViewModel)
     }
 }
 
@@ -124,6 +126,14 @@ private fun NavGraphBuilder.showContractList(
         ContractListScreen(navController, apiViewModel)
     }
 }
+private fun NavGraphBuilder.showContractAddForm(
+    navController: NavController,
+    apiViewModel: ApiViewModel
+) {
+    composable(route = MainLeafScreen.ContractAddForm.route) {
+        ContractAddForm(navController, apiViewModel)
+    }
+}
 private fun NavGraphBuilder.showPet(navController: NavController, apiViewModel: ApiViewModel) {
     composable(route = MainLeafScreen.Pet.route) {
         PetScreen(
@@ -154,8 +164,10 @@ private fun NavGraphBuilder.showPetHistoryMap(
     navController: NavController,
     apiViewModel: ApiViewModel
 ) {
-    composable(route = MainLeafScreen.PetHistoryMap.route) {
-        HistoryMap(apiViewModel)
+    composable(route = "${MainLeafScreen.PetHistoryMap.route}?id={id}", arguments = listOf(
+        navArgument("id") {}
+    )) {backStackEntry ->
+        HistoryMap(apiViewModel, backStackEntry.arguments?.getString("id"))
     }
 }
 private fun NavGraphBuilder.showPetAddForm(navController: NavController, apiViewModel: ApiViewModel) {

@@ -8,6 +8,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface WalkService {
 
@@ -21,11 +22,18 @@ interface WalkService {
     fun postGeopoint(@Body geopoint: GeopointDTO): Call<String>
 
     @PUT("api/contracts/{id}/active")
-    fun acceptContract(@Path("id") id:String): Call<String>
+    fun acceptContract(@Path("id") id: String): Call<String>
 
     @PUT("api/contracts/{id}/complete")
-    fun completeContract(@Path("id") id:String): Call<String>
+    fun completeContract(@Path("id") id: String): Call<String>
 
-    @POST("api/contract")
-    fun addContract()
+    @POST("api/contracts")
+    fun addContract(
+        @Query("description") description: String,
+        @Query("reward") reward: Double,
+        @Query("latitude") latitude: Double,
+        @Query("longitude") longitude: Double,
+        @Query("pets") pets: List<String?>,
+        @Query("isDangerous") isDangerous: Boolean,
+    ): Call<String>
 }

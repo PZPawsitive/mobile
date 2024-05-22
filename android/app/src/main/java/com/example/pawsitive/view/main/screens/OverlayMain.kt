@@ -17,9 +17,11 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.ManageAccounts
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.List
 import androidx.compose.material.icons.outlined.ManageAccounts
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
@@ -172,12 +174,12 @@ private fun BottomNavBar(
             onClick = { navController.navigateToRootScreen(MainRootScreen.ContractList) },
             alwaysShowLabel = true,
             label = {
-                Text(text = "Follow")
+                Text(text = "Contracts")
             },
             icon = {
                 Icon(
-                    imageVector = if (currentSelectedScreen == MainRootScreen.ContractList) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                    contentDescription = "Follows"
+                    imageVector = if (currentSelectedScreen == MainRootScreen.ContractList) Icons.Filled.List else Icons.Outlined.List,
+                    contentDescription = "Contracts"
                 )
             }
         )

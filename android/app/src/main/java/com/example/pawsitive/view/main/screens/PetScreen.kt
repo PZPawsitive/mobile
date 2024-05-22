@@ -293,8 +293,8 @@ fun Contracts(
                                 .padding(10.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text(text = it.user, fontWeight = FontWeight.Bold)
-                            Text(text = "${it.petAmount} pets")
+//                            Text(text = it.user, fontWeight = FontWeight.Bold)
+                            Text(text = "${it.pets.size} pets")
                             Text(text = "${it.reward} $", fontWeight = FontWeight.Bold)
                         }
                     }
