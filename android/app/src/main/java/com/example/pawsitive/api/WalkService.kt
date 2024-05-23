@@ -1,5 +1,6 @@
 package com.example.pawsitive.api
 
+import com.example.pawsitive.models.AddContract
 import com.example.pawsitive.models.Contract
 import com.example.pawsitive.models.GeopointDTO
 import com.example.pawsitive.models.SimpleGeopoint
@@ -20,20 +21,24 @@ interface WalkService {
     @GET("api/contracts/{id}")
     fun getContract(@Path("id") id: String): Call<Contract>
 
+    @GET("api/contracts/{id}/geopoints")
+    fun getGeopoints(
+        @Path("id") id: String
+    ): Call<List<GeopointDTO>>
+
     @POST("api/geopoints/{contractId}")
     fun postGeopoint(
         @Path("contractId") contractId: String,
-        @Query("latitude") latitude: Double,
-        @Query("longitude") longitude: Double,
+        @Body createGeopointDTO: SimpleGeopoint
     ): Call<String>
 
     @POST("api/geopoints/all/{contractId}")
     fun postMultipleGeopoints(
         @Path("contractId") contractId: String,
         @Body geopointsDTOs: List<SimpleGeopoint>
-    ) : Call<List<String>>
+    ): Call<List<String>>
 
-    @PUT("api/contracts/{id}/active")
+    @PUT("api/contracts/{id}/activate")
     fun acceptContract(@Path("id") id: String): Call<String>
 
     @PUT("api/contracts/{id}/complete")
@@ -41,11 +46,6 @@ interface WalkService {
 
     @POST("api/contracts")
     fun addContract(
-        @Query("description") description: String,
-        @Query("reward") reward: Double,
-        @Query("latitude") latitude: Double,
-        @Query("longitude") longitude: Double,
-        @Query("pets") pets: List<String?>,
-        @Query("isDangerous") isDangerous: Boolean,
+        @Body createContractDTO: AddContract
     ): Call<String>
 }

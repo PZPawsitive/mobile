@@ -10,6 +10,7 @@ import org.osmdroid.util.GeoPoint
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.time.LocalDateTime
 import java.util.UUID
 
 class SendGeolocationTask(apiViewModel: ApiViewModel, historyId: String?) {
@@ -28,7 +29,7 @@ class SendGeolocationTask(apiViewModel: ApiViewModel, historyId: String?) {
             if (isRunning) {
                 runBlocking {
                     val call: Call<String> =
-                        apiViewModel.walkService.postGeopoint(historyId!!, latitude, longitude)
+                        apiViewModel.walkService.postGeopoint(historyId!!, SimpleGeopoint(latitude, longitude, LocalDateTime.now()))
                     call.enqueue(object : Callback<String> {
                         override fun onResponse(
                             p0: Call<String>,

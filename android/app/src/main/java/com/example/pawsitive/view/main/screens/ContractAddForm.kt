@@ -33,8 +33,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.pawsitive.models.AddContract
 import com.example.pawsitive.models.AddPetRequest
 import com.example.pawsitive.models.Pet
+import com.example.pawsitive.models.SimpleGeopoint
 import com.example.pawsitive.navigation.main.MainLeafScreen
 import com.example.pawsitive.util.PreferencesManager
 import com.example.pawsitive.viewmodel.ApiViewModel
@@ -42,6 +44,7 @@ import kotlinx.coroutines.runBlocking
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.time.LocalDateTime
 
 @Composable
 fun ContractAddForm(navController: NavController, apiViewModel: ApiViewModel) {
@@ -157,14 +160,7 @@ fun ContractAddForm(navController: NavController, apiViewModel: ApiViewModel) {
                     Log.d("retrofit", "dangerous: ${isDangerous}")
                     runBlocking {
                         val userId = preferencesManager.getUserId()
-                        val call: Call<String> = apiViewModel.walkService.addContract(
-                            description = descriptionInput,
-                            reward = rewardInput.toDouble(),
-                            latitude = latitude.toDouble(),
-                            longitude = longitude.toDouble(),
-                            pets = selectedPets.toList(),
-                            isDangerous = isDangerous
-                        )
+                        val call: Call<String> = apiViewModel.walkService.addContract(AddContract(descriptionInput, rewardInput.toDouble(), SimpleGeopoint(latitude, longitude, LocalDateTime.now()), selectedPets.toList(), isDangerous))
                         call.enqueue(object : Callback<String> {
                             override fun onResponse(
                                 p0: Call<String>,

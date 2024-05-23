@@ -3,6 +3,7 @@ package com.example.pawsitive.api
 import android.content.Context
 import android.content.SharedPreferences
 import com.example.pawsitive.util.LocalDateJsonAdapter
+import com.example.pawsitive.util.LocalDateTimeJsonAdapter
 import com.example.pawsitive.util.PreferencesManager
 import com.example.pawsitive.util.UUIDJsonAdapter
 import com.squareup.moshi.Moshi
@@ -21,6 +22,7 @@ class RetrofitClient(context: Context) {
     private val moshi = Moshi.Builder()
         .add(UUIDJsonAdapter())
         .add(LocalDateJsonAdapter())
+        .add(LocalDateTimeJsonAdapter())
         .build()
 
     private val okHttpClient = OkHttpClient.Builder()
