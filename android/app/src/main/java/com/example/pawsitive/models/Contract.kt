@@ -7,7 +7,6 @@ data class Contract(
     val id: String,
     val dogWalker: String?,
     val description: String,
-//    val user: String,
     val reward: Double,
     val pets: List<String>,
     val dangerous: Boolean,

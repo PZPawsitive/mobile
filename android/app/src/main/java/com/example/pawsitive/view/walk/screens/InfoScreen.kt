@@ -1,8 +1,10 @@
 package com.example.pawsitive.view.walk.screens
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,8 +17,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -31,17 +36,23 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.pawsitive.view.main.MainActivity
+import com.example.pawsitive.view.walk.WalkActivity
+import com.example.pawsitive.viewmodel.ApiViewModel
 import com.example.pawsitive.viewmodel.BeaconViewModel
 import com.minew.beaconplus.sdk.MTFrameHandler
 import com.minew.beaconplus.sdk.MTPeripheral
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -51,11 +62,10 @@ fun InfoScreen(
     refresh: () -> Unit,
     connect: (MTPeripheral) -> Unit,
     disconnect: (MTPeripheral) -> Unit,
-    navController: NavHostController
+    navController: NavHostController,
+    apiViewModel: ApiViewModel,
+    historyId: String?
 ) {
-    var connected by remember {
-        mutableStateOf(false)
-    }
     val pullToRefreshState = rememberPullToRefreshState()
     val scope = rememberCoroutineScope()
 
@@ -72,6 +82,8 @@ fun InfoScreen(
             isRefreshing = false
         }
     }
+    val openAlertDialog = remember { mutableStateOf(false) }
+    val context = LocalContext.current
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -101,18 +113,63 @@ fun InfoScreen(
                 )
             }
         }
+        FloatingActionButton(onClick = { openAlertDialog.value = !openAlertDialog.value }, modifier = Modifier
+            .align(Alignment.BottomCenter)
+            .padding(bottom = 15.dp)) {
+            Box(modifier = Modifier.padding(15.dp)) {
+                Text(text = "Walk Completed")
+            }
+        }
+        when {
+            openAlertDialog.value -> {
+                AlertDialog(
+                    onDismissRequest = { openAlertDialog.value = false },
+                    confirmButton = {
+                        Button(onClick = {
+                            runBlocking {
+                                val call: Call<String> = apiViewModel.walkService.completeContract(historyId!!)
+                                call.enqueue(object : Callback<String> {
+                                    override fun onResponse(
+                                        p0: Call<String>,
+                                        p1: Response<String>
+                                    ) {
+                                        if (p1.body() != null) {
+                                            openAlertDialog.value = false
+                                            val intent = Intent(
+                                                context,
+                                                MainActivity::class.java
+                                            )
+                                            context.startActivity(intent)
+                                        } else {
+                                            Log.d("retrofit", p1.body().toString())
+                                            Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                                    override fun onFailure(
+                                        p0: Call<String>,
+                                        p1: Throwable
+                                    ) {
+                                        Log.d("retrofit", p1.message.toString())
+                                        Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+                                    }
 
-//        if (beaconViewModel.connectedMTPeripheral != null) {
-//            FloatingActionButton(
-//                onClick = { navController.navigate(LeafScreen.DeviceConnected.route) },
-//                modifier = Modifier
-//                    .align(Alignment.BottomCenter)
-//                    .padding(bottom = 10.dp)
-//            ) {
-//                Text(text = "Go to connected device", modifier = Modifier.padding(10.dp))
-//            }
-//        }
-
+                                })
+                            }
+                        }) {
+                            Text(text = "Yes")
+                        }
+                    },
+                    dismissButton = {
+                        Button(onClick = { openAlertDialog.value = false }) {
+                            Text(text = "No")
+                        }
+                    },
+                    text = {
+                        Text(text = "Are you at paymaster's location?")
+                    }
+                )
+            }
+        }
         if (pullToRefreshState.isRefreshing) {
             LaunchedEffect(true) {
                 onRefresh()

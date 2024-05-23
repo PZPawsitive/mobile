@@ -59,6 +59,7 @@ fun OverlayWalk(
     connect: (MTPeripheral) -> Unit,
     disconnect: (MTPeripheral) -> Unit,
     apiViewModel: ApiViewModel,
+    historyId: String?,
     registerNavigateAction: (() -> Unit) -> Unit,
 ) {
     val navController = rememberNavController()
@@ -88,7 +89,7 @@ fun OverlayWalk(
                 .fillMaxSize()
                 .padding(it)
         ) {
-            WalkNavGraph(navController = navController, beaconViewModel, refresh, connect, disconnect)
+            WalkNavGraph(navController = navController, beaconViewModel, refresh, connect, disconnect, apiViewModel, historyId)
         }
     }
 }

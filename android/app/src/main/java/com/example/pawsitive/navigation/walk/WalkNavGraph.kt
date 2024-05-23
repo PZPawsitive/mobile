@@ -10,6 +10,7 @@ import com.example.pawsitive.view.walk.screens.DeviceConnectedScreen
 import com.example.pawsitive.view.walk.screens.InfoScreen
 import com.example.pawsitive.view.walk.screens.MapScreen
 import com.example.pawsitive.view.walk.screens.MessageScreen
+import com.example.pawsitive.viewmodel.ApiViewModel
 import com.example.pawsitive.viewmodel.BeaconViewModel
 import com.minew.beaconplus.sdk.MTPeripheral
 
@@ -20,10 +21,12 @@ fun WalkNavGraph(
     beaconViewModel: BeaconViewModel,
     refresh: () -> Unit,
     connect: (MTPeripheral) -> Unit,
-    disconnect: (MTPeripheral) -> Unit
+    disconnect: (MTPeripheral) -> Unit,
+    apiViewModel: ApiViewModel,
+    historyId: String?
 ) {
     NavHost(navController = navController, startDestination = WalkRootScreen.Info.route) {
-        addInfoRoute(navController, beaconViewModel, refresh, connect, disconnect)
+        addInfoRoute(navController, beaconViewModel, refresh, connect, disconnect, apiViewModel, historyId)
         addMapRoute(navController)
         addMessagesRoute(navController)
     }
@@ -34,10 +37,12 @@ private fun NavGraphBuilder.addInfoRoute(
     beaconViewModel: BeaconViewModel,
     refresh: () -> Unit,
     connect: (MTPeripheral) -> Unit,
-    disconnect: (MTPeripheral) -> Unit
+    disconnect: (MTPeripheral) -> Unit,
+    apiViewModel: ApiViewModel,
+    historyId: String?
 ) {
     navigation(route = WalkRootScreen.Info.route, startDestination = WalkLeafScreen.Info.route) {
-        showInfo(navController, beaconViewModel, refresh, connect, disconnect)
+        showInfo(navController, beaconViewModel, refresh, connect, disconnect, apiViewModel, historyId)
         showDeviceConnected(navController, beaconViewModel, disconnect)
     }
 }
@@ -61,10 +66,12 @@ private fun NavGraphBuilder.showInfo(
     beaconViewModel: BeaconViewModel,
     refresh: () -> Unit,
     connect: (MTPeripheral) -> Unit,
-    disconnect: (MTPeripheral) -> Unit
+    disconnect: (MTPeripheral) -> Unit,
+    apiViewModel: ApiViewModel,
+    historyId: String?
 ) {
     composable(route = WalkLeafScreen.Info.route) {
-        InfoScreen(beaconViewModel, refresh, connect, disconnect, navController)
+        InfoScreen(beaconViewModel, refresh, connect, disconnect, navController, apiViewModel, historyId)
     }
 }
 

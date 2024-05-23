@@ -100,7 +100,8 @@ class WalkActivity : AppCompatActivity() {
                 { refresh() },
                 ::connect,
                 ::disconnect,
-                apiViewModel
+                apiViewModel,
+                historyId
             ) { navigateAction ->
                 onNavigateAction = navigateAction
             }

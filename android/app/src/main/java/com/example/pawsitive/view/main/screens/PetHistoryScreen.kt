@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -16,6 +17,7 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -30,6 +32,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -97,17 +100,17 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        Column(modifier = Modifier.fillMaxSize()) {
+        if (histories != null && histories!!.isNotEmpty()) {
+            Column(modifier = Modifier.fillMaxSize()) {
 
-            Text(
-                text = "Historia spacerów",
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier
-                    .padding(10.dp)
-                    .fillMaxWidth(),
-                textAlign = TextAlign.Center
-            )
-            if (histories != null) {
+                Text(
+                    text = "Historia spacerów",
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
                 LazyColumn(
                     modifier = Modifier
                         .padding(10.dp)
@@ -154,9 +157,15 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                     }
                 }
             }
-
-
-
+        } else {
+            Text(
+                text = "Brak spacerów",
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
         }
         when {
             openAlertDialog.value -> {

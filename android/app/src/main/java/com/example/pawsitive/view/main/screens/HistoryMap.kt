@@ -29,6 +29,8 @@ import org.osmdroid.views.overlay.ItemizedIconOverlay
 import org.osmdroid.views.overlay.ItemizedOverlayWithFocus
 import org.osmdroid.views.overlay.OverlayItem
 import org.osmdroid.views.overlay.Polyline
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -75,7 +77,7 @@ fun HistoryMap(apiViewModel: ApiViewModel, contractId: String?) {
         })
     }
     Log.d("raz", geopoints.toString())
-    if (geopoints != null) {
+    if (geopoints != null && geopoints!!.isNotEmpty()) {
         AndroidView(
             modifier = Modifier.padding(10.dp),
             factory = { it ->
@@ -130,15 +132,34 @@ fun HistoryMap(apiViewModel: ApiViewModel, contractId: String?) {
             }
         )
     } else {
-        Box(modifier = Modifier.fillMaxSize()) {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .width(64.dp)
-                    .align(Alignment.Center),
-                color = MaterialTheme.colorScheme.secondary,
-                trackColor = MaterialTheme.colorScheme.surfaceVariant
-            )
-        }
+        AndroidView(
+            modifier = Modifier.padding(10.dp),
+            factory = { it ->
+                val mapView = MapView(it)
+                mapView.setTileSource(TileSourceFactory.MAPNIK)
+                mapView.setMultiTouchControls(true)
+                val mapController = mapView.controller
+                mapController.setZoom(17)
+
+                val mLocationOverlay = MyLocationNewOverlay(GpsMyLocationProvider(it), mapView)
+                mLocationOverlay.enableMyLocation()
+                mapView.overlays.add(mLocationOverlay)
+                mLocationOverlay.enableFollowLocation()
+
+
+                mapController.setCenter(mLocationOverlay.myLocation)
+
+
+//                val line = Polyline()
+//                line.width = 4f
+//            line.setPoints(items.map { GeoPoint(it.point.latitude, it.point.longitude) })
+//                mapView.overlays.add(line)
+//            overlay.setFocusItemsOnTap(true);
+//            mapView.overlays.add(overlay)
+
+                mapView
+            }
+        )
     }
 
 }

@@ -74,8 +74,7 @@ fun ContractListScreen(navController: NavHostController, apiViewModel: ApiViewMo
                 ) {
                     Log.d("retrofit", p1.body().toString())
                     if (p1.body() != null) {
-
-                        contracts = p1.body()!!.filter { !it.completed || !it.active }
+                        contracts = p1.body()!!.filter { !it.active && !it.completed }
                     } else {
                         Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
                     }
