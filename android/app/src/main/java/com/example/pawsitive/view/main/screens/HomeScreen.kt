@@ -6,6 +6,9 @@ import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.util.Log
+import android.widget.Toast
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,12 +37,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import com.example.pawsitive.R
+import com.example.pawsitive.models.User
 import com.example.pawsitive.navigation.main.MainLeafScreen
 import com.example.pawsitive.viewmodel.ApiViewModel
 import compose.icons.FontAwesomeIcons
 import compose.icons.fontawesomeicons.Solid
 import compose.icons.fontawesomeicons.solid.List
 import compose.icons.fontawesomeicons.solid.Map
+import kotlinx.coroutines.runBlocking
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
@@ -49,6 +54,9 @@ import org.osmdroid.views.overlay.OverlayItem
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 data class Post(val owner: String, val content: String)
@@ -65,12 +73,44 @@ val posts = listOf(
 @Composable
 fun HomeScreen(navController: NavController, apiViewModel: ApiViewModel) {
 
+    val context = LocalContext.current
+    var dogWalkers: List<User>? by remember {
+        mutableStateOf(null)
+    }
+    Log.d("retrofit", "smth")
+    runBlocking {
+        val call: Call<List<User>> = apiViewModel.userService.getDogWalkers()
+        call.enqueue(object : Callback<List<User>> {
+            override fun onResponse(
+                p0: Call<List<User>>,
+                p1: Response<List<User>>
+            ) {
+                Log.d("retrofit", p1.body().toString())
+                if (p1.body() != null) {
+
+                    dogWalkers = p1.body()
+                } else {
+                    Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(
+                p0: Call<List<User>>,
+                p1: Throwable
+            ) {
+                Log.d("retrofit", p1.message.toString())
+                Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+            }
+
+        })
+    }
+
     Scaffold {
         Box(modifier = Modifier.fillMaxSize()) {
             if (LocalGlobalState.current) {
                 PostsScreen(navController)
             } else {
-                DogWalkersScreen(navController)
+                DogWalkersScreen(navController, dogWalkers)
             }
         }
     }
@@ -101,17 +141,17 @@ fun PostsScreen(navController: NavController) {
 }
 
 
-data class DogWalker(val name: String, val description: String, val geoPoint: GeoPoint)
+//data class DogWalker(val name: String, val description: String, val geoPoint: GeoPoint)
 
-val dogWalkers = listOf(
-    DogWalker("kacper", "dogwalker", GeoPoint(52.237049, 21.017532)),
-    DogWalker("kacper", "dogwalker", GeoPoint(53.237049, 22.017532)),
-    DogWalker("kacper", "dogwalker", GeoPoint(53.237049, 23.017532))
-)
+//val dogWalkers = listOf(
+//    DogWalker("kacper", "dogwalker", GeoPoint(52.237049, 21.017532)),
+//    DogWalker("kacper", "dogwalker", GeoPoint(53.237049, 22.017532)),
+//    DogWalker("kacper", "dogwalker", GeoPoint(53.237049, 23.017532))
+//)
 
 @SuppressLint("UseCompatLoadingForDrawables")
 @Composable
-fun DogWalkersScreen(navController: NavController) {
+fun DogWalkersScreen(navController: NavController, dogWalkers: List<User>?) {
     var viewMode by remember {
         mutableStateOf(true)
     }
@@ -127,21 +167,33 @@ fun DogWalkersScreen(navController: NavController) {
 
     Box(Modifier.fillMaxSize()) {
         if (viewMode) {
-            LazyColumn {
-                items(items = dogWalkers) {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(10.dp),
-                        onClick = {
-                            navController.navigate(MainLeafScreen.Chat.route)
+            if (dogWalkers != null) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    LazyColumn {
+                        items(items = dogWalkers) {
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(10.dp),
+                                onClick = {
+                                    navController.navigate(MainLeafScreen.Chat.route)
+                                }
+                            ) {
+                                Text(text = it.firstName)
+                                Text(text = it.lastName)
+                            }
                         }
-                    ) {
-                        Text(text = it.name)
-                        Text(text = "${it.geoPoint}")
                     }
                 }
+            } else {
+                Log.d("retrofit", "brak")
+                Box(modifier = Modifier
+                    .fillMaxSize()
+                    .border(2.dp, Color.Red)) {
+                    Text(text = "cos", Modifier.align(Alignment.Center))
+                }
             }
+
         } else {
             Column() {
                 AndroidView(
@@ -156,13 +208,13 @@ fun DogWalkersScreen(navController: NavController) {
                         val scaledPersonIcon: Drawable = scaleDrawable(personIcon, 15)
                         scaledPersonIcon.colorFilter = PorterDuffColorFilter(context.getColor(R.color.black), PorterDuff.Mode.SRC_IN)
                         val items = ArrayList<OverlayItem>()
-                        dogWalkers.forEach { walker ->
-                            val overlayItem = OverlayItem(walker.name, walker.description, walker.geoPoint)
-                            overlayItem.setMarker(scaledPersonIcon)
-                            items.add(
-                                overlayItem
-                            )
-                        }
+//                        com.example.pawsitive.view.main.screens.dogWalkers.forEach { walker ->
+//                            val overlayItem = OverlayItem(walker.name, walker.description, walker.geoPoint)
+//                            overlayItem.setMarker(scaledPersonIcon)
+//                            items.add(
+//                                overlayItem
+//                            )
+//                        }
                         val mapController = mapView.controller
                         val mLocationOverlay = MyLocationNewOverlay(GpsMyLocationProvider(it), mapView)
                         mLocationOverlay.enableMyLocation()

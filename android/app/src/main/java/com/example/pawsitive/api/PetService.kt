@@ -32,5 +32,4 @@ interface PetService {
 
     @GET("api/pets/{id}/history")
     fun getAllPetWalkHistoryByPetId(@Path("id") id: String): Call<List<Contract>>
-
 }
