@@ -504,5 +504,13 @@ class WalkActivity : AppCompatActivity() {
         super.onDestroy()
         mMTCentralManager.stopService()
         stopScan()
+        task.stop()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mMTCentralManager.stopService()
+        stopScan()
+        task.stop()
     }
 }

@@ -49,14 +49,13 @@ import retrofit2.Callback
 import retrofit2.Response
 
 
-
 @Composable
 fun ContractScreen(apiViewModel: ApiViewModel, id: String?) {
-    WalkNotActiveView(apiViewModel,id)
+    WalkNotActiveView(apiViewModel, id)
 }
 
 @Composable
-fun WalkNotActiveView(apiViewModel: ApiViewModel,id: String?) {
+fun WalkNotActiveView(apiViewModel: ApiViewModel, id: String?) {
     var contract: Contract? by remember {
         mutableStateOf(null)
     }
@@ -94,42 +93,60 @@ fun WalkNotActiveView(apiViewModel: ApiViewModel,id: String?) {
                 .fillMaxSize()
         ) {
             Column {
-//            val location =
-//                Uri.parse("geo:${contract.localization.latitude},${exampleContract.localization.longitude}?q=${exampleContract.localization.latitude},${exampleContract.localization.longitude}")
-//            val mapIntent = Intent(Intent.ACTION_VIEW, location)
-//            val chooser = Intent.createChooser(mapIntent, "choose map")
+                val location =
+                    Uri.parse("geo:${contract!!.location.latitude},${contract!!.location.longitude}?q=${contract!!.location.latitude},${contract!!.location.longitude}")
+                val mapIntent = Intent(Intent.ACTION_VIEW, location)
+                val chooser = Intent.createChooser(mapIntent, "choose map")
 
-                Text(text = "Contract", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center, style = MaterialTheme.typography.headlineLarge)
+                Text(
+                    text = "Contract",
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.headlineLarge
+                )
                 Spacer(modifier = Modifier.height(10.dp))
 //                Text(text = "Owner: ${contract!!.user}", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center,  style = MaterialTheme.typography.headlineSmall)
 //                Spacer(modifier = Modifier.height(10.dp))
-                Text(text = "Pet quantity: ${contract!!.pets.size}", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center,  style = MaterialTheme.typography.headlineSmall)
+                Text(
+                    text = "Pet quantity: ${contract!!.pets.size}",
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.headlineSmall
+                )
                 Spacer(modifier = Modifier.height(10.dp))
-                Text(text = "Payment: ${contract!!.reward}$", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center,  style = MaterialTheme.typography.headlineSmall)
+                Text(
+                    text = "Payment: ${contract!!.reward}$",
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.headlineSmall
+                )
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Row(
                     Modifier
                         .fillMaxWidth()
                         .clickable {
-//                try {
-//                    context.startActivity(chooser)
-//                } catch (e: ActivityNotFoundException) {
-//                    Toast.makeText(
-//                        context,
-//                        "Cannot find application to handle maps",
-//                        Toast.LENGTH_LONG
-//                    )
-//                        .show()
-//                }
-                        }, horizontalArrangement = Arrangement.Center) {
+                            try {
+                                context.startActivity(chooser)
+                            } catch (e: ActivityNotFoundException) {
+                                Toast
+                                    .makeText(
+                                        context,
+                                        "Cannot find application to handle maps",
+                                        Toast.LENGTH_LONG
+                                    )
+                                    .show()
+                            }
+                        }, horizontalArrangement = Arrangement.Center
+                ) {
                     Text(text = "Show location", style = MaterialTheme.typography.headlineSmall) //
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                         contentDescription = "open map with localization",
                         Modifier
                             .size(30.dp, 30.dp)
-                            .align(Alignment.CenterVertically))
+                            .align(Alignment.CenterVertically)
+                    )
                 }
                 Spacer(modifier = Modifier.height(10.dp))
 
@@ -140,7 +157,8 @@ fun WalkNotActiveView(apiViewModel: ApiViewModel,id: String?) {
                             confirmButton = {
                                 Button(onClick = {
                                     runBlocking {
-                                        val call: Call<String> = apiViewModel.walkService.acceptContract(id!!)
+                                        val call: Call<String> =
+                                            apiViewModel.walkService.acceptContract(id!!)
                                         call.enqueue(object : Callback<String> {
                                             override fun onResponse(
                                                 p0: Call<String>,
@@ -158,15 +176,24 @@ fun WalkNotActiveView(apiViewModel: ApiViewModel,id: String?) {
                                                     context.startActivity(intent)
                                                 } else {
                                                     Log.d("retrofit", p1.body().toString())
-                                                    Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
+                                                    Toast.makeText(
+                                                        context,
+                                                        "Error, try again",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
                                                 }
                                             }
+
                                             override fun onFailure(
                                                 p0: Call<String>,
                                                 p1: Throwable
                                             ) {
                                                 Log.d("retrofit", p1.message.toString())
-                                                Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(
+                                                    context,
+                                                    "Connection error",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
                                             }
 
                                         })
@@ -188,9 +215,11 @@ fun WalkNotActiveView(apiViewModel: ApiViewModel,id: String?) {
                 }
 
             }
-            FloatingActionButton(onClick = { openAlertDialog.value = !openAlertDialog.value }, modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 15.dp)) {
+            FloatingActionButton(
+                onClick = { openAlertDialog.value = !openAlertDialog.value }, modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 15.dp)
+            ) {
                 Box(modifier = Modifier.padding(15.dp)) {
                     Text(text = "Accept contract")
                 }

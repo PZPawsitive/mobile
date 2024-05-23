@@ -58,6 +58,7 @@ private fun NavGraphBuilder.addContractListRoute(
     ) {
         showContractList(navController, apiViewModel)
         showContractAddForm(navController, apiViewModel)
+        showContractScreen(navController, apiViewModel)
     }
 }
 
@@ -74,7 +75,6 @@ private fun NavGraphBuilder.addPetRoute(
         showPetHistory(navController, apiViewModel)
         showPetHistoryMap(navController, apiViewModel)
         showPetAddForm(navController, apiViewModel)
-        showContractScreen(navController, apiViewModel)
     }
 }
 

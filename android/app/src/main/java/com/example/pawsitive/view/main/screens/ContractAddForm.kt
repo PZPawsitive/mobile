@@ -23,6 +23,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -67,6 +68,9 @@ fun ContractAddForm(navController: NavController, apiViewModel: ApiViewModel) {
     var pets: List<Pet>? by remember {
         mutableStateOf(null)
     }
+    var selectedPets = remember {
+        mutableStateListOf<String?>()
+    }
     runBlocking {
         val call: Call<List<Pet>> =
             apiViewModel.petService.getPetsByUserId(preferencesManager.getUserId()!!)
@@ -95,9 +99,6 @@ fun ContractAddForm(navController: NavController, apiViewModel: ApiViewModel) {
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        var selectedPets = remember {
-            mutableListOf<String?>()
-        }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
@@ -122,11 +123,12 @@ fun ContractAddForm(navController: NavController, apiViewModel: ApiViewModel) {
             Text(text = "Is any of pets aggresive?")
             Switch(checked = isDangerous, onCheckedChange = { isDangerous = !isDangerous })
             Spacer(modifier = Modifier.height(20.dp))
+            Text(text = "Select pets for this walk")
             if (pets != null) {
                 LazyColumn {
                     items(items = pets!!) {
                         var selected by rememberSaveable {
-                            mutableStateOf(true)
+                            mutableStateOf(false)
                         }
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             RadioButton(selected = selected, onClick = {
@@ -153,7 +155,7 @@ fun ContractAddForm(navController: NavController, apiViewModel: ApiViewModel) {
             }
 
         }
-        if (descriptionInput.isNotEmpty() && rewardInput.isNotEmpty() && selectedPets.toList().isNotEmpty())
+        if (descriptionInput.isNotEmpty() && rewardInput.isNotEmpty() && selectedPets.isNotEmpty())
             FloatingActionButton(
                 onClick = {
                     Log.d("retrofit", "pets: ${selectedPets}")

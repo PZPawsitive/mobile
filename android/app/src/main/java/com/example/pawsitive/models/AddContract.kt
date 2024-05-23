@@ -7,7 +7,7 @@ import retrofit2.http.Query
 data class AddContract(
     val description: String,
     val reward: Double,
-    val geopoint: SimpleGeopoint,
+    val location: SimpleGeopoint,
     val pets: List<String?>,
     val dangerous: Boolean,
 )
