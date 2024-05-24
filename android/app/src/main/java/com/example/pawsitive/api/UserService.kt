@@ -9,6 +9,7 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 import java.util.UUID
@@ -43,5 +44,8 @@ interface UserService {
 
     @GET("api/users/dogwalkers")
     fun getDogWalkers() : Call<List<User>>
+
+    @PUT("api/users/{id}/dogwalker")
+    fun updateDogwalker(@Path("id") id: String) : Call<String>
 
 }

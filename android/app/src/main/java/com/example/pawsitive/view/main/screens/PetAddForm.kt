@@ -264,7 +264,6 @@ fun PetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
                 onClick = {
                     runBlocking {
                         val userId = preferencesManager.getUserId()
-                        Log.d("retrofit", "owner id: ${userId}")
 
                         val call: Call<String> = apiViewModel.petService.addPet(
                             nameInput, selectedSpecies, selectedBreed, millisToLocalDate!!, userId!!

@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -17,7 +16,6 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -33,7 +31,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -41,24 +38,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.pawsitive.models.Contract
-import com.example.pawsitive.models.History
-import com.example.pawsitive.models.User
 import com.example.pawsitive.navigation.main.MainLeafScreen
 import com.example.pawsitive.viewmodel.ApiViewModel
 import kotlinx.coroutines.runBlocking
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-
-//data class History(val description: String, val date: Date, val geopoints: List<GeoPoint>)
-
-//val histories = mutableStateListOf(
-//    History("super spacer", Date(), listOf(GeoPoint(1, 1), GeoPoint(2, 2))),
-//    History("lipny spacer", Date(), listOf(GeoPoint(1, 1))),
-//    History("walka psów", Date(), listOf(GeoPoint(1, 1))),
-//    History("super droga", Date(), listOf(GeoPoint(1, 1))),
-//    History("piesek był zadowolony", Date(), listOf(GeoPoint(1, 1))),
-//)
 
 @SuppressLint("UnrememberedMutableState")
 @Composable
