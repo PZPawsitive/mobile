@@ -7,6 +7,7 @@ import java.time.LocalDateTime
 data class Contract(
     val id: String,
     val dogWalker: String?,
+    val owner: ContractOwner?,
     val description: String,
     val reward: Double,
     val pets: List<String>,

@@ -196,7 +196,7 @@ private fun NavGraphBuilder.showContractScreen(
         arguments = listOf(
             navArgument("id") {}
         )) {backStackEntry ->
-        ContractScreen(apiViewModel, backStackEntry.arguments?.getString("id"))
+        ContractScreen(apiViewModel, backStackEntry.arguments?.getString("id"), navController)
     }
 }
 private fun NavGraphBuilder.showMessages(navController: NavController, apiViewModel: ApiViewModel) {

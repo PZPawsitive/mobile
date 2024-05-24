@@ -5,6 +5,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -44,6 +45,7 @@ import kotlinx.coroutines.runBlocking
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.time.format.DateTimeFormatter
 
 @SuppressLint("UnrememberedMutableState")
 @Composable
@@ -55,7 +57,7 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
 
     val openAlertDialog = remember { mutableStateOf(false) }
 
-    val _histories =  remember {
+    val _histories = remember {
         mutableStateListOf<Contract>()
     }
     val histories: List<Contract?> = _histories
@@ -64,7 +66,8 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
     }
 
     LaunchedEffect(Unit) {
-        val call: Call<List<Contract>> = apiViewModel.petService.getAllPetWalkHistoryByPetId(id = petId!!)
+        val call: Call<List<Contract>> =
+            apiViewModel.petService.getAllPetWalkHistoryByPetId(id = petId!!)
         call.enqueue(object : Callback<List<Contract>> {
             override fun onResponse(
                 p0: Call<List<Contract>>,
@@ -95,7 +98,8 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
 
     fun loadHistories() {
         runBlocking {
-            val call: Call<List<Contract>> = apiViewModel.petService.getAllPetWalkHistoryByPetId(id = petId!!)
+            val call: Call<List<Contract>> =
+                apiViewModel.petService.getAllPetWalkHistoryByPetId(id = petId!!)
             call.enqueue(object : Callback<List<Contract>> {
                 override fun onResponse(
                     p0: Call<List<Contract>>,
@@ -161,35 +165,46 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                                         Log.d("retrofit", selectedHistoryId.toString())
                                     })
                                 HorizontalDivider()
-                                DropdownMenuItem(text = { Text(text = "remove history") }, onClick = {
-                                    expandedSettings = !expandedSettings
-                                    runBlocking {
-                                        val call: Call<String> = apiViewModel.walkService.deleteContract(it!!.id)
-                                        call.enqueue(object : Callback<String> {
-                                            override fun onResponse(
-                                                p0: Call<String>,
-                                                p1: Response<String>
-                                            ) {
-                                                Log.d("retrofit", p1.body().toString())
-                                                if (p1.body() != null) {
-                                                    _histories.remove(it)
-                                                    Log.d("retrofit", "histories ${p1.body()}")
-                                                } else {
-                                                    Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
+                                DropdownMenuItem(
+                                    text = { Text(text = "remove history") },
+                                    onClick = {
+                                        expandedSettings = !expandedSettings
+                                        runBlocking {
+                                            val call: Call<String> =
+                                                apiViewModel.walkService.deleteContract(it!!.id)
+                                            call.enqueue(object : Callback<String> {
+                                                override fun onResponse(
+                                                    p0: Call<String>,
+                                                    p1: Response<String>
+                                                ) {
+                                                    Log.d("retrofit", p1.body().toString())
+                                                    if (p1.body() != null) {
+                                                        _histories.remove(it)
+                                                        Log.d("retrofit", "histories ${p1.body()}")
+                                                    } else {
+                                                        Toast.makeText(
+                                                            context,
+                                                            "Error, try again",
+                                                            Toast.LENGTH_SHORT
+                                                        ).show()
+                                                    }
                                                 }
-                                            }
 
-                                            override fun onFailure(
-                                                p0: Call<String>,
-                                                p1: Throwable
-                                            ) {
-                                                Log.d("retrofit", p1.message.toString())
-                                                Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
-                                            }
+                                                override fun onFailure(
+                                                    p0: Call<String>,
+                                                    p1: Throwable
+                                                ) {
+                                                    Log.d("retrofit", p1.message.toString())
+                                                    Toast.makeText(
+                                                        context,
+                                                        "Connection error",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                }
 
-                                        })
-                                    }
-                                })
+                                            })
+                                        }
+                                    })
                                 HorizontalDivider()
                                 DropdownMenuItem(
                                     text = { Text(text = "Zobacz na mapie") },
@@ -201,10 +216,61 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                                     .padding(10.dp),
                                 onClick = { expandedSettings = !expandedSettings }
                             ) {
-                                Column(modifier = Modifier.padding(5.dp)) {
-                                    Text(text = it!!.description, fontWeight = FontWeight.Bold)
-//                                    Text(text = it.date.toString())
+                                Box(modifier = Modifier.padding(10.dp)) {
+                                    Column(modifier = Modifier.padding(5.dp)) {
+                                        Text(text = it!!.description)
+                                        val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
+                                        if (it.completed) {
+                                            val date = it.completedAt!!.format(formatter)
+                                            Row {
+                                                Text(
+                                                    text = "Completed at: ",
+                                                    fontWeight = FontWeight.Bold,
+                                                    style = MaterialTheme.typography.labelLarge
+                                                )
+                                                Text(
+                                                    text = date,
+                                                    fontWeight = FontWeight.Bold,
+                                                    style = MaterialTheme.typography.labelLarge
+                                                )
+                                            }
+
+                                        } else if (it.active) {
+                                            val date = it.acceptedAt!!.format(formatter)
+                                            Row {
+                                                Text(
+                                                    text = "Active since: ",
+                                                    fontWeight = FontWeight.Bold,
+                                                    style = MaterialTheme.typography.labelLarge
+                                                )
+
+                                                Text(
+                                                    text = date,
+                                                    fontWeight = FontWeight.Bold,
+                                                    style = MaterialTheme.typography.labelLarge
+                                                )
+                                            }
+
+                                        } else {
+                                            val date = it.createdAt.format(formatter)
+                                            Row {
+                                                Text(
+                                                    text = "created at: ",
+                                                    fontWeight = FontWeight.Bold,
+                                                    style = MaterialTheme.typography.labelLarge
+                                                )
+                                                Text(
+                                                    text = date,
+                                                    fontWeight = FontWeight.Bold,
+                                                    style = MaterialTheme.typography.labelLarge
+                                                )
+                                            }
+
+                                        }
+
+                                    }
                                 }
+
                             }
                         }
 
@@ -234,7 +300,10 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                             openAlertDialog.value = false
                             Log.d("retrofit", "selected id: ${selectedHistoryId!!}")
                             runBlocking {
-                                val call: Call<String> = apiViewModel.walkService.changeDescription(selectedHistoryId!!, input)
+                                val call: Call<String> = apiViewModel.walkService.changeDescription(
+                                    selectedHistoryId!!,
+                                    input
+                                )
                                 call.enqueue(object : Callback<String> {
                                     override fun onResponse(
                                         p0: Call<String>,
@@ -244,7 +313,11 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                                         if (p1.body() != null) {
                                             loadHistories()
                                         } else {
-                                            Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(
+                                                context,
+                                                "Error, try again",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
                                         }
                                     }
 
@@ -253,7 +326,11 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                                         p1: Throwable
                                     ) {
                                         Log.d("retrofit", p1.message.toString())
-                                        Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(
+                                            context,
+                                            "Connection error",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
 
                                 })

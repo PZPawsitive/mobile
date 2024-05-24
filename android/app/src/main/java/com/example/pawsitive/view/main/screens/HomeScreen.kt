@@ -103,39 +103,6 @@ fun HomeScreen(
     updateLocation: () -> Unit,
     getLocation: () -> List<Double>
 ) {
-
-//    val context = LocalContext.current
-//    var dogWalkers: List<User>? by remember {
-//        mutableStateOf(null)
-//    }
-//    Log.d("retrofit", "smth")
-//    runBlocking {
-//        val call: Call<List<User>> = apiViewModel.userService.getDogWalkers()
-//        call.enqueue(object : Callback<List<User>> {
-//            override fun onResponse(
-//                p0: Call<List<User>>,
-//                p1: Response<List<User>>
-//            ) {
-//                Log.d("retrofit", p1.body().toString())
-//                if (p1.body() != null) {
-//
-//                    dogWalkers = p1.body()
-//                } else {
-//                    Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
-//                }
-//            }
-//
-//            override fun onFailure(
-//                p0: Call<List<User>>,
-//                p1: Throwable
-//            ) {
-//                Log.d("retrofit", p1.message.toString())
-//                Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
-//            }
-//
-//        })
-//    }
-
     Scaffold {
         Box(modifier = Modifier.fillMaxSize()) {
             if (LocalGlobalState.current) {

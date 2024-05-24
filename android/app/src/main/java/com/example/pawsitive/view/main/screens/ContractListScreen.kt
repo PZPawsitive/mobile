@@ -111,8 +111,6 @@ fun ContractListScreen(navController: NavHostController, apiViewModel: ApiViewMo
                                         Text(text = "${it.reward} $", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelLarge)
                                     }
                                 }
-
-
                             }
                         }
                         DropdownMenu(

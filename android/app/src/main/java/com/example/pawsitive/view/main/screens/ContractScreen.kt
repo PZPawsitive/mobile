@@ -6,7 +6,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,12 +19,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.Chat
+import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.Map
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,28 +38,33 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.pawsitive.models.Contract
-import com.example.pawsitive.models.Pet
+import com.example.pawsitive.navigation.main.MainLeafScreen
 import com.example.pawsitive.util.PreferencesManager
 import com.example.pawsitive.view.walk.WalkActivity
 import com.example.pawsitive.viewmodel.ApiViewModel
+import compose.icons.FontAwesomeIcons
+import compose.icons.fontawesomeicons.Solid
+import compose.icons.fontawesomeicons.solid.Map
 import kotlinx.coroutines.runBlocking
 
-import org.osmdroid.util.GeoPoint
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.time.format.DateTimeFormatter
 
 
 @Composable
-fun ContractScreen(apiViewModel: ApiViewModel, id: String?) {
-    WalkNotActiveView(apiViewModel, id)
+fun ContractScreen(apiViewModel: ApiViewModel, id: String?, navController: NavController) {
+    WalkNotActiveView(apiViewModel, id, navController)
 }
 
 @Composable
-fun WalkNotActiveView(apiViewModel: ApiViewModel, id: String?) {
+fun WalkNotActiveView(apiViewModel: ApiViewModel, id: String?, navController: NavController) {
     var contract: Contract? by remember {
         mutableStateOf(null)
     }
@@ -85,14 +93,15 @@ fun WalkNotActiveView(apiViewModel: ApiViewModel, id: String?) {
                 Log.d("retrofit", p1.message.toString())
                 Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
             }
-
         })
     }
     val openAlertDialog = remember { mutableStateOf(false) }
+    val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
     if (contract != null) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(15.dp)
         ) {
             Column {
                 val location =
@@ -106,51 +115,154 @@ fun WalkNotActiveView(apiViewModel: ApiViewModel, id: String?) {
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.headlineLarge
                 )
-                Spacer(modifier = Modifier.height(10.dp))
-//                Text(text = "Owner: ${contract!!.user}", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center,  style = MaterialTheme.typography.headlineSmall)
-//                Spacer(modifier = Modifier.height(10.dp))
-                Text(
-                    text = "Pet quantity: ${contract!!.pets.size}",
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.headlineSmall
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                Text(
-                    text = "Payment: ${contract!!.reward}$",
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.headlineSmall
-                )
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(20.dp))
+                if (contract!!.owner != null) { // for now
+                    Row {
+                        Text(
+                            text = "Posted by: ",
+                            style = MaterialTheme.typography.headlineSmall,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = "${contract!!.owner!!.firstName} ${contract!!.owner!!.lastName}",
+                            style = MaterialTheme.typography.headlineSmall
+                        )
+                    }
+                }
 
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            try {
-                                context.startActivity(chooser)
-                            } catch (e: ActivityNotFoundException) {
-                                Toast
-                                    .makeText(
-                                        context,
-                                        "Cannot find application to handle maps",
-                                        Toast.LENGTH_LONG
-                                    )
-                                    .show()
-                            }
-                        }, horizontalArrangement = Arrangement.Center
-                ) {
-                    Text(text = "Show location", style = MaterialTheme.typography.headlineSmall) //
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                        contentDescription = "open map with localization",
-                        Modifier
-                            .size(30.dp, 30.dp)
-                            .align(Alignment.CenterVertically)
+                Spacer(modifier = Modifier.height(20.dp))
+                Row {
+                    Text(
+                        text = "Description: ",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = contract!!.description,
+                        style = MaterialTheme.typography.headlineSmall
                     )
                 }
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(20.dp))
+                Row {
+                    Text(
+                        text = "Pet amount: ",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = contract!!.pets.size.toString(),
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                }
+                Spacer(modifier = Modifier.height(20.dp))
+                Row {
+                    Text(
+                        text = "Payment: ",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "${contract!!.reward.toString()}$",
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                }
+                Spacer(modifier = Modifier.height(20.dp))
+                if (contract!!.completed) {
+                    val date = contract!!.completedAt!!.format(formatter)
+                    Row {
+                        Text(
+                            text = "Completed at: ",
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.headlineSmall,
+
+                            )
+                        Text(
+                            text = date,
+                            style = MaterialTheme.typography.headlineSmall,
+                        )
+                    }
+
+                } else if (contract!!.active) {
+                    val date = contract!!.acceptedAt!!.format(formatter)
+                    Row {
+                        Text(
+                            text = "Active since: ",
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.headlineSmall,
+                        )
+
+                        Text(
+                            text = date,
+                            style = MaterialTheme.typography.headlineSmall,
+                        )
+                    }
+
+                } else {
+                    val date = contract!!.createdAt.format(formatter)
+                    Row {
+                        Text(
+                            text = "created at: ",
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.headlineSmall,
+                        )
+                        Text(
+                            text = date,
+                            style = MaterialTheme.typography.headlineSmall,
+                        )
+                    }
+
+                }
+                Spacer(modifier = Modifier.height(20.dp))
+
+                OutlinedButton(
+                    onClick = {
+                        try {
+                            context.startActivity(chooser)
+                        } catch (e: ActivityNotFoundException) {
+                            Toast
+                                .makeText(
+                                    context,
+                                    "Cannot find application to handle maps",
+                                    Toast.LENGTH_LONG
+                                )
+                                .show()
+                        }
+                    },
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                ) {
+                    Row(horizontalArrangement = Arrangement.SpaceBetween) {
+                        Text(text = "Show location", style = MaterialTheme.typography.headlineSmall)
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Icon(
+                            imageVector = FontAwesomeIcons.Solid.Map,
+                            contentDescription = "open map with localization",
+                            Modifier
+                                .size(30.dp, 30.dp)
+                                .align(Alignment.CenterVertically)
+                        )
+                    }
+
+                }
+                Spacer(modifier = Modifier.height(20.dp))
+                OutlinedButton(
+                    onClick = {
+                        navController.navigate(MainLeafScreen.Chat.route)
+                    },
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                ) {
+                    Row(horizontalArrangement = Arrangement.SpaceBetween) {
+                        Text(text = "Start chat", style = MaterialTheme.typography.headlineSmall)
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Chat,
+                            contentDescription = "start chat with contract owner",
+                            Modifier
+                                .size(30.dp, 30.dp)
+                                .align(Alignment.CenterVertically)
+                        )
+                    }
+
+                }
 
                 when {
                     openAlertDialog.value -> {
@@ -160,7 +272,10 @@ fun WalkNotActiveView(apiViewModel: ApiViewModel, id: String?) {
                                 Button(onClick = {
                                     runBlocking {
                                         val call: Call<String> =
-                                            apiViewModel.walkService.acceptContract(id!!, preferencesManager.getUserId()!!)
+                                            apiViewModel.walkService.acceptContract(
+                                                id!!,
+                                                preferencesManager.getUserId()!!
+                                            )
                                         call.enqueue(object : Callback<String> {
                                             override fun onResponse(
                                                 p0: Call<String>,
