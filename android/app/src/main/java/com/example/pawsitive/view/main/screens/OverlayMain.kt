@@ -41,6 +41,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.example.pawsitive.navigation.main.MainNavGraph
 import com.example.pawsitive.navigation.main.MainRootScreen
+import com.example.pawsitive.util.PreferencesManager
 import com.example.pawsitive.view.auth.LoginActivity
 import com.example.pawsitive.viewmodel.ApiViewModel
 import compose.icons.FontAwesomeIcons
@@ -66,6 +67,7 @@ fun OverlayMain(apiViewModel: ApiViewModel, updateLocation: () -> Unit, getLocat
     }
 
     val context = LocalContext.current
+    val preferencesManager = PreferencesManager(context)
 
     fun changeState() {
         state = !state
@@ -109,6 +111,7 @@ fun OverlayMain(apiViewModel: ApiViewModel, updateLocation: () -> Unit, getLocat
                             )
                             HorizontalDivider()
                             DropdownMenuItem(text = { Text(text = "Logout") }, onClick = {
+                                preferencesManager.clear()
                                 context.startActivity(
                                     Intent(context, LoginActivity::class.java)
                                 )

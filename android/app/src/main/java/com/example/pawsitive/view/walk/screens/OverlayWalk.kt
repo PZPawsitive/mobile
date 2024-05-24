@@ -19,6 +19,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
@@ -48,6 +49,8 @@ import com.example.pawsitive.viewmodel.BeaconViewModel
 import com.example.pawsitive.navigation.walk.WalkLeafScreen
 import com.example.pawsitive.navigation.walk.WalkNavGraph
 import com.example.pawsitive.navigation.walk.WalkRootScreen
+import com.example.pawsitive.util.PreferencesManager
+import com.example.pawsitive.view.auth.LoginActivity
 import com.example.pawsitive.viewmodel.ApiViewModel
 import com.minew.beaconplus.sdk.MTPeripheral
 
@@ -157,6 +160,7 @@ fun TopNavBar(navController: NavHostController) {
     }
 
     val context = LocalContext.current
+    val preferencesManager = PreferencesManager(context)
     CenterAlignedTopAppBar(
         title = { Text(text = "Pawsitive", fontWeight = FontWeight.Bold) },
         navigationIcon = {
@@ -182,8 +186,12 @@ fun TopNavBar(navController: NavHostController) {
                 DropdownMenuItem(
                     text = { Text(text = "Settings") },
                     onClick = { /*TODO*/ })
-                Divider()
-                DropdownMenuItem(text = { Text(text = "...") }, onClick = { /*TODO*/ })
+                HorizontalDivider()
+                DropdownMenuItem(text = { Text(text = "Logout") }, onClick = {
+                    preferencesManager.clear()
+                    val intent = Intent(context, LoginActivity::class.java)
+                    context.startActivity(intent)
+                })
             }
         }
     )

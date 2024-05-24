@@ -131,7 +131,7 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
 
 
     Box(modifier = Modifier.fillMaxSize()) {
-        if (histories != null && histories!!.isNotEmpty()) {
+        if (histories.isNotEmpty()) {
             Column(modifier = Modifier.fillMaxSize()) {
 
                 Text(
@@ -147,7 +147,7 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                         .padding(10.dp)
                         .fillMaxSize()
                 ) {
-                    items(items = histories!!) {
+                    items(items = histories) {
                         var expandedSettings by remember {
                             mutableStateOf(false)
                         }
@@ -207,7 +207,7 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                                     })
                                 HorizontalDivider()
                                 DropdownMenuItem(
-                                    text = { Text(text = "Zobacz na mapie") },
+                                    text = { Text(text = "Show on map") },
                                     onClick = { navController.navigate("${MainLeafScreen.PetHistoryMap.route}?id=${it!!.id}") })
                             }
                             Card(
@@ -219,7 +219,8 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                                 Box(modifier = Modifier.padding(10.dp)) {
                                     Column(modifier = Modifier.padding(5.dp)) {
                                         Text(text = it!!.description)
-                                        val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
+                                        val formatter =
+                                            DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
                                         if (it.completed) {
                                             val date = it.completedAt!!.format(formatter)
                                             Row {
