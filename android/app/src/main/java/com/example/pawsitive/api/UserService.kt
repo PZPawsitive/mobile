@@ -2,6 +2,7 @@ package com.example.pawsitive.api
 
 import com.example.pawsitive.models.LoginRequest
 import com.example.pawsitive.models.RegisterRequest
+import com.example.pawsitive.models.SimpleGeopoint
 import com.example.pawsitive.models.User
 import com.example.pawsitive.models.VerificationRequest
 import retrofit2.Call
@@ -37,8 +38,7 @@ interface UserService {
     @GET("api/users")
     fun getDogWalkersNearby(
         @Query("range") range: Double,
-        @Query("latitude") latitude: Double,
-        @Query("longtitude") longtitude: Double
+        @Body createGeopointDTO: SimpleGeopoint
     ): Call<List<User>>
 
     @GET("api/users/dogwalkers")

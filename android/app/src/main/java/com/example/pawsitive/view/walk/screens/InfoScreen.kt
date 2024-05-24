@@ -79,6 +79,7 @@ fun InfoScreen(
             refresh()
             isRefreshing = true
             delay(3000L)
+//            beaconViewModel.setBeaconList(emptyList())
             isRefreshing = false
         }
     }

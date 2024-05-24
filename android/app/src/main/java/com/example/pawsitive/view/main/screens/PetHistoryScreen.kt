@@ -71,33 +71,40 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
     var histories: List<Contract>? by remember {
         mutableStateOf(null)
     }
-
-    runBlocking {
-        val call: Call<List<Contract>> = apiViewModel.petService.getAllPetWalkHistoryByPetId(id = petId!!)
-        call.enqueue(object : Callback<List<Contract>> {
-            override fun onResponse(
-                p0: Call<List<Contract>>,
-                p1: Response<List<Contract>>
-            ) {
-                Log.d("retrofit", p1.body().toString())
-                if (p1.body() != null) {
-                    histories = p1.body()
-                    Log.d("retrofit", "histories ${p1.body()}")
-                } else {
-                    Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            override fun onFailure(
-                p0: Call<List<Contract>>,
-                p1: Throwable
-            ) {
-                Log.d("retrofit", p1.message.toString())
-                Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
-            }
-
-        })
+    var selectedHistoryId: String? by remember {
+        mutableStateOf(null)
     }
+
+    fun loadHistories() {
+        runBlocking {
+            val call: Call<List<Contract>> = apiViewModel.petService.getAllPetWalkHistoryByPetId(id = petId!!)
+            call.enqueue(object : Callback<List<Contract>> {
+                override fun onResponse(
+                    p0: Call<List<Contract>>,
+                    p1: Response<List<Contract>>
+                ) {
+                    Log.d("retrofit", p1.body().toString())
+                    if (p1.body() != null) {
+                        histories = p1.body()!!
+                        Log.d("retrofit", "histories ${p1.body()}")
+                    } else {
+                        Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(
+                    p0: Call<List<Contract>>,
+                    p1: Throwable
+                ) {
+                    Log.d("retrofit", p1.message.toString())
+                    Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+                }
+
+            })
+        }
+    }
+
+    loadHistories()
 
     Box(modifier = Modifier.fillMaxSize()) {
         if (histories != null && histories!!.isNotEmpty()) {
@@ -128,13 +135,40 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                                 DropdownMenuItem(
                                     text = { Text(text = "Change description") },
                                     onClick = {
+                                        selectedHistoryId = it.id
                                         expandedSettings = !expandedSettings
                                         openAlertDialog.value = !openAlertDialog.value
+                                        Log.d("retrofit", selectedHistoryId.toString())
                                     })
                                 HorizontalDivider()
                                 DropdownMenuItem(text = { Text(text = "remove history") }, onClick = {
                                     expandedSettings = !expandedSettings
-//                                histories1.remove(it)
+                                    runBlocking {
+                                        val call: Call<String> = apiViewModel.walkService.deleteContract(it.id)
+                                        call.enqueue(object : Callback<String> {
+                                            override fun onResponse(
+                                                p0: Call<String>,
+                                                p1: Response<String>
+                                            ) {
+                                                Log.d("retrofit", p1.body().toString())
+                                                if (p1.body() != null) {
+                                                    loadHistories()
+                                                    Log.d("retrofit", "histories ${p1.body()}")
+                                                } else {
+                                                    Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
+                                                }
+                                            }
+
+                                            override fun onFailure(
+                                                p0: Call<String>,
+                                                p1: Throwable
+                                            ) {
+                                                Log.d("retrofit", p1.message.toString())
+                                                Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+                                            }
+
+                                        })
+                                    }
                                 })
                                 HorizontalDivider()
                                 DropdownMenuItem(
@@ -176,7 +210,35 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                     onDismissRequest = { openAlertDialog.value = false },
                     confirmButton = {
                         Button(onClick = {
+
                             openAlertDialog.value = false
+                            Log.d("retrofit", "selected id: ${selectedHistoryId!!}")
+                            runBlocking {
+                                val call: Call<String> = apiViewModel.walkService.changeDescription(selectedHistoryId!!, input)
+                                call.enqueue(object : Callback<String> {
+                                    override fun onResponse(
+                                        p0: Call<String>,
+                                        p1: Response<String>
+                                    ) {
+                                        Log.d("retrofit", p1.body().toString())
+                                        if (p1.body() != null) {
+                                            loadHistories()
+                                        } else {
+                                            Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+
+                                    override fun onFailure(
+                                        p0: Call<String>,
+                                        p1: Throwable
+                                    ) {
+                                        Log.d("retrofit", p1.message.toString())
+                                        Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+                                    }
+
+                                })
+                            }
+
                         }) {
                             Icon(imageVector = Icons.Default.Check, contentDescription = "accept")
                         }
@@ -187,7 +249,10 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                         }
                     },
                     text = {
-                        OutlinedTextField(value = input, onValueChange = {input = it})
+                        OutlinedTextField(value = input, onValueChange = {
+                            input = it
+                            Log.d("retrofit", selectedHistoryId!!)
+                        })
                     }
                 )
             }

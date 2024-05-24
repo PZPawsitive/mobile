@@ -7,6 +7,7 @@ import com.example.pawsitive.models.SimpleGeopoint
 import org.osmdroid.util.GeoPoint
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -48,4 +49,15 @@ interface WalkService {
     fun addContract(
         @Body createContractDTO: AddContract
     ): Call<String>
+
+    @PUT("api/contracts/{id}/description")
+    fun changeDescription(
+        @Path("id") id: String,
+        @Body description: String
+        ) : Call<String>
+
+    @DELETE("api/contracts/{id}")
+    fun deleteContract(
+        @Path("id") id: String
+    ) : Call<String>
 }

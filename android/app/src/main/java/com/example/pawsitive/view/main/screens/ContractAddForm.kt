@@ -38,6 +38,7 @@ import com.example.pawsitive.models.AddContract
 import com.example.pawsitive.models.AddPetRequest
 import com.example.pawsitive.models.Pet
 import com.example.pawsitive.models.SimpleGeopoint
+import com.example.pawsitive.models.User
 import com.example.pawsitive.navigation.main.MainLeafScreen
 import com.example.pawsitive.util.PreferencesManager
 import com.example.pawsitive.viewmodel.ApiViewModel
@@ -59,8 +60,8 @@ fun ContractAddForm(navController: NavController, apiViewModel: ApiViewModel) {
     var rewardInput by rememberSaveable {
         mutableStateOf("")
     }
-    val latitude = 0.0
-    val longitude = 0.0
+    var location: SimpleGeopoint? = null
+
 
     var isDangerous by rememberSaveable {
         mutableStateOf(false)
@@ -89,6 +90,30 @@ fun ContractAddForm(navController: NavController, apiViewModel: ApiViewModel) {
 
             override fun onFailure(
                 p0: Call<List<Pet>>,
+                p1: Throwable
+            ) {
+                Log.d("retrofit", p1.message.toString())
+                Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+            }
+
+        })
+        val callUser: Call<User> =
+            apiViewModel.userService.getUserById(preferencesManager.getUserId()!!)
+        callUser.enqueue(object : Callback<User> {
+            override fun onResponse(
+                p0: Call<User>,
+                p1: Response<User>
+            ) {
+                Log.d("retrofit", p1.body().toString())
+                if (p1.body() != null) {
+//                    location = p1.body().
+                } else {
+                    Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(
+                p0: Call<User>,
                 p1: Throwable
             ) {
                 Log.d("retrofit", p1.message.toString())
@@ -151,7 +176,6 @@ fun ContractAddForm(navController: NavController, apiViewModel: ApiViewModel) {
                         Text(text = "Add pet")
                     }
                 }
-
             }
 
         }
@@ -162,7 +186,7 @@ fun ContractAddForm(navController: NavController, apiViewModel: ApiViewModel) {
                     Log.d("retrofit", "dangerous: ${isDangerous}")
                     runBlocking {
                         val userId = preferencesManager.getUserId()
-                        val call: Call<String> = apiViewModel.walkService.addContract(AddContract(descriptionInput, rewardInput.toDouble(), SimpleGeopoint(latitude, longitude, LocalDateTime.now()), selectedPets.toList(), isDangerous))
+                        val call: Call<String> = apiViewModel.walkService.addContract(AddContract(descriptionInput, rewardInput.toDouble(), SimpleGeopoint(0.0, 0.0, LocalDateTime.now()), selectedPets.toList(), isDangerous))
                         call.enqueue(object : Callback<String> {
                             override fun onResponse(
                                 p0: Call<String>,

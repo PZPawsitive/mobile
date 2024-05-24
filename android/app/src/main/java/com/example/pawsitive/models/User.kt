@@ -13,6 +13,7 @@ data class User(
     val firstName: String,
     val lastName: String,
     val phone: Int,
+//    val location: Sim
     val role: String?,
     val description: String,
     val profilePic: String,
