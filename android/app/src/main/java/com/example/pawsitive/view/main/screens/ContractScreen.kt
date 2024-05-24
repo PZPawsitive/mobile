@@ -39,6 +39,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.pawsitive.models.Contract
 import com.example.pawsitive.models.Pet
+import com.example.pawsitive.util.PreferencesManager
 import com.example.pawsitive.view.walk.WalkActivity
 import com.example.pawsitive.viewmodel.ApiViewModel
 import kotlinx.coroutines.runBlocking
@@ -60,6 +61,7 @@ fun WalkNotActiveView(apiViewModel: ApiViewModel, id: String?) {
         mutableStateOf(null)
     }
     val context = LocalContext.current
+    val preferencesManager = PreferencesManager(context)
 
     runBlocking {
         val call: Call<Contract> = apiViewModel.walkService.getContract(id = id!!)
@@ -158,7 +160,7 @@ fun WalkNotActiveView(apiViewModel: ApiViewModel, id: String?) {
                                 Button(onClick = {
                                     runBlocking {
                                         val call: Call<String> =
-                                            apiViewModel.walkService.acceptContract(id!!)
+                                            apiViewModel.walkService.acceptContract(id!!, preferencesManager.getUserId()!!)
                                         call.enqueue(object : Callback<String> {
                                             override fun onResponse(
                                                 p0: Call<String>,

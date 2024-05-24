@@ -40,7 +40,10 @@ interface WalkService {
     ): Call<List<String>>
 
     @PUT("api/contracts/{id}/activate")
-    fun acceptContract(@Path("id") id: String): Call<String>
+    fun acceptContract(
+        @Path("id") id: String,
+        @Query("dogWalkerId") dogWalkerId: String
+    ): Call<String>
 
     @PUT("api/contracts/{id}/complete")
     fun completeContract(@Path("id") id: String): Call<String>
