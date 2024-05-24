@@ -35,7 +35,7 @@ interface UserService {
     @GET("api/users/{id}")
     fun getUserById(@Path("id") id: String): Call<User>
 
-    @GET("api/users")
+    @POST("api/users/dogwalkers-nearby")
     fun getDogWalkersNearby(
         @Query("range") range: Double,
         @Body createGeopointDTO: SimpleGeopoint

@@ -17,26 +17,39 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.FilterAlt
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import com.example.pawsitive.R
+import com.example.pawsitive.models.SimpleGeopoint
 import com.example.pawsitive.models.User
 import com.example.pawsitive.navigation.main.MainLeafScreen
 import com.example.pawsitive.viewmodel.ApiViewModel
@@ -46,7 +59,6 @@ import compose.icons.fontawesomeicons.solid.List
 import compose.icons.fontawesomeicons.solid.Map
 import kotlinx.coroutines.runBlocking
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
-import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.ItemizedIconOverlay
 import org.osmdroid.views.overlay.ItemizedOverlayWithFocus
@@ -57,6 +69,7 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.time.LocalDateTime
 
 
 data class Post(val owner: String, val content: String)
@@ -71,46 +84,51 @@ val posts = listOf(
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HomeScreen(navController: NavController, apiViewModel: ApiViewModel) {
+fun HomeScreen(
+    navController: NavController,
+    apiViewModel: ApiViewModel,
+    updateLocation: () -> Unit,
+    getLocation: () -> List<Double>
+) {
 
-    val context = LocalContext.current
-    var dogWalkers: List<User>? by remember {
-        mutableStateOf(null)
-    }
-    Log.d("retrofit", "smth")
-    runBlocking {
-        val call: Call<List<User>> = apiViewModel.userService.getDogWalkers()
-        call.enqueue(object : Callback<List<User>> {
-            override fun onResponse(
-                p0: Call<List<User>>,
-                p1: Response<List<User>>
-            ) {
-                Log.d("retrofit", p1.body().toString())
-                if (p1.body() != null) {
-
-                    dogWalkers = p1.body()
-                } else {
-                    Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            override fun onFailure(
-                p0: Call<List<User>>,
-                p1: Throwable
-            ) {
-                Log.d("retrofit", p1.message.toString())
-                Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
-            }
-
-        })
-    }
+//    val context = LocalContext.current
+//    var dogWalkers: List<User>? by remember {
+//        mutableStateOf(null)
+//    }
+//    Log.d("retrofit", "smth")
+//    runBlocking {
+//        val call: Call<List<User>> = apiViewModel.userService.getDogWalkers()
+//        call.enqueue(object : Callback<List<User>> {
+//            override fun onResponse(
+//                p0: Call<List<User>>,
+//                p1: Response<List<User>>
+//            ) {
+//                Log.d("retrofit", p1.body().toString())
+//                if (p1.body() != null) {
+//
+//                    dogWalkers = p1.body()
+//                } else {
+//                    Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
+//                }
+//            }
+//
+//            override fun onFailure(
+//                p0: Call<List<User>>,
+//                p1: Throwable
+//            ) {
+//                Log.d("retrofit", p1.message.toString())
+//                Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+//            }
+//
+//        })
+//    }
 
     Scaffold {
         Box(modifier = Modifier.fillMaxSize()) {
             if (LocalGlobalState.current) {
                 PostsScreen(navController)
             } else {
-                DogWalkersScreen(navController, dogWalkers)
+                DogWalkersScreen(navController, apiViewModel, updateLocation, getLocation)
             }
         }
     }
@@ -140,18 +158,15 @@ fun PostsScreen(navController: NavController) {
     }
 }
 
-
-//data class DogWalker(val name: String, val description: String, val geoPoint: GeoPoint)
-
-//val dogWalkers = listOf(
-//    DogWalker("kacper", "dogwalker", GeoPoint(52.237049, 21.017532)),
-//    DogWalker("kacper", "dogwalker", GeoPoint(53.237049, 22.017532)),
-//    DogWalker("kacper", "dogwalker", GeoPoint(53.237049, 23.017532))
-//)
-
 @SuppressLint("UseCompatLoadingForDrawables")
 @Composable
-fun DogWalkersScreen(navController: NavController, dogWalkers: List<User>?) {
+fun DogWalkersScreen(
+    navController: NavController,
+    apiViewModel: ApiViewModel,
+    updateLocation: () -> Unit,
+    getLocation: () -> List<Double>
+) {
+    updateLocation()
     var viewMode by remember {
         mutableStateOf(true)
     }
@@ -164,33 +179,63 @@ fun DogWalkersScreen(navController: NavController, dogWalkers: List<User>?) {
         val scaledBitmap = Bitmap.createScaledBitmap(bitmap, pxSize, pxSize, true)
         return BitmapDrawable(context.resources, scaledBitmap)
     }
+    var _dogWalkers = remember {
+        mutableStateListOf<User>()
+    }
+    val dogWalkers: List<User?> = _dogWalkers
+    Log.d("retrofit", "smth")
+    LaunchedEffect(Unit) {
+        val call: Call<List<User>> = apiViewModel.userService.getDogWalkers()
+        call.enqueue(object : Callback<List<User>> {
+            override fun onResponse(
+                p0: Call<List<User>>,
+                p1: Response<List<User>>
+            ) {
+                Log.d("retrofit", p1.body().toString())
+                if (p1.body() != null) {
+                    _dogWalkers.clear()
+                    p1.body()!!.forEach {
+                        _dogWalkers.add(it)
+                    }
+
+//                    _dogWalkers = p1.body()
+                } else {
+                    Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(
+                p0: Call<List<User>>,
+                p1: Throwable
+            ) {
+                Log.d("retrofit", p1.message.toString())
+                Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+            }
+
+        })
+
+    }
+
+    val openAlertDialog = remember { mutableStateOf(false) }
 
     Box(Modifier.fillMaxSize()) {
         if (viewMode) {
-            if (dogWalkers != null) {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    LazyColumn {
-                        items(items = dogWalkers) {
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(10.dp),
-                                onClick = {
-                                    navController.navigate(MainLeafScreen.Chat.route)
-                                }
-                            ) {
-                                Text(text = it.firstName)
-                                Text(text = it.lastName)
+            Log.d("dogwalkers", "ddd ${dogWalkers.toList()}")
+            Box(modifier = Modifier.fillMaxSize()) {
+                LazyColumn {
+                    items(items = dogWalkers) {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(10.dp),
+                            onClick = {
+                                navController.navigate(MainLeafScreen.Chat.route)
                             }
+                        ) {
+                            Text(text = it!!.firstName)
+                            Text(text = it!!.lastName)
                         }
                     }
-                }
-            } else {
-                Log.d("retrofit", "brak")
-                Box(modifier = Modifier
-                    .fillMaxSize()
-                    .border(2.dp, Color.Red)) {
-                    Text(text = "cos", Modifier.align(Alignment.Center))
                 }
             }
 
@@ -243,11 +288,76 @@ fun DogWalkersScreen(navController: NavController, dogWalkers: List<User>?) {
             }
 
         }
+        FloatingActionButton(onClick = {openAlertDialog.value = !openAlertDialog.value }, modifier = Modifier
+            .align(Alignment.BottomStart)
+            .padding(bottom = 15.dp, start = 15.dp)) {
+            Box(modifier = Modifier.padding(15.dp)) {
+                Icon(imageVector = Icons.Default.FilterAlt, contentDescription = "filter by range icon", Modifier.size(25.dp))
+            }
+        }
         FloatingActionButton(onClick = { viewMode = !viewMode },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(bottom = 15.dp, end = 15.dp)) {
             Icon(imageVector = if (viewMode) FontAwesomeIcons.Solid.Map else FontAwesomeIcons.Solid.List, contentDescription = "viewmode", Modifier.size(25.dp))
+        }
+//        LaunchedEffect(Unit) {
+//            list = getLocation()
+//        }
+        when {
+            openAlertDialog.value -> {
+                var input by rememberSaveable {
+                    mutableStateOf("")
+                }
+                AlertDialog(
+                    onDismissRequest = { openAlertDialog.value = false },
+                    confirmButton = {
+                        Button(onClick = {
+                            openAlertDialog.value = false
+                            val list = getLocation()
+                            Log.d("retrofit", list.toString())
+                            runBlocking {
+                                val call: Call<List<User>> = apiViewModel.userService.getDogWalkersNearby(input.toDouble(), SimpleGeopoint(
+                                    list[0], list[1], LocalDateTime.now()))
+                                call.enqueue(object : Callback<List<User>> {
+                                    override fun onResponse(
+                                        p0: Call<List<User>>,
+                                        p1: Response<List<User>>
+                                    ) {
+                                        Log.d("dogwalkers", p1.body().toString())
+                                        _dogWalkers.clear()
+                                        p1.body()!!.forEach {
+                                            _dogWalkers.add(it)
+                                        }
+                                    }
+
+                                    override fun onFailure(
+                                        p0: Call<List<User>>,
+                                        p1: Throwable
+                                    ) {
+                                        Log.d("retrofit", p1.message.toString())
+                                        Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+                                    }
+
+                                })
+                            }
+
+                        }) {
+                            Icon(imageVector = Icons.Default.Check, contentDescription = "accept")
+                        }
+                    },
+                    dismissButton = {
+                        Button(onClick = { openAlertDialog.value = false }) {
+                            Icon(imageVector = Icons.Default.Clear, contentDescription = "decline")
+                        }
+                    },
+                    text = {
+                        OutlinedTextField(value = input, onValueChange = {
+                            input = it
+                        }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
+                    }
+                )
+            }
         }
     }
 }

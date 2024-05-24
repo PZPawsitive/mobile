@@ -26,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -41,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.pawsitive.models.Contract
 import com.example.pawsitive.models.History
+import com.example.pawsitive.models.User
 import com.example.pawsitive.navigation.main.MainLeafScreen
 import com.example.pawsitive.viewmodel.ApiViewModel
 import kotlinx.coroutines.runBlocking
@@ -68,11 +70,42 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
 
     val openAlertDialog = remember { mutableStateOf(false) }
 
-    var histories: List<Contract>? by remember {
-        mutableStateOf(null)
+    val _histories =  remember {
+        mutableStateListOf<Contract>()
     }
+    val histories: List<Contract?> = _histories
     var selectedHistoryId: String? by remember {
         mutableStateOf(null)
+    }
+
+    LaunchedEffect(Unit) {
+        val call: Call<List<Contract>> = apiViewModel.petService.getAllPetWalkHistoryByPetId(id = petId!!)
+        call.enqueue(object : Callback<List<Contract>> {
+            override fun onResponse(
+                p0: Call<List<Contract>>,
+                p1: Response<List<Contract>>
+            ) {
+                Log.d("retrofit", p1.body().toString())
+                if (p1.body() != null) {
+                    _histories.clear()
+                    p1.body()!!.forEach {
+                        _histories.add(it)
+                    }
+                    Log.d("retrofit", "histories ${p1.body()}")
+                } else {
+                    Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(
+                p0: Call<List<Contract>>,
+                p1: Throwable
+            ) {
+                Log.d("retrofit", p1.message.toString())
+                Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+            }
+
+        })
     }
 
     fun loadHistories() {
@@ -85,7 +118,10 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                 ) {
                     Log.d("retrofit", p1.body().toString())
                     if (p1.body() != null) {
-                        histories = p1.body()!!
+                        _histories.clear()
+                        p1.body()!!.forEach {
+                            _histories.add(it)
+                        }
                         Log.d("retrofit", "histories ${p1.body()}")
                     } else {
                         Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
@@ -104,7 +140,6 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
         }
     }
 
-    loadHistories()
 
     Box(modifier = Modifier.fillMaxSize()) {
         if (histories != null && histories!!.isNotEmpty()) {
@@ -135,7 +170,7 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                                 DropdownMenuItem(
                                     text = { Text(text = "Change description") },
                                     onClick = {
-                                        selectedHistoryId = it.id
+                                        selectedHistoryId = it!!.id
                                         expandedSettings = !expandedSettings
                                         openAlertDialog.value = !openAlertDialog.value
                                         Log.d("retrofit", selectedHistoryId.toString())
@@ -144,7 +179,7 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                                 DropdownMenuItem(text = { Text(text = "remove history") }, onClick = {
                                     expandedSettings = !expandedSettings
                                     runBlocking {
-                                        val call: Call<String> = apiViewModel.walkService.deleteContract(it.id)
+                                        val call: Call<String> = apiViewModel.walkService.deleteContract(it!!.id)
                                         call.enqueue(object : Callback<String> {
                                             override fun onResponse(
                                                 p0: Call<String>,
@@ -152,7 +187,7 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                                             ) {
                                                 Log.d("retrofit", p1.body().toString())
                                                 if (p1.body() != null) {
-                                                    loadHistories()
+                                                    _histories.remove(it)
                                                     Log.d("retrofit", "histories ${p1.body()}")
                                                 } else {
                                                     Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
@@ -173,7 +208,7 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                                 HorizontalDivider()
                                 DropdownMenuItem(
                                     text = { Text(text = "Zobacz na mapie") },
-                                    onClick = { navController.navigate("${MainLeafScreen.PetHistoryMap.route}?id=${it.id}") })
+                                    onClick = { navController.navigate("${MainLeafScreen.PetHistoryMap.route}?id=${it!!.id}") })
                             }
                             Card(
                                 modifier = Modifier
@@ -182,7 +217,7 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                                 onClick = { expandedSettings = !expandedSettings }
                             ) {
                                 Column(modifier = Modifier.padding(5.dp)) {
-                                    Text(text = it.description, fontWeight = FontWeight.Bold)
+                                    Text(text = it!!.description, fontWeight = FontWeight.Bold)
 //                                    Text(text = it.date.toString())
                                 }
                             }

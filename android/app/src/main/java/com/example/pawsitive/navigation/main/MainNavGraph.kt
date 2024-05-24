@@ -22,15 +22,18 @@ import com.example.pawsitive.view.main.screens.PetScreen
 import com.example.pawsitive.view.main.screens.ProfileScreen
 import com.example.pawsitive.view.main.screens.Settings
 import com.example.pawsitive.viewmodel.ApiViewModel
+import kotlin.reflect.KFunction0
 
 @Composable
 fun MainNavGraph(
     navController: NavHostController,
     apiViewModel: ApiViewModel,
     changeState: () -> Unit,
+    updateLocation: () -> Unit,
+    getLocation: KFunction0<List<Double>>,
 ) {
     NavHost(navController = navController, startDestination = MainRootScreen.Home.route) {
-        addHomeRoute(navController, apiViewModel)
+        addHomeRoute(navController, apiViewModel, updateLocation,getLocation)
         addContractListRoute(navController, apiViewModel)
         addPetRoute(navController, apiViewModel)
         addMessagesRoute(navController, apiViewModel)
@@ -40,12 +43,17 @@ fun MainNavGraph(
     
 }
 
-private fun NavGraphBuilder.addHomeRoute(navController: NavController, apiViewModel: ApiViewModel) {
+private fun NavGraphBuilder.addHomeRoute(
+    navController: NavController,
+    apiViewModel: ApiViewModel,
+    updateLocation: () -> Unit,
+    getLocation: () -> List<Double>
+) {
     navigation(
         route = MainRootScreen.Home.route,
         startDestination = MainLeafScreen.Home.route
     ) {
-        showHome(navController, apiViewModel)
+        showHome(navController, apiViewModel, updateLocation,getLocation)
     }
 }
 private fun NavGraphBuilder.addContractListRoute(
@@ -113,9 +121,14 @@ private fun NavGraphBuilder.showSettings(navController: NavController, changeSta
         Settings(navController, changeState)
     }
 }
-private fun NavGraphBuilder.showHome(navController: NavController, apiViewModel: ApiViewModel) {
+private fun NavGraphBuilder.showHome(
+    navController: NavController,
+    apiViewModel: ApiViewModel,
+    updateLocation: () -> Unit,
+    getLocation: () -> List<Double>
+) {
     composable(route = MainLeafScreen.Home.route) {
-        HomeScreen(navController, apiViewModel)
+        HomeScreen(navController, apiViewModel, updateLocation,getLocation)
     }
 }
 private fun NavGraphBuilder.showContractList(
