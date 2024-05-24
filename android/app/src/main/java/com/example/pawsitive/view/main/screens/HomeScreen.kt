@@ -7,6 +7,7 @@ import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.util.Log
+import android.widget.TextView
 import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
@@ -59,10 +61,13 @@ import compose.icons.fontawesomeicons.solid.List
 import compose.icons.fontawesomeicons.solid.Map
 import kotlinx.coroutines.runBlocking
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.ItemizedIconOverlay
 import org.osmdroid.views.overlay.ItemizedOverlayWithFocus
+import org.osmdroid.views.overlay.Overlay
 import org.osmdroid.views.overlay.OverlayItem
+import org.osmdroid.views.overlay.Polygon
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
@@ -172,6 +177,8 @@ fun DogWalkersScreen(
     }
     val context = LocalContext.current
 
+
+
     fun scaleDrawable(drawable: Drawable, dpSize: Int): Drawable {
         val metrics = context.resources.displayMetrics
         val pxSize = (dpSize * metrics.density).toInt()
@@ -179,11 +186,14 @@ fun DogWalkersScreen(
         val scaledBitmap = Bitmap.createScaledBitmap(bitmap, pxSize, pxSize, true)
         return BitmapDrawable(context.resources, scaledBitmap)
     }
-    var _dogWalkers = remember {
+    val _dogWalkers = remember {
         mutableStateListOf<User>()
     }
     val dogWalkers: List<User?> = _dogWalkers
-    Log.d("retrofit", "smth")
+
+    var range by rememberSaveable {
+        mutableStateOf(0.0)
+    }
     LaunchedEffect(Unit) {
         val call: Call<List<User>> = apiViewModel.userService.getDogWalkers()
         call.enqueue(object : Callback<List<User>> {
@@ -242,7 +252,7 @@ fun DogWalkersScreen(
         } else {
             Column() {
                 AndroidView(
-
+                    // todo update somehow
                     factory = { it ->
                         val mapView = MapView(it)
                         mapView.setTileSource(TileSourceFactory.MAPNIK)
@@ -263,12 +273,15 @@ fun DogWalkersScreen(
                         val mapController = mapView.controller
                         val mLocationOverlay = MyLocationNewOverlay(GpsMyLocationProvider(it), mapView)
                         mLocationOverlay.enableMyLocation()
-
-
                         mLocationOverlay.enableFollowLocation() // check
+
+
+
+
+
                         mapController.setCenter(mLocationOverlay.myLocation)
                         mapController.setZoom(15)
-
+                        mapView.overlays.add(mLocationOverlay)
                         val overlay = ItemizedOverlayWithFocus<OverlayItem>(items, object :
                             ItemizedIconOverlay.OnItemGestureListener<OverlayItem> {
                             override fun onItemSingleTapUp(index: Int, item: OverlayItem): Boolean {
@@ -279,9 +292,20 @@ fun DogWalkersScreen(
                                 return false
                             }
                         }, it)
+
+                        if (range != 0.0) {
+                            val myLocation = getLocation()
+                            val circle = Polygon.pointsAsCircle(GeoPoint(myLocation[0], myLocation[1]), range * 1000)
+                            val polygon = Polygon()
+                            polygon.points = circle
+                            mapView.overlays.add(polygon)
+                        }
+
+
                         overlay.setFocusItemsOnTap(true);
                         mapView.overlays.add(overlay)
-                        mapView.overlays.add(mLocationOverlay)
+
+
                         mapView
                     }
                 )
@@ -301,15 +325,13 @@ fun DogWalkersScreen(
                 .padding(bottom = 15.dp, end = 15.dp)) {
             Icon(imageVector = if (viewMode) FontAwesomeIcons.Solid.Map else FontAwesomeIcons.Solid.List, contentDescription = "viewmode", Modifier.size(25.dp))
         }
-//        LaunchedEffect(Unit) {
-//            list = getLocation()
-//        }
         when {
             openAlertDialog.value -> {
                 var input by rememberSaveable {
                     mutableStateOf("")
                 }
                 AlertDialog(
+                    modifier = Modifier.width(200.dp),
                     onDismissRequest = { openAlertDialog.value = false },
                     confirmButton = {
                         Button(onClick = {
@@ -329,6 +351,7 @@ fun DogWalkersScreen(
                                         p1.body()!!.forEach {
                                             _dogWalkers.add(it)
                                         }
+                                        range = input.toDouble()
                                     }
 
                                     override fun onFailure(
@@ -352,7 +375,7 @@ fun DogWalkersScreen(
                         }
                     },
                     text = {
-                        OutlinedTextField(value = input, onValueChange = {
+                        OutlinedTextField(modifier = Modifier.width(150.dp),label = { Text(text = "Kilometres")},value = input, onValueChange = {
                             input = it
                         }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
                     }
