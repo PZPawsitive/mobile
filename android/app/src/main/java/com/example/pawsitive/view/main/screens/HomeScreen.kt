@@ -1,11 +1,13 @@
 package com.example.pawsitive.view.main.screens
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
@@ -61,7 +63,9 @@ import coil.compose.AsyncImage
 import com.example.pawsitive.R
 import com.example.pawsitive.models.SimpleGeopoint
 import com.example.pawsitive.models.User
+import com.example.pawsitive.models.UserDTO
 import com.example.pawsitive.navigation.main.MainLeafScreen
+import com.example.pawsitive.view.walk.WalkActivity
 import com.example.pawsitive.viewmodel.ApiViewModel
 import compose.icons.FontAwesomeIcons
 import compose.icons.fontawesomeicons.Solid
@@ -162,19 +166,19 @@ fun DogWalkersScreen(
         return BitmapDrawable(context.resources, scaledBitmap)
     }
     val _dogWalkers = remember {
-        mutableStateListOf<User>()
+        mutableStateListOf<UserDTO>()
     }
-    val dogWalkers: List<User?> = _dogWalkers
+    val dogWalkers: List<UserDTO?> = _dogWalkers
 
     var range by rememberSaveable {
         mutableStateOf(0.0)
     }
     LaunchedEffect(Unit) {
-        val call: Call<List<User>> = apiViewModel.userService.getDogWalkers()
-        call.enqueue(object : Callback<List<User>> {
+        val call: Call<List<UserDTO>> = apiViewModel.userService.getDogWalkers()
+        call.enqueue(object : Callback<List<UserDTO>> {
             override fun onResponse(
-                p0: Call<List<User>>,
-                p1: Response<List<User>>
+                p0: Call<List<UserDTO>>,
+                p1: Response<List<UserDTO>>
             ) {
                 Log.d("retrofit", p1.body().toString())
                 if (p1.body() != null) {
@@ -190,7 +194,7 @@ fun DogWalkersScreen(
             }
 
             override fun onFailure(
-                p0: Call<List<User>>,
+                p0: Call<List<UserDTO>>,
                 p1: Throwable
             ) {
                 Log.d("retrofit", p1.message.toString())
@@ -202,6 +206,11 @@ fun DogWalkersScreen(
     }
 
     val openAlertDialog = remember { mutableStateOf(false) }
+    val openSendMessageDialog = remember { mutableStateOf(false) }
+
+    var selectedDogWalker by remember {
+        mutableStateOf<String?>(null)
+    }
 
     Box(Modifier.fillMaxSize()) {
         if (viewMode) {
@@ -257,13 +266,12 @@ fun DogWalkersScreen(
                         val scaledPersonIcon: Drawable = scaleDrawable(personIcon, 15)
                         scaledPersonIcon.colorFilter = PorterDuffColorFilter(context.getColor(R.color.black), PorterDuff.Mode.SRC_IN)
                         val items = ArrayList<OverlayItem>()
-//                        com.example.pawsitive.view.main.screens.dogWalkers.forEach { walker ->
-//                            val overlayItem = OverlayItem(walker.name, walker.description, walker.geoPoint)
-//                            overlayItem.setMarker(scaledPersonIcon)
-//                            items.add(
-//                                overlayItem
-//                            )
-//                        }
+                        dogWalkers.forEach { walker ->
+                            val overlayItem = OverlayItem(walker!!.id.toString(),walker.firstName, walker.description, GeoPoint(walker.location.latitude, walker.location.longitude))
+                            overlayItem.setMarker(scaledPersonIcon)
+                            items.add(overlayItem)
+                        }
+
                         val mapController = mapView.controller
                         val mLocationOverlay = MyLocationNewOverlay(GpsMyLocationProvider(it), mapView)
                         mLocationOverlay.enableMyLocation()
@@ -275,14 +283,21 @@ fun DogWalkersScreen(
                         mapView.overlays.add(mLocationOverlay)
                         val overlay = ItemizedOverlayWithFocus<OverlayItem>(items, object :
                             ItemizedIconOverlay.OnItemGestureListener<OverlayItem> {
+
                             override fun onItemSingleTapUp(index: Int, item: OverlayItem): Boolean {
+                                Log.d("osmdroid", item.uid.toString())
                                 return true
                             }
 
                             override fun onItemLongPress(index: Int, item: OverlayItem): Boolean {
+                                Log.d("osmdroid", "long press")
+                                selectedDogWalker = item.uid.toString()
+                                openSendMessageDialog.value = true
                                 return false
                             }
                         }, it)
+
+                        overlay.setFocusItemsOnTap(true)
 
                         if (range != 0.0) {
                             val myLocation = getLocation()
@@ -293,7 +308,6 @@ fun DogWalkersScreen(
                         }
 
 
-                        overlay.setFocusItemsOnTap(true);
                         mapView.overlays.add(overlay)
 
 
@@ -330,12 +344,12 @@ fun DogWalkersScreen(
                             val list = getLocation()
                             Log.d("retrofit", list.toString())
                             runBlocking {
-                                val call: Call<List<User>> = apiViewModel.userService.getDogWalkersNearby(input.toDouble(), SimpleGeopoint(
+                                val call: Call<List<UserDTO>> = apiViewModel.userService.getDogWalkersNearby(input.toDouble(), SimpleGeopoint(
                                     list[0], list[1], LocalDateTime.now()))
-                                call.enqueue(object : Callback<List<User>> {
+                                call.enqueue(object : Callback<List<UserDTO>> {
                                     override fun onResponse(
-                                        p0: Call<List<User>>,
-                                        p1: Response<List<User>>
+                                        p0: Call<List<UserDTO>>,
+                                        p1: Response<List<UserDTO>>
                                     ) {
                                         Log.d("dogwalkers", p1.body().toString())
                                         _dogWalkers.clear()
@@ -346,7 +360,7 @@ fun DogWalkersScreen(
                                     }
 
                                     override fun onFailure(
-                                        p0: Call<List<User>>,
+                                        p0: Call<List<UserDTO>>,
                                         p1: Throwable
                                     ) {
                                         Log.d("retrofit", p1.message.toString())
@@ -369,6 +383,74 @@ fun DogWalkersScreen(
                         OutlinedTextField(modifier = Modifier.width(150.dp),label = { Text(text = "Kilometres")},value = input, onValueChange = {
                             input = it
                         }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
+                    }
+                )
+            }
+        }
+        when {
+            openSendMessageDialog.value -> {
+                AlertDialog(
+                    onDismissRequest = { openSendMessageDialog.value = false },
+                    confirmButton = {
+                        Button(onClick = {
+                            openSendMessageDialog.value = false
+                            navController.navigate(MainLeafScreen.Chat.route)
+//                            runBlocking {
+//                                val call: Call<String> =
+//                                    apiViewModel.walkService.acceptContract(
+//                                        id!!,
+//                                        preferencesManager.getUserId()!!
+//                                    )
+//                                call.enqueue(object : Callback<String> {
+//                                    override fun onResponse(
+//                                        p0: Call<String>,
+//                                        p1: Response<String>
+//                                    ) {
+//                                        if (p1.body() != null) {
+//                                            openAlertDialog.value = false
+//                                            val bundle = Bundle().apply {
+//                                                putString("historyId", contract!!.id)
+//                                            }
+//                                            val intent = Intent(
+//                                                context,
+//                                                WalkActivity::class.java
+//                                            ).apply { putExtras(bundle) }
+//                                            context.startActivity(intent)
+//                                        } else {
+//                                            Log.d("retrofit", p1.body().toString())
+//                                            Toast.makeText(
+//                                                context,
+//                                                "Error, try again",
+//                                                Toast.LENGTH_SHORT
+//                                            ).show()
+//                                        }
+//                                    }
+//
+//                                    override fun onFailure(
+//                                        p0: Call<String>,
+//                                        p1: Throwable
+//                                    ) {
+//                                        Log.d("retrofit", p1.message.toString())
+//                                        Toast.makeText(
+//                                            context,
+//                                            "Connection error",
+//                                            Toast.LENGTH_SHORT
+//                                        ).show()
+//                                    }
+//
+//                                })
+//                            }
+                        }) {
+                            Text(text = "Yes")
+                        }
+                    },
+                    dismissButton = {
+                        Button(onClick = { openSendMessageDialog.value = false }) {
+                            Text(text = "No")
+                        }
+                    },
+                    text = {
+                        Text(text = "Start chat with dog walker?")
                     }
                 )
             }

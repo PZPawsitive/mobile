@@ -35,6 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.pawsitive.models.User
+import com.example.pawsitive.models.UserDTO
 import com.example.pawsitive.util.PreferencesManager
 import com.example.pawsitive.viewmodel.ApiViewModel
 import kotlinx.coroutines.delay
@@ -49,18 +50,18 @@ fun ProfileScreen(apiViewModel: ApiViewModel) {
 
     val context = LocalContext.current
     val preferencesManager = PreferencesManager(context)
-    var user: User? by remember {
+    var user: UserDTO? by remember {
         mutableStateOf(null)
     }
 
     fun loadData() {
         runBlocking {
-            val call: Call<User> =
+            val call: Call<UserDTO> =
                 apiViewModel.userService.getUserById(preferencesManager.getUserId()!!)
-            call.enqueue(object : Callback<User> {
+            call.enqueue(object : Callback<UserDTO> {
                 override fun onResponse(
-                    p0: Call<User>,
-                    p1: Response<User>
+                    p0: Call<UserDTO>,
+                    p1: Response<UserDTO>
                 ) {
                     Log.d("retrofit", "data")
                     Log.d("retrofit", p1.body().toString())
@@ -72,7 +73,7 @@ fun ProfileScreen(apiViewModel: ApiViewModel) {
                 }
 
                 override fun onFailure(
-                    p0: Call<User>,
+                    p0: Call<UserDTO>,
                     p1: Throwable
                 ) {
                     Log.d("retrofit", p1.message.toString())
@@ -111,7 +112,7 @@ fun ProfileScreen(apiViewModel: ApiViewModel) {
 }
 
 @Composable
-fun UserProfile(user: User, apiViewModel: ApiViewModel, loadData: () -> Unit) {
+fun UserProfile(user: UserDTO, apiViewModel: ApiViewModel, loadData: () -> Unit) {
     val configuration = LocalConfiguration.current
     val context = LocalContext.current
     val preferencesManager = PreferencesManager(context)

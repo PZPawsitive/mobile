@@ -120,11 +120,11 @@ fun ContractListScreen(navController: NavHostController, apiViewModel: ApiViewMo
                         ) {
 
                             DropdownMenuItem(
-                                text = { Text(text = "Napisz wiadomość") },
+                                text = { Text(text = "Send message") },
                                 onClick = { navController.navigate(MainLeafScreen.Chat.route) })
                             HorizontalDivider()
                             DropdownMenuItem(
-                                text = { Text(text = "Pokaż szczegóły") },
+                                text = { Text(text = "Show details") },
                                 onClick = { navController.navigate("${MainLeafScreen.ContractScreen.route}?id=${it.id}") })
                         }
                     }

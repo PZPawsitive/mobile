@@ -39,6 +39,7 @@ import com.example.pawsitive.models.AddPetRequest
 import com.example.pawsitive.models.Pet
 import com.example.pawsitive.models.SimpleGeopoint
 import com.example.pawsitive.models.User
+import com.example.pawsitive.models.UserDTO
 import com.example.pawsitive.navigation.main.MainLeafScreen
 import com.example.pawsitive.util.PreferencesManager
 import com.example.pawsitive.viewmodel.ApiViewModel
@@ -97,12 +98,12 @@ fun ContractAddForm(navController: NavController, apiViewModel: ApiViewModel) {
             }
 
         })
-        val callUser: Call<User> =
+        val callUser: Call<UserDTO> =
             apiViewModel.userService.getUserById(preferencesManager.getUserId()!!)
-        callUser.enqueue(object : Callback<User> {
+        callUser.enqueue(object : Callback<UserDTO> {
             override fun onResponse(
-                p0: Call<User>,
-                p1: Response<User>
+                p0: Call<UserDTO>,
+                p1: Response<UserDTO>
             ) {
                 Log.d("retrofit", p1.body().toString())
                 if (p1.body() != null) {
@@ -113,7 +114,7 @@ fun ContractAddForm(navController: NavController, apiViewModel: ApiViewModel) {
             }
 
             override fun onFailure(
-                p0: Call<User>,
+                p0: Call<UserDTO>,
                 p1: Throwable
             ) {
                 Log.d("retrofit", p1.message.toString())

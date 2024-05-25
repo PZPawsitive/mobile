@@ -259,7 +259,7 @@ fun Device(
             } else {
 
                 Text(
-                    text = "Poczekaj aż się skonfiguruje",
+                    text = "Wait for the device to configure",
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )

@@ -4,6 +4,7 @@ import com.example.pawsitive.models.LoginRequest
 import com.example.pawsitive.models.RegisterRequest
 import com.example.pawsitive.models.SimpleGeopoint
 import com.example.pawsitive.models.User
+import com.example.pawsitive.models.UserDTO
 import com.example.pawsitive.models.VerificationRequest
 import retrofit2.Call
 import retrofit2.http.Body
@@ -34,16 +35,16 @@ interface UserService {
     fun checkSession(@Query("token") token: String): Call<String>
 
     @GET("api/users/{id}")
-    fun getUserById(@Path("id") id: String): Call<User>
+    fun getUserById(@Path("id") id: String): Call<UserDTO>
 
     @POST("api/users/dogwalkers-nearby")
     fun getDogWalkersNearby(
         @Query("range") range: Double,
         @Body createGeopointDTO: SimpleGeopoint
-    ): Call<List<User>>
+    ): Call<List<UserDTO>>
 
     @GET("api/users/dogwalkers")
-    fun getDogWalkers() : Call<List<User>>
+    fun getDogWalkers() : Call<List<UserDTO>>
 
     @PUT("api/users/{id}/dogwalker")
     fun updateDogwalker(@Path("id") id: String) : Call<String>

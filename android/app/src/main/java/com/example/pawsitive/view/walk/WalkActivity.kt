@@ -23,6 +23,7 @@ import com.example.pawsitive.util.SendGeolocationTask
 import com.example.pawsitive.viewmodel.BeaconViewModel
 import com.example.pawsitive.view.walk.screens.OverlayWalk
 import com.example.pawsitive.viewmodel.ApiViewModel
+import com.google.android.gms.common.api.Api
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.minew.beaconplus.sdk.MTCentralManager
@@ -45,7 +46,10 @@ class WalkActivity : AppCompatActivity() {
     lateinit var mMTCentralManager: MTCentralManager
 
     val beaconViewModel by viewModel<BeaconViewModel>()
+
+    private lateinit var apiViewModel: ApiViewModel
     private var onNavigateAction: (() -> Unit)? = null
+    private lateinit var id: String
 
     lateinit var task: SendGeolocationTask
 
@@ -64,6 +68,7 @@ class WalkActivity : AppCompatActivity() {
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         )[ApiViewModel::class.java]
+        this@WalkActivity.apiViewModel = apiViewModel
         if (ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.INTERNET
@@ -77,6 +82,7 @@ class WalkActivity : AppCompatActivity() {
         setBleManagerListener()
         initBlePermission()
         val historyId = intent.extras?.getString("historyId")
+        id = historyId!!
         Log.d("retrofit", historyId.toString())
         task = SendGeolocationTask(apiViewModel, historyId)
         mMTCentralManager.startService()
@@ -453,19 +459,12 @@ class WalkActivity : AppCompatActivity() {
                                 Toast.LENGTH_SHORT
                             ).show()
 
-                            mtPeripheral.mMTConnectionHandler.resetFactorySetting { s, _ ->
-                                Log.d("beaconplus", "resetted")
-                            }
-                            mtPeripheral.mMTConnectionHandler.mTConnectionFeature
+//                            mtPeripheral.mMTConnectionHandler.resetFactorySetting { s, _ ->
+//                                Log.d("beaconplus", "resetted")
+//                            }
                             beaconViewModel.setConnectedPeripheral(mtPeripheral)
 
                             performNavigation()
-//                            val intent = Intent()
-//                            intent.setClass(
-//                                this@MainActivity,
-//                                DeviceConnectedActivity::class.java
-//                            )
-//                            startActivity(intent)
                         }
 
                         ConnectionStatus.CONNECTFAILED, ConnectionStatus.DISCONNECTED -> {
@@ -489,25 +488,34 @@ class WalkActivity : AppCompatActivity() {
                 Log.e("tag", e.message)
             }
         })
-//        Config.mConnectedMTPeripheral = mtPeripheral
     }
 
-    fun navigateToDeviceConnected(action: () -> Unit) {
-        action()
-    }
+
 
     fun disconnect(mtPeripheral: MTPeripheral) {
         mMTCentralManager.disconnect(mtPeripheral)
     }
 
     override fun onDestroy() {
+        beaconViewModel.listenedDevices.forEach {
+            connect(it)
+            it.mMTConnectionHandler.resetFactorySetting { s, _ ->
+                Log.d("beaconplus", "resetted")
+            }
+        }
         super.onDestroy()
         mMTCentralManager.stopService()
         stopScan()
         task.stop()
+//        apiViewModel.walkService.acceptContract(id)
     }
 
     override fun onStop() {
+        beaconViewModel.listenedDevices.forEach {
+            it.mMTConnectionHandler.resetFactorySetting { s, _ ->
+                Log.d("beaconplus", "resetted")
+            }
+        }
         super.onStop()
         mMTCentralManager.stopService()
         stopScan()

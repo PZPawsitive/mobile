@@ -63,4 +63,9 @@ interface WalkService {
     fun deleteContract(
         @Path("id") id: String
     ) : Call<String>
+
+    @PUT("api/contracts/{id}/cancel")
+    fun cancelContract(
+        @Path("id") id: String
+    ) : Call<String>
 }

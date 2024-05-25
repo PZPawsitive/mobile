@@ -5,7 +5,7 @@ import java.time.LocalDate
 import java.util.UUID
 
 @JsonClass(generateAdapter = true)
-data class User(
+data class UserDTO(
     val token: String?,
     val id: UUID,
     val email: String,
@@ -14,7 +14,7 @@ data class User(
     val lastName: String,
     val phone: Int,
     val dogWalker: Boolean?,
-    val location: String,
+    val location: SimpleGeopoint,
     val role: String?,
     val description: String,
     val profilePic: String,

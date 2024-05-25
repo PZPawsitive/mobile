@@ -58,6 +58,9 @@ fun DeviceConnectedScreen(
     }
 
 
+    if (connectedMTPeripheral == null) {
+        navController.navigate(WalkLeafScreen.Info.route)
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
