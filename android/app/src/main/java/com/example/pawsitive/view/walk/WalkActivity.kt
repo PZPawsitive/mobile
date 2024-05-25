@@ -14,12 +14,14 @@ import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.pawsitive.R
 import com.example.pawsitive.util.SendGeolocationTask
+import com.example.pawsitive.view.main.MainActivity
 import com.example.pawsitive.viewmodel.BeaconViewModel
 import com.example.pawsitive.view.walk.screens.OverlayWalk
 import com.example.pawsitive.viewmodel.ApiViewModel
@@ -36,8 +38,12 @@ import com.minew.beaconplus.sdk.exception.MTException
 import com.minew.beaconplus.sdk.interfaces.ConnectionStatueListener
 import com.minew.beaconplus.sdk.interfaces.GetPasswordListener
 import com.permissionx.guolindev.PermissionX
+import kotlinx.coroutines.runBlocking
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.osmdroid.config.Configuration
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class WalkActivity : AppCompatActivity() {
@@ -45,7 +51,8 @@ class WalkActivity : AppCompatActivity() {
 
     lateinit var mMTCentralManager: MTCentralManager
 
-    val beaconViewModel by viewModel<BeaconViewModel>()
+        val beaconViewModel by viewModel<BeaconViewModel>()
+
 
     private lateinit var apiViewModel: ApiViewModel
     private var onNavigateAction: (() -> Unit)? = null
@@ -63,12 +70,22 @@ class WalkActivity : AppCompatActivity() {
         onNavigateAction?.invoke()
     }
 
+    override fun onStart() {
+        super.onStart()
+        Log.d("create", "on start")
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.d("create", "on create")
         val apiViewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         )[ApiViewModel::class.java]
         this@WalkActivity.apiViewModel = apiViewModel
+
+
         if (ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.INTERNET
@@ -79,18 +96,20 @@ class WalkActivity : AppCompatActivity() {
         initBleManager()
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         getCurrentLocation()
-        setBleManagerListener()
+        if (!mMTCentralManager.isScanning) {
+            setBleManagerListener()
+            Log.d("create", "reset")
+        }
+
         initBlePermission()
         val historyId = intent.extras?.getString("historyId")
         id = historyId!!
         Log.d("retrofit", historyId.toString())
         task = SendGeolocationTask(apiViewModel, historyId)
+
         mMTCentralManager.startService()
 
 
-
-
-        super.onCreate(savedInstanceState)
 //        enableEdgeToEdge()
         setContent {
 
@@ -132,7 +151,7 @@ class WalkActivity : AppCompatActivity() {
                 }
                 fusedLocationProviderClient.lastLocation.addOnCompleteListener(this) {
                     val location: Location? = it.result
-                    if (location==null) {
+                    if (location == null) {
                         Toast.makeText(this, "Null reveived", Toast.LENGTH_SHORT).show()
                     } else {
 //                        Toast.makeText(this, "get success", Toast.LENGTH_SHORT).show()
@@ -151,8 +170,11 @@ class WalkActivity : AppCompatActivity() {
     }
 
     private fun isLocationEnabled(): Boolean {
-        val locationManager: LocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+        val locationManager: LocationManager =
+            getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
+            LocationManager.NETWORK_PROVIDER
+        )
     }
 
     private fun requestPermission() {
@@ -174,15 +196,15 @@ class WalkActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         if (requestCode == PERMISSION_REQUEST_ACCESS_LOCATION) {
-            if (grantResults.isNotEmpty() && grantResults[0]== PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(applicationContext, "Granted", Toast.LENGTH_SHORT).show()
                 getCurrentLocation()
-            }
-            else {
+            } else {
                 Toast.makeText(applicationContext, "Denied", Toast.LENGTH_SHORT).show()
             }
         }
     }
+
     companion object {
         private const val PERMISSION_REQUEST_ACCESS_LOCATION = 100
     }
@@ -458,7 +480,7 @@ class WalkActivity : AppCompatActivity() {
                                 "COMPLETED",
                                 Toast.LENGTH_SHORT
                             ).show()
-
+//
 //                            mtPeripheral.mMTConnectionHandler.resetFactorySetting { s, _ ->
 //                                Log.d("beaconplus", "resetted")
 //                            }
@@ -491,34 +513,73 @@ class WalkActivity : AppCompatActivity() {
     }
 
 
-
     fun disconnect(mtPeripheral: MTPeripheral) {
         mMTCentralManager.disconnect(mtPeripheral)
     }
 
     override fun onDestroy() {
-        beaconViewModel.listenedDevices.forEach {
-            connect(it)
-            it.mMTConnectionHandler.resetFactorySetting { s, _ ->
-                Log.d("beaconplus", "resetted")
-            }
-        }
+//        beaconViewModel.listenedDevices.forEach {
+//            connect(it)
+//            it.mMTConnectionHandler.resetFactorySetting { s, _ ->
+//                Log.d("beaconplus", "resetted")
+//            }
+//        }
+//        mMTCentralManager.stopService()
         super.onDestroy()
-        mMTCentralManager.stopService()
-        stopScan()
-        task.stop()
+
+
+        runBlocking {
+            val call: Call<String> = apiViewModel.walkService.cancelContract(id)
+            call.enqueue(object : Callback<String> {
+                override fun onResponse(
+                    p0: Call<String>,
+                    p1: Response<String>
+                ) {
+                }
+
+                override fun onFailure(
+                    p0: Call<String>,
+                    p1: Throwable
+                ) {
+                }
+
+            })
+        }
+//        apiViewModel.walkService.cancelContract(id)
+//        stopScan()
+//        task.stop()
 //        apiViewModel.walkService.acceptContract(id)
     }
 
     override fun onStop() {
-        beaconViewModel.listenedDevices.forEach {
-            it.mMTConnectionHandler.resetFactorySetting { s, _ ->
-                Log.d("beaconplus", "resetted")
-            }
-        }
+        Log.d("retrofit", "stop")
+//        beaconViewModel.listenedDevices.forEach {
+//            it.mMTConnectionHandler.resetFactorySetting { s, _ ->
+//                Log.d("beaconplus", "resetted")
+//            }
+//        }
+//        runBlocking {
+//            val call: Call<String> = apiViewModel.walkService.cancelContract(id)
+//            call.enqueue(object : Callback<String> {
+//                override fun onResponse(
+//                    p0: Call<String>,
+//                    p1: Response<String>
+//                ) {
+//                }
+//                override fun onFailure(
+//                    p0: Call<String>,
+//                    p1: Throwable
+//                ) {
+//                }
+//
+//            })
+//        }
         super.onStop()
-        mMTCentralManager.stopService()
-        stopScan()
-        task.stop()
+//        if (mMTCentralManager != null) {
+//
+//        }
+//        mMTCentralManager.stopService()
+//        stopScan()
+//        task.stop()
     }
 }

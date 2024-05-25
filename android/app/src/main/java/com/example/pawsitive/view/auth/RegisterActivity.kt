@@ -58,6 +58,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
 import com.example.pawsitive.models.LoginRequest
 import com.example.pawsitive.models.RegisterRequest
+import com.example.pawsitive.models.SimpleGeopoint
 import com.example.pawsitive.models.User
 import com.example.pawsitive.models.VerificationRequest
 import com.example.pawsitive.util.DateUtils
@@ -68,6 +69,7 @@ import kotlinx.coroutines.runBlocking
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.time.LocalDateTime
 
 
 class RegisterActivity : ComponentActivity() {
@@ -383,7 +385,8 @@ class RegisterActivity : ComponentActivity() {
                                                 phone = phoneInput.toInt(),
                                                 description = "New user",
                                                 profilePic = "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-                                                role = "USER_NOT_VERIFIED"
+                                                role = "USER_NOT_VERIFIED",
+                                                location = SimpleGeopoint(0.0, 0.0, LocalDateTime.now())
                                             )
                                         )
                                         call.enqueue(object : Callback<User> {

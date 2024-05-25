@@ -34,6 +34,7 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.time.format.DateTimeFormatter
 import java.util.Date
 
 //val exampleHistory = History(
@@ -87,11 +88,12 @@ fun HistoryMap(apiViewModel: ApiViewModel, contractId: String?) {
                 val mapController = mapView.controller
                 mapController.setZoom(17)
                 val items = ArrayList<OverlayItem>()
+                val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
                 geopoints!!.forEach {
                     items.add(
                         OverlayItem(
-                            it.createdAt.toString(),
-                            "geopoint",
+                            it.createdAt.format(formatter),
+                            "route",
                             GeoPoint(it.latitude, it.longitude)
                         )
                     )
@@ -108,7 +110,10 @@ fun HistoryMap(apiViewModel: ApiViewModel, contractId: String?) {
                         return false
                     }
                 }, it)
+                overlay.setFocusItemsOnTap(true)
                 mapView.overlays.add(overlay)
+
+
 
 
 //                    val mLocationOverlay = MyLocationNewOverlay(GpsMyLocationProvider(it), mapView)
@@ -123,7 +128,7 @@ fun HistoryMap(apiViewModel: ApiViewModel, contractId: String?) {
 
                 val line = Polyline()
                 line.width = 4f
-//            line.setPoints(items.map { GeoPoint(it.point.latitude, it.point.longitude) })
+                line.setPoints(items.map { GeoPoint(it.point.latitude, it.point.longitude) })
                 mapView.overlays.add(line)
 //            overlay.setFocusItemsOnTap(true);
 //            mapView.overlays.add(overlay)

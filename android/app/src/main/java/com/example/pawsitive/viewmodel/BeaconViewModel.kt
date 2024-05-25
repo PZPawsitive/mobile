@@ -5,12 +5,15 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.minew.beaconplus.sdk.MTPeripheral
 
 @SuppressLint("MutableCollectionMutableState")
 class BeaconViewModel : ViewModel(){
+
+
 
 //    var mlist by mutableStateOf(mutableStateListOf<MTPeripheral>())
 
@@ -20,6 +23,7 @@ class BeaconViewModel : ViewModel(){
     var connectedMTPeripheral by mutableStateOf<MTPeripheral?>(null)
 
     var _listenedDevices = mutableStateListOf<MTPeripheral>()
+
     val listenedDevices: List<MTPeripheral> = _listenedDevices
 
     fun setBeaconList(list: List<MTPeripheral>) {

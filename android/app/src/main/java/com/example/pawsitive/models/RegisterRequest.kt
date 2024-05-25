@@ -1,6 +1,7 @@
 package com.example.pawsitive.models
 
 import com.squareup.moshi.JsonClass
+import org.osmdroid.util.GeoPoint
 import java.time.LocalDate
 
 @JsonClass(generateAdapter = true)
@@ -13,5 +14,6 @@ data class RegisterRequest(
     val phone: Int,
     val description: String,
     val profilePic: String,
-    val role: String
+    val role: String,
+    val location: SimpleGeopoint
 )
