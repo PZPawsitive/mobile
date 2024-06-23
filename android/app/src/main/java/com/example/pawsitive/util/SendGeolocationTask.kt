@@ -2,16 +2,13 @@ package com.example.pawsitive.util
 
 import android.os.Handler
 import android.util.Log
-import com.example.pawsitive.models.GeopointDTO
 import com.example.pawsitive.models.SimpleGeopoint
 import com.example.pawsitive.viewmodel.ApiViewModel
 import kotlinx.coroutines.runBlocking
-import org.osmdroid.util.GeoPoint
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.time.LocalDateTime
-import java.util.UUID
 
 class SendGeolocationTask(apiViewModel: ApiViewModel, historyId: String?) {
     private val handler = Handler()
@@ -69,7 +66,7 @@ class SendGeolocationTask(apiViewModel: ApiViewModel, historyId: String?) {
 //                            })
                 }
             }
-            handler.postDelayed(this, 15000)
+            handler.postDelayed(this, 180000)
 
         }
 

@@ -1,7 +1,6 @@
 package com.example.pawsitive.view.walk
 
 import android.Manifest
-import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -14,22 +13,18 @@ import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.pawsitive.R
 import com.example.pawsitive.util.SendGeolocationTask
-import com.example.pawsitive.view.main.MainActivity
 import com.example.pawsitive.viewmodel.BeaconViewModel
 import com.example.pawsitive.view.walk.screens.OverlayWalk
 import com.example.pawsitive.viewmodel.ApiViewModel
-import com.google.android.gms.common.api.Api
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.minew.beaconplus.sdk.MTCentralManager
-import com.minew.beaconplus.sdk.MTFrameHandler
 import com.minew.beaconplus.sdk.MTPeripheral
 import com.minew.beaconplus.sdk.Utils.BLETool
 import com.minew.beaconplus.sdk.enums.ConnectionStatus
@@ -47,32 +42,23 @@ import retrofit2.Response
 
 
 class WalkActivity : AppCompatActivity() {
-    val mObjectAnimator: ObjectAnimator? = null
+//    val mObjectAnimator: ObjectAnimator? = null
 
-    lateinit var mMTCentralManager: MTCentralManager
-
-        val beaconViewModel by viewModel<BeaconViewModel>()
-
-
+    private lateinit var mMTCentralManager: MTCentralManager
+    private lateinit var task: SendGeolocationTask
     private lateinit var apiViewModel: ApiViewModel
-    private var onNavigateAction: (() -> Unit)? = null
-    private lateinit var id: String
-
-    lateinit var task: SendGeolocationTask
-
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private lateinit var id: String
 
     var latitude: Double = 0.0
     var longtitude: Double = 0.0
 
+    val beaconViewModel by viewModel<BeaconViewModel>()
+
+    private var onNavigateAction: (() -> Unit)? = null
 
     fun performNavigation() {
         onNavigateAction?.invoke()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        Log.d("create", "on start")
     }
 
 
@@ -96,15 +82,15 @@ class WalkActivity : AppCompatActivity() {
         initBleManager()
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         getCurrentLocation()
+
         if (!mMTCentralManager.isScanning) {
             setBleManagerListener()
-            Log.d("create", "reset")
         }
 
         initBlePermission()
         val historyId = intent.extras?.getString("historyId")
         id = historyId!!
-        Log.d("retrofit", historyId.toString())
+
         task = SendGeolocationTask(apiViewModel, historyId)
 
         mMTCentralManager.startService()
@@ -112,14 +98,6 @@ class WalkActivity : AppCompatActivity() {
 
 //        enableEdgeToEdge()
         setContent {
-
-//            Button(onClick = {
-//                val intent = Intent(this, MainActivity::class.java)
-//                startActivity(intent)
-//            }) {
-//
-//                Text(text = "back")
-//            }
             OverlayWalk(
                 beaconViewModel,
                 { refresh() },
@@ -152,9 +130,8 @@ class WalkActivity : AppCompatActivity() {
                 fusedLocationProviderClient.lastLocation.addOnCompleteListener(this) {
                     val location: Location? = it.result
                     if (location == null) {
-                        Toast.makeText(this, "Null reveived", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Null received", Toast.LENGTH_SHORT).show()
                     } else {
-//                        Toast.makeText(this, "get success", Toast.LENGTH_SHORT).show()
                         latitude = location.latitude
                         longtitude = location.longitude
                     }
@@ -210,18 +187,14 @@ class WalkActivity : AppCompatActivity() {
     }
 
     private fun checkPermissions(): Boolean {
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            return true
-        }
-        return false
+        return ActivityCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
     }
 
     fun initBleManager() {
@@ -230,49 +203,20 @@ class WalkActivity : AppCompatActivity() {
     }
 
     fun setBleManagerListener() {
-        var i = 0
         mMTCentralManager.setMTCentralManagerListener { it ->
-            Log.d("trigger", it.toString())
 
-            var setListen: Boolean = false
-            var listToListen = mutableListOf<MTPeripheral>()
+            val listToListen = mutableListOf<MTPeripheral>()
             for (beacon in it) {
 
                 val connectionHandler = beacon.mMTConnectionHandler
-//                connectionHandler.resetFactorySetting {
-//                    success, exception ->
-//                    if (success) {
-//                        Log.d("test", "succes")
-//                    } else {
-//                        Log.d("test", exception.message)
-//                    }
-//                }
-                val mtFrameHandler: MTFrameHandler = beacon.mMTFrameHandler
+
                 val frames = connectionHandler.allFrames
-                val c = mtFrameHandler.advFrames
-                var count = 0
-//                c.forEach {
-//                    Log.d("result", "currslot: ${it}")
-//                    val smth = it.frameType
-//                    Log.d("result", "frame: ${smth} count: $count")
-//                    count += 1
-//                }
                 for (frame in frames) {
                     val currSlot = frame.curSlot
                     if (currSlot == 5 && frame.frameType == FrameType.FrameTLM) {
-//                        Log.d("result", "result!!! $i")
-//                        i += 1
-                        setListen = true
-//                        listToListen.plus(beacon)
                         listToListen.add(beacon)
-//                        beaconViewModel.setListenedList(it)
-//                        getCurrentLocation()
-//                        task.setGeolocation(latitude, longtitude)
-//                        task.start() // broken
                     } else {
                         if (currSlot == 5 && frame.frameType == FrameType.FrameNone) {
-//                            beaconViewModel.setListenedList(emptyList())
-//                            task.stop() // broken
                             listToListen.remove(beacon)
                         }
                     }
@@ -280,7 +224,6 @@ class WalkActivity : AppCompatActivity() {
             }
             if (listToListen.isNotEmpty()) {
                 getCurrentLocation()
-//                beaconViewModel.setListenedList(listToListen)
                 task.setGeolocation(latitude, longtitude)
                 task.start()
             } else {
@@ -289,13 +232,13 @@ class WalkActivity : AppCompatActivity() {
             beaconViewModel.setListenedList(listToListen)
             beaconViewModel.setBeaconList(it)
         }
-        mMTCentralManager.setBluetoothChangedListener {
-            Log.d("items", "bluetooth changed")
-        }
+//        mMTCentralManager.setBluetoothChangedListener {
+//            Log.d("items", "bluetooth changed")
+//        }
     }
 
     fun initBlePermission() {
-        var requestPermissionsList: Array<String>
+        val requestPermissionsList: Array<String>
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             requestPermissionsList = arrayOf(
@@ -340,14 +283,11 @@ class WalkActivity : AppCompatActivity() {
     }
 
     private fun startScan() {
-        Log.d("SCAN", "startScan")
         if (mMTCentralManager.isScanning()) {
             stopScan()
         }
         mMTCentralManager.clear()
         mMTCentralManager.startScan()
-//        mDevicesListAdapter.submitList(null)
-//        mObjectAnimator!!.start()
     }
 
     private fun stopScan() {
@@ -480,12 +420,9 @@ class WalkActivity : AppCompatActivity() {
                                 "COMPLETED",
                                 Toast.LENGTH_SHORT
                             ).show()
-//
-//                            mtPeripheral.mMTConnectionHandler.resetFactorySetting { s, _ ->
-//                                Log.d("beaconplus", "resetted")
-//                            }
-                            beaconViewModel.setConnectedPeripheral(mtPeripheral)
-
+                            if (!beaconViewModel.listenedDevices.contains(mtPeripheral)) {
+                                beaconViewModel.setConnectedPeripheral(mtPeripheral)
+                            }
                             performNavigation()
                         }
 
@@ -518,13 +455,6 @@ class WalkActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-//        beaconViewModel.listenedDevices.forEach {
-//            connect(it)
-//            it.mMTConnectionHandler.resetFactorySetting { s, _ ->
-//                Log.d("beaconplus", "resetted")
-//            }
-//        }
-//        mMTCentralManager.stopService()
         super.onDestroy()
 
 
@@ -545,41 +475,5 @@ class WalkActivity : AppCompatActivity() {
 
             })
         }
-//        apiViewModel.walkService.cancelContract(id)
-//        stopScan()
-//        task.stop()
-//        apiViewModel.walkService.acceptContract(id)
-    }
-
-    override fun onStop() {
-        Log.d("retrofit", "stop")
-//        beaconViewModel.listenedDevices.forEach {
-//            it.mMTConnectionHandler.resetFactorySetting { s, _ ->
-//                Log.d("beaconplus", "resetted")
-//            }
-//        }
-//        runBlocking {
-//            val call: Call<String> = apiViewModel.walkService.cancelContract(id)
-//            call.enqueue(object : Callback<String> {
-//                override fun onResponse(
-//                    p0: Call<String>,
-//                    p1: Response<String>
-//                ) {
-//                }
-//                override fun onFailure(
-//                    p0: Call<String>,
-//                    p1: Throwable
-//                ) {
-//                }
-//
-//            })
-//        }
-        super.onStop()
-//        if (mMTCentralManager != null) {
-//
-//        }
-//        mMTCentralManager.stopService()
-//        stopScan()
-//        task.stop()
     }
 }

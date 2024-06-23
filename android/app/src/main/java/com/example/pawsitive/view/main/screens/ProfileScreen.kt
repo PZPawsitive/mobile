@@ -34,11 +34,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.example.pawsitive.models.User
 import com.example.pawsitive.models.UserDTO
 import com.example.pawsitive.util.PreferencesManager
 import com.example.pawsitive.viewmodel.ApiViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import retrofit2.Call
 import retrofit2.Callback
@@ -87,11 +85,7 @@ fun ProfileScreen(apiViewModel: ApiViewModel) {
 
     LaunchedEffect(Unit) {
         loadData()
-        delay(15000)
-        loadData()
     }
-    Log.d("retrofit", "recompose")
-
 
     if (user != null) {
         UserProfile(user = user!!, apiViewModel, ::loadData)
@@ -202,17 +196,6 @@ fun UserProfile(user: UserDTO, apiViewModel: ApiViewModel, loadData: () -> Unit)
                             text = "Birthdate: ${user.birthdate}",
                             style = MaterialTheme.typography.headlineSmall
                         )
-//                        if (user.dogWalker != null && user.dogWalker) {
-//                            Text(
-//                                text = "Dog walker",
-//                                style = MaterialTheme.typography.headlineSmall
-//                            )
-//                        } else {
-//                            Text(
-//                                text = "Not dog walker",
-//                                style = MaterialTheme.typography.headlineSmall
-//                            )
-//                        }
                     }
 
                 }

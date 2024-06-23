@@ -1,7 +1,6 @@
 package com.example.pawsitive.view.walk.screens
 
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -73,8 +72,6 @@ fun DeviceConnectedScreen(
         mutableStateOf("")
     }
 
-    val context = LocalContext.current
-
     Box(modifier = Modifier.fillMaxSize()) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
             OutlinedTextField(value = nameSpaceInput, onValueChange = {nameSpaceInput = it}, placeholder = { Text(
@@ -101,9 +98,6 @@ fun DeviceConnectedScreen(
 //                        Toast.makeText(context, "Could not save name", Toast.LENGTH_SHORT).show()
                     }
                 }
-//                connectedMTPeripheral.mMTFrameHandler.advFrames.forEach {
-//                    if (it.frameType == Fr)
-//                }
             }) {
                 Text(text = "Save name")
             }

@@ -20,11 +20,9 @@ import androidx.navigation.NavController
 import com.example.pawsitive.navigation.main.MainLeafScreen
 import com.example.pawsitive.viewmodel.ApiViewModel
 
-
-// CHECKOUT BRANCH
 data class Message(val sender: String, val content: String)
 
-val messages = listOf(
+val messages = listOf( // mock, wait for backend implementation
     Message("Piłsudski", "wygralismy"),
     Message("Jan 3 Sobieski", "Miałem 3 pieski"),
     Message("Pepe", "Jestem smutny"),
@@ -58,7 +56,6 @@ fun MessagesScreen(navController: NavController, apiViewModel: ApiViewModel) {
                     Box(modifier = Modifier
                         .background(shape = CircleShape, color = Color.Red)
                         .padding(20.dp)) {
-//                        Text(text = "cos")
                     }
                     Column(
                         modifier = Modifier.padding(horizontal = 10.dp)

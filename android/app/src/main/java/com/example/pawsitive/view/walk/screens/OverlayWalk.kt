@@ -6,8 +6,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Chat
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Map
@@ -15,7 +15,6 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Map
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -67,7 +66,7 @@ fun OverlayWalk(
 ) {
     val navController = rememberNavController()
     val currentSelectedScreen by navController.currentScreenAsState()
-    val currentRoute by navController.currentRouteAsState()
+//    val currentRoute by navController.currentRouteAsState()
 
     fun navigateToDeviceConnected() {
         navController.navigate(WalkLeafScreen.DeviceConnected.route)
@@ -166,7 +165,7 @@ fun TopNavBar(navController: NavHostController) {
         navigationIcon = {
             IconButton(onClick = { context.startActivity(Intent(context, MainActivity::class.java)) }) {
                 Icon(
-                    imageVector = Icons.Filled.ArrowBack,
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Localized description"
                 )
             }

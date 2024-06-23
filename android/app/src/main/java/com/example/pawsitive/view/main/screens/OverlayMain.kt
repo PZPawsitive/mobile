@@ -6,9 +6,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.automirrored.outlined.Chat
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.ManageAccounts
@@ -49,15 +49,18 @@ import compose.icons.fontawesomeicons.Solid
 import compose.icons.fontawesomeicons.solid.Paw
 import kotlin.reflect.KFunction0
 
-
-var LocalGlobalState = compositionLocalOf<Boolean> { error("not composed") }
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OverlayMain(apiViewModel: ApiViewModel, updateLocation: () -> Unit, getLocation: KFunction0<List<Double>>) {
+fun OverlayMain(
+    apiViewModel: ApiViewModel,
+    updateLocation: () -> Unit,
+    getLocation: KFunction0<List<Double>>
+) {
     val navController = rememberNavController()
     val currentSelectedScreen by navController.currentScreenAsState()
-    val currentRoute by navController.currentRouteAsState()
+    val context = LocalContext.current
+    val preferencesManager = PreferencesManager(context)
+    //    val currentRoute by navController.currentRouteAsState()
 
     var expandedSettings by remember {
         mutableStateOf(false)
@@ -66,78 +69,69 @@ fun OverlayMain(apiViewModel: ApiViewModel, updateLocation: () -> Unit, getLocat
         mutableStateOf(false)
     }
 
-    val context = LocalContext.current
-    val preferencesManager = PreferencesManager(context)
-
-    fun changeState() {
-        state = !state
-    }
-
-    CompositionLocalProvider(LocalGlobalState provides state) {
-
-
-        Scaffold(
-            topBar = {
-                CenterAlignedTopAppBar(
-                    title = { Text(text = "Pawsitive", fontWeight = FontWeight.Bold) },
-                    navigationIcon = {
-                        IconButton(onClick = { navController.navigateUp() }) {
-                            Icon(
-                                imageVector = Icons.Filled.ArrowBack,
-                                contentDescription = "Localized description"
-                            )
-                        }
-                    },
-                    actions = {
-//                        Text(text = "Walker", modifier = Modifier.padding(end = 5.dp))
-//                        Switch(checked = state, onCheckedChange = { state = !state })
-                        IconButton(onClick = { expandedSettings = !expandedSettings }) {
-                            Icon(
-                                imageVector = Icons.Filled.Menu,
-                                contentDescription = "Localized description"
-                            )
-                        }
-
-                        DropdownMenu( // ui broken - fix
-                            expanded = expandedSettings,
-                            onDismissRequest = { expandedSettings = false }
-                        ) {
-                            DropdownMenuItem(
-                                text = { Text(text = "Settings") },
-                                onClick = {
-                                    navController.navigate(MainRootScreen.Settings.route)
-                                    expandedSettings = false
-                                }
-                            )
-                            HorizontalDivider()
-                            DropdownMenuItem(text = { Text(text = "Logout") }, onClick = {
-                                preferencesManager.clear()
-                                context.startActivity(
-                                    Intent(context, LoginActivity::class.java)
-                                )
-                            })
-                        }
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = { Text(text = "Pawsitive", fontWeight = FontWeight.Bold) },
+                navigationIcon = {
+                    IconButton(onClick = { navController.navigateUp() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Localized description"
+                        )
                     }
-                )
+                },
+                actions = {
+                    IconButton(onClick = { expandedSettings = !expandedSettings }) {
+                        Icon(
+                            imageVector = Icons.Filled.Menu,
+                            contentDescription = "Localized description"
+                        )
+                    }
 
-            },
-            bottomBar = {
-                BottomNavBar(
-                    navController = navController,
-                    currentSelectedScreen = currentSelectedScreen
-                )
-            },
-            modifier = Modifier.fillMaxSize(),
+                    DropdownMenu(
+                        expanded = expandedSettings,
+                        onDismissRequest = { expandedSettings = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text(text = "Settings") },
+                            onClick = {
+                                navController.navigate(MainRootScreen.Settings.route)
+                                expandedSettings = false
+                            }
+                        )
+                        HorizontalDivider()
+                        DropdownMenuItem(text = { Text(text = "Logout") }, onClick = {
+                            preferencesManager.clear()
+                            context.startActivity(
+                                Intent(context, LoginActivity::class.java)
+                            )
+                        })
+                    }
+                }
+            )
+
+        },
+        bottomBar = {
+            BottomNavBar(
+                navController = navController,
+                currentSelectedScreen = currentSelectedScreen
+            )
+        },
+        modifier = Modifier.fillMaxSize(),
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it)
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(it)
-            ) {
-                MainNavGraph(navController = navController, apiViewModel, ::changeState, updateLocation, getLocation)
-            }
+            MainNavGraph(
+                navController = navController,
+                apiViewModel,
+                updateLocation,
+                getLocation
+            )
         }
-
     }
 }
 
@@ -159,7 +153,7 @@ private fun BottomNavBar(
             icon = {
                 Icon(
                     imageVector = if (currentSelectedScreen == MainRootScreen.Home) Icons.Default.Home else Icons.Outlined.Home,
-                    contentDescription = "Home"
+                    contentDescription = "home"
                 )
             }
         )
@@ -173,7 +167,7 @@ private fun BottomNavBar(
             icon = {
                 Icon(
                     imageVector = if (currentSelectedScreen == MainRootScreen.ContractList) Icons.Filled.List else Icons.Outlined.List,
-                    contentDescription = "Contracts"
+                    contentDescription = "contracts"
                 )
             }
         )
@@ -187,7 +181,7 @@ private fun BottomNavBar(
             icon = {
                 Icon(
                     imageVector = FontAwesomeIcons.Solid.Paw,
-                    contentDescription = "Pets",
+                    contentDescription = "pets",
                     modifier = Modifier.size(25.dp)
                 )
             }
@@ -202,7 +196,7 @@ private fun BottomNavBar(
             icon = {
                 Icon(
                     imageVector = if (currentSelectedScreen == MainRootScreen.Messages) Icons.AutoMirrored.Filled.Chat else Icons.AutoMirrored.Outlined.Chat,
-                    contentDescription = "home"
+                    contentDescription = "messages"
                 )
             }
         )
@@ -216,7 +210,7 @@ private fun BottomNavBar(
             icon = {
                 Icon(
                     imageVector = if (currentSelectedScreen == MainRootScreen.Profile) Icons.Filled.ManageAccounts else Icons.Outlined.ManageAccounts,
-                    contentDescription = "home"
+                    contentDescription = "profile"
                 )
             }
         )

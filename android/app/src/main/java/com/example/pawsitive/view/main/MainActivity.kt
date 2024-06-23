@@ -46,9 +46,7 @@ class MainActivity : AppCompatActivity() {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
         setContent {
-
             OverlayMain(apiViewModel, ::updateLocation, ::getLocation)
-
         }
         val ctx = applicationContext
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx))

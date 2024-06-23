@@ -32,7 +32,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -41,14 +40,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.pawsitive.models.AddPetRequest
-import com.example.pawsitive.models.IdWrapper
-import com.example.pawsitive.models.User
 import com.example.pawsitive.navigation.main.MainLeafScreen
 import com.example.pawsitive.util.DateUtils
 import com.example.pawsitive.util.PreferencesManager
 import com.example.pawsitive.viewmodel.ApiViewModel
-import com.minew.beaconplus.sdk.MTPeripheral
 import compose.icons.FontAwesomeIcons
 import compose.icons.fontawesomeicons.Solid
 import compose.icons.fontawesomeicons.solid.Cat
@@ -65,12 +60,16 @@ import retrofit2.Response
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
-    var nameInput by rememberSaveable {
-        mutableStateOf("")
-    }
-    var showDialog = rememberSaveable {
-        mutableStateOf(false)
-    }
+    val species = listOf("DOG", "CAT", "BIRD", "OTHER")
+    val breeds = mutableListOf("Labrador", "Bulldog", "Alaskan Malamute", "Other")
+    val dogBreeds = listOf("Labrador", "Bulldog", "Alaskan Malamute", "Other")
+    val catBreeds = listOf("Birman", "Bombay", "Bengal", "Other")
+    val birdBreeds = listOf("Canary", "Columbidae", "Cockatiel", "Finch", "Lovebird", "Other")
+    val otherBreeds = listOf("Other")
+
+    val context = LocalContext.current
+    val preferencesManager = PreferencesManager(context)
+
     val birthDate = rememberDatePickerState()
     val millisToLocalDate = birthDate.selectedDateMillis?.let {
         DateUtils().convertMillisToLocalDate(it)
@@ -79,17 +78,14 @@ fun PetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
         DateUtils().dateToString(millisToLocalDate!!)
     } ?: "Choose birthdate"
 
+    var nameInput by rememberSaveable {
+        mutableStateOf("")
+    }
+    val showDialog = rememberSaveable {
+        mutableStateOf(false)
+    }
     var expandedSpecies by rememberSaveable { mutableStateOf(false) }
     var expandedBreed by rememberSaveable { mutableStateOf(false) }
-
-    val species = listOf("DOG", "CAT", "BIRD", "OTHER")
-    val dogBreeds = listOf("Labrador", "Bulldog", "Alaskan Malamute", "Other")
-    val catBreeds = listOf("Birman", "Bombay", "Bengal", "Other")
-    val birdBreeds = listOf("Canary", "Columbidae", "Cockatiel", "Finch", "Lovebird", "Other")
-    val otherBreeds = listOf("Other")
-
-    var breeds = mutableListOf("DOG", "CAT", "BIRD", "OTHER")
-
 
     var selectedSpecies by rememberSaveable {
         mutableStateOf(species[0])
@@ -98,9 +94,6 @@ fun PetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
         mutableStateOf(dogBreeds[0])
     }
 
-    val context = LocalContext.current
-
-    val preferencesManager = PreferencesManager(context)
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
@@ -177,7 +170,6 @@ fun PetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
                     dogBreeds.forEach { breeds.add(it) }
                     selectedBreed = dogBreeds[0]
                 }
-
                 "CAT" -> {
                     breeds.clear()
                     catBreeds.forEach { breeds.add(it) }
@@ -222,6 +214,7 @@ fun PetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
                             }, onClick = {
                                 selectedBreed = it
                                 expandedBreed = false
+                                Log.d("pet", selectedBreed)
                             })
                         }
 

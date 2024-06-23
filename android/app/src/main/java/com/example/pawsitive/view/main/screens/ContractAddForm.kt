@@ -35,11 +35,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.pawsitive.models.AddContract
-import com.example.pawsitive.models.AddPetRequest
 import com.example.pawsitive.models.Pet
 import com.example.pawsitive.models.SimpleGeopoint
-import com.example.pawsitive.models.User
-import com.example.pawsitive.models.UserDTO
 import com.example.pawsitive.navigation.main.MainLeafScreen
 import com.example.pawsitive.util.PreferencesManager
 import com.example.pawsitive.viewmodel.ApiViewModel
@@ -61,16 +58,13 @@ fun ContractAddForm(navController: NavController, apiViewModel: ApiViewModel) {
     var rewardInput by rememberSaveable {
         mutableStateOf("")
     }
-    var location: SimpleGeopoint? = null
-
-
     var isDangerous by rememberSaveable {
         mutableStateOf(false)
     }
     var pets: List<Pet>? by remember {
         mutableStateOf(null)
     }
-    var selectedPets = remember {
+    val selectedPets = remember {
         mutableStateListOf<String?>()
     }
     runBlocking {
@@ -98,30 +92,30 @@ fun ContractAddForm(navController: NavController, apiViewModel: ApiViewModel) {
             }
 
         })
-        val callUser: Call<UserDTO> =
-            apiViewModel.userService.getUserById(preferencesManager.getUserId()!!)
-        callUser.enqueue(object : Callback<UserDTO> {
-            override fun onResponse(
-                p0: Call<UserDTO>,
-                p1: Response<UserDTO>
-            ) {
-                Log.d("retrofit", p1.body().toString())
-                if (p1.body() != null) {
-//                    location = p1.body().
-                } else {
-                    Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            override fun onFailure(
-                p0: Call<UserDTO>,
-                p1: Throwable
-            ) {
-                Log.d("retrofit", p1.message.toString())
-                Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
-            }
-
-        })
+//        val callUser: Call<UserDTO> =
+//            apiViewModel.userService.getUserById(preferencesManager.getUserId()!!)
+//        callUser.enqueue(object : Callback<UserDTO> {
+//            override fun onResponse(
+//                p0: Call<UserDTO>,
+//                p1: Response<UserDTO>
+//            ) {
+//                Log.d("retrofit", p1.body().toString())
+//                if (p1.body() != null) {
+////                    location = p1.body().
+//                } else {
+//                    Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
+//                }
+//            }
+//
+//            override fun onFailure(
+//                p0: Call<UserDTO>,
+//                p1: Throwable
+//            ) {
+//                Log.d("retrofit", p1.message.toString())
+//                Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+//            }
+//
+//        })
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -183,10 +177,10 @@ fun ContractAddForm(navController: NavController, apiViewModel: ApiViewModel) {
         if (descriptionInput.isNotEmpty() && rewardInput.isNotEmpty() && selectedPets.isNotEmpty())
             FloatingActionButton(
                 onClick = {
-                    Log.d("retrofit", "pets: ${selectedPets}")
-                    Log.d("retrofit", "dangerous: ${isDangerous}")
+                    Log.d("retrofit", "pets: $selectedPets")
+                    Log.d("retrofit", "dangerous: $isDangerous")
                     runBlocking {
-                        val userId = preferencesManager.getUserId()
+//                        val userId = preferencesManager.getUserId()
                         val call: Call<String> = apiViewModel.walkService.addContract(AddContract(descriptionInput, rewardInput.toDouble(), SimpleGeopoint(0.0, 0.0, LocalDateTime.now()), selectedPets.toList(), isDangerous))
                         call.enqueue(object : Callback<String> {
                             override fun onResponse(
@@ -224,7 +218,7 @@ fun ContractAddForm(navController: NavController, apiViewModel: ApiViewModel) {
                     .padding(bottom = 15.dp)
             ) {
                 Box(modifier = Modifier.padding(10.dp)) {
-                    Text(text = "Add pet")
+                    Text(text = "Add Contract")
                 }
             }
     }

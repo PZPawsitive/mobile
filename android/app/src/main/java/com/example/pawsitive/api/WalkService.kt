@@ -2,7 +2,7 @@ package com.example.pawsitive.api
 
 import com.example.pawsitive.models.AddContract
 import com.example.pawsitive.models.Contract
-import com.example.pawsitive.models.GeopointDTO
+import com.example.pawsitive.models.Geopoint
 import com.example.pawsitive.models.SimpleGeopoint
 import org.osmdroid.util.GeoPoint
 import retrofit2.Call
@@ -25,7 +25,7 @@ interface WalkService {
     @GET("api/contracts/{id}/geopoints")
     fun getGeopoints(
         @Path("id") id: String
-    ): Call<List<GeopointDTO>>
+    ): Call<List<Geopoint>>
 
     @POST("api/geopoints/{contractId}")
     fun postGeopoint(

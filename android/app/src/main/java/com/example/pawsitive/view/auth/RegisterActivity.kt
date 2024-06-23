@@ -40,7 +40,6 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -56,14 +55,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
-import com.example.pawsitive.models.LoginRequest
 import com.example.pawsitive.models.RegisterRequest
 import com.example.pawsitive.models.SimpleGeopoint
 import com.example.pawsitive.models.User
-import com.example.pawsitive.models.VerificationRequest
 import com.example.pawsitive.util.DateUtils
 import com.example.pawsitive.util.PreferencesManager
-import com.example.pawsitive.view.main.MainActivity
 import com.example.pawsitive.viewmodel.ApiViewModel
 import kotlinx.coroutines.runBlocking
 import retrofit2.Call
@@ -95,8 +91,6 @@ class RegisterActivity : ComponentActivity() {
         }
     }
 
-
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun RegisterView() {
         if (registerView.value) {
@@ -386,7 +380,7 @@ class RegisterActivity : ComponentActivity() {
                                                 description = "New user",
                                                 profilePic = "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                                                 role = "USER_NOT_VERIFIED",
-                                                location = SimpleGeopoint(0.0, 0.0, LocalDateTime.now())
+                                                location = SimpleGeopoint(54.39555994665233, 18.5737934140649, LocalDateTime.now())
                                             )
                                         )
                                         call.enqueue(object : Callback<User> {
@@ -401,9 +395,6 @@ class RegisterActivity : ComponentActivity() {
                                                     preferencesManager.saveToken(p1.body()!!.token!!)
                                                     preferencesManager.setUserId(p1.body()!!.id.toString())
                                                     preferencesManager.setEmail(p1.body()!!.email)
-//                                                    val intent = Intent(context, MainActivity::class.java)
-//                                                    startActivity(intent)
-
                                                     registerView.value = false
                                                 } else {
 
@@ -481,7 +472,6 @@ class RegisterActivity : ComponentActivity() {
                 }
                 Row(Modifier.fillMaxWidth().padding(10.dp), horizontalArrangement = Arrangement.SpaceEvenly) {
                     OutlinedButton(onClick = {
-//                        apiViewModel.userService.resend(preferencesManager.getEmail()!!)
                         runBlocking {
                             val call: Call<String> = apiViewModel.userService.resend(preferencesManager.getEmail()!!)
                             call.enqueue(object : Callback<String> {

@@ -28,7 +28,6 @@ import kotlin.reflect.KFunction0
 fun MainNavGraph(
     navController: NavHostController,
     apiViewModel: ApiViewModel,
-    changeState: () -> Unit,
     updateLocation: () -> Unit,
     getLocation: KFunction0<List<Double>>,
 ) {
@@ -38,7 +37,7 @@ fun MainNavGraph(
         addPetRoute(navController, apiViewModel)
         addMessagesRoute(navController, apiViewModel)
         addProfileRoute(navController, apiViewModel)
-        addSettingsRoute(navController, changeState)
+        addSettingsRoute(navController)
     }
     
 }
@@ -110,15 +109,15 @@ private fun NavGraphBuilder.addProfileRoute(
     }
 }
 
-private fun NavGraphBuilder.addSettingsRoute(navController: NavController, changeState: () -> Unit) {
+private fun NavGraphBuilder.addSettingsRoute(navController: NavController) {
     navigation(route = MainRootScreen.Settings.route, startDestination = MainLeafScreen.Settings.route) {
-        showSettings(navController, changeState)
+        showSettings(navController)
     }
 
 }
-private fun NavGraphBuilder.showSettings(navController: NavController, changeState: () -> Unit) {
+private fun NavGraphBuilder.showSettings(navController: NavController) {
     composable(route = MainLeafScreen.Settings.route) {
-        Settings(navController, changeState)
+        Settings(navController)
     }
 }
 private fun NavGraphBuilder.showHome(

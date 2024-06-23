@@ -28,22 +28,18 @@
         <activity
             android:name=".view.walk.WalkActivity"
             android:exported="false"
-            android:label="@string/title_activity_walk"
             android:theme="@style/Theme.Pawsitive" />
         <activity
             android:name=".view.main.MainActivity"
             android:exported="false"
-            android:label="@string/title_activity_main_screen"
             android:theme="@style/Theme.Pawsitive" />
         <activity
             android:name=".view.auth.RegisterActivity"
             android:exported="false"
-            android:label="@string/title_activity_register"
             android:theme="@style/Theme.Pawsitive" />
         <activity
             android:name=".view.auth.LoginActivity"
             android:exported="true"
-            android:label="@string/title_activity_login"
             android:theme="@style/Theme.Pawsitive">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

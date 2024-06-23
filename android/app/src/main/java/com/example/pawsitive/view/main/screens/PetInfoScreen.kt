@@ -39,7 +39,6 @@ import compose.icons.fontawesomeicons.solid.Cat
 import compose.icons.fontawesomeicons.solid.Dog
 import compose.icons.fontawesomeicons.solid.Dove
 import compose.icons.fontawesomeicons.solid.Horse
-import compose.icons.fontawesomeicons.solid.KiwiBird
 import compose.icons.fontawesomeicons.solid.Paw
 import kotlinx.coroutines.runBlocking
 import retrofit2.Call
@@ -49,7 +48,6 @@ import retrofit2.Response
 
 @Composable
 fun PetInfoScreen(apiViewModel: ApiViewModel, petId: String?, navController: NavController) {
-//    Log.d("retrofit", petId.toString())
     var pet: Pet? by remember {
         mutableStateOf(null)
     }

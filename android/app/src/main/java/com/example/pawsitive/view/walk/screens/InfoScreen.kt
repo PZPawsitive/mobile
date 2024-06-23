@@ -5,7 +5,6 @@ import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -250,12 +249,7 @@ fun Device(
                 .fillMaxWidth(),
 
             onClick = {
-                if (mtFrameHandler.name == "D15N") {
-                    connect(mtPeripheral)
-                } else {
-                    Toast.makeText(context, "wait for device to configure", Toast.LENGTH_SHORT)
-                        .show()
-                }
+                connect(mtPeripheral)
             }
         ) {
             Box(modifier = Modifier.padding(10.dp)) {

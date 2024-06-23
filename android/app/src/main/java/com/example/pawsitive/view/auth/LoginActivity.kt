@@ -1,13 +1,11 @@
 package com.example.pawsitive.view.auth
 
-import android.app.Application
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -54,7 +52,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-//val networkRepository = NetworkRepository(ServiceConfiguration.userService, ServiceConfiguration.petService, ServiceConfiguration.walkService)
+
 
 class LoginActivity : ComponentActivity() {
 

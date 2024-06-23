@@ -13,11 +13,7 @@ import com.minew.beaconplus.sdk.MTPeripheral
 @SuppressLint("MutableCollectionMutableState")
 class BeaconViewModel : ViewModel(){
 
-
-
-//    var mlist by mutableStateOf(mutableStateListOf<MTPeripheral>())
-
-    var _mlist = mutableStateListOf<MTPeripheral>()
+    private var _mlist = mutableStateListOf<MTPeripheral>()
     val mlist : List<MTPeripheral> = _mlist
 
     var connectedMTPeripheral by mutableStateOf<MTPeripheral?>(null)
@@ -27,7 +23,6 @@ class BeaconViewModel : ViewModel(){
     val listenedDevices: List<MTPeripheral> = _listenedDevices
 
     fun setBeaconList(list: List<MTPeripheral>) {
-//        Log.d("beaconData", list.toString())
         _mlist.clear()
         list.forEach {
             _mlist.add(it)
