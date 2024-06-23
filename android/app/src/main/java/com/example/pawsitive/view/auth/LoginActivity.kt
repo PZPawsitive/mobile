@@ -1,12 +1,12 @@
-package com.example.pawsitive.view
+package com.example.pawsitive.view.auth
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,21 +16,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,16 +39,36 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.pawsitive.ui.theme.Green4
-import com.example.pawsitive.ui.theme.PawsitiveTheme
+import androidx.lifecycle.ViewModelProvider
+import com.example.pawsitive.models.LoginRequest
+import com.example.pawsitive.models.User
+import com.example.pawsitive.util.PreferencesManager
+import com.example.pawsitive.view.main.MainActivity
+import com.example.pawsitive.viewmodel.ApiViewModel
+import kotlinx.coroutines.runBlocking
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
 
 
 class LoginActivity : ComponentActivity() {
+
+    private lateinit var apiViewModel: ApiViewModel
+
+    private lateinit var preferencesManager: PreferencesManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        apiViewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+        )[ApiViewModel::class.java]
+        preferencesManager = PreferencesManager(applicationContext)
+        preferencesManager.clear()
+
         setContent {
 
             LoginView()
@@ -67,7 +82,7 @@ class LoginActivity : ComponentActivity() {
 
         val context = LocalContext.current
 
-        var loginInput by rememberSaveable {
+        var emailInput by rememberSaveable {
             mutableStateOf("")
         }
         var passwordInput by rememberSaveable {
@@ -105,16 +120,16 @@ class LoginActivity : ComponentActivity() {
 
                     ) {
                         OutlinedTextField(
-                            value = loginInput,
-                            label = { Text(text = "Login") },
-                            onValueChange = { loginInput = it },
+                            value = emailInput,
+                            label = { Text(text = "Email") },
+                            onValueChange = { emailInput = it },
                             modifier = Modifier
                                 .fillMaxWidth()
                         )
                         Spacer(modifier = Modifier.height(20.dp))
                         OutlinedTextField(
                             value = passwordInput,
-                            label = { Text(text = "Hasło") },
+                            label = { Text(text = "Password") },
                             visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                             onValueChange = { passwordInput = it },
                             modifier = Modifier
@@ -142,14 +157,43 @@ class LoginActivity : ComponentActivity() {
                                 },
 
                                 ) {
-                                Text(text = "Nie masz jeszcze konta?")
+                                Text(text = "Don't have account?")
                             }
                             Button(
-                                onClick = {},
-                                ) {
-                                Text(text = "Zaloguj")
-                            }
+                                onClick = {
+                                    runBlocking {
+                                        val call: Call<User> = apiViewModel.userService.login(LoginRequest(emailInput, passwordInput))
+                                        call.enqueue(object : Callback<User> {
+                                            override fun onResponse(
+                                                p0: Call<User>,
+                                                p1: Response<User>
+                                            ) {
+                                                Log.d("retrofit", p1.body().toString())
+                                                if (p1.body() != null) {
+                                                    preferencesManager.saveToken(p1.body()!!.token!!)
+                                                    preferencesManager.setUserId(p1.body()!!.id.toString())
+                                                    val intent = Intent(context, MainActivity::class.java)
+                                                    startActivity(intent)
+                                                } else {
+                                                    Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
+                                                }
+                                            }
 
+                                            override fun onFailure(
+                                                p0: Call<User>,
+                                                p1: Throwable
+                                            ) {
+                                                Log.d("retrofit", p1.message.toString())
+//                                                Log.d("retrofit", p1.)
+                                                Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+                                            }
+
+                                        })
+                                    }
+                                },
+                            ) {
+                                Text(text = "Login")
+                            }
                         }
 
                     }
