@@ -89,7 +89,7 @@ fun MyPetsColumn(
                 if (p1.body() != null) {
                     pets = p1.body()
                 } else {
-                    Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Błąd, spróbuj ponownie", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -98,7 +98,7 @@ fun MyPetsColumn(
                 p1: Throwable
             ) {
                 Log.d("retrofit", p1.message.toString())
-                Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Błąd połączenia", Toast.LENGTH_SHORT).show()
             }
 
         })
@@ -134,7 +134,7 @@ fun MyPetsColumn(
                                         "HORSE" -> FontAwesomeIcons.Solid.Horse
                                         else -> FontAwesomeIcons.Solid.Paw
                                     },
-                                    contentDescription = "pet type",
+                                    contentDescription = "Ikona zwierzęcia",
                                     Modifier.size(30.dp)
                                 )
                             }
@@ -145,7 +145,7 @@ fun MyPetsColumn(
                             ) {
 
                                 DropdownMenuItem(
-                                    text = { Text(text = "Info") },
+                                    text = { Text(text = "Informacje") },
                                     onClick = { navController.navigate("${MainLeafScreen.PetInfo.route}?petId=${it.id}") })
                                 HorizontalDivider()
                                 DropdownMenuItem(
@@ -165,7 +165,7 @@ fun MyPetsColumn(
                     .align(alignment = Alignment.BottomEnd)
                     .padding(20.dp)
             ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "add my pet")
+                Icon(imageVector = Icons.Default.Add, contentDescription = "Dodaj zwierzę")
             }
         }
 

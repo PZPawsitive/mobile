@@ -77,7 +77,7 @@ fun OverlayMain(
                     IconButton(onClick = { navController.navigateUp() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Localized description"
+                            contentDescription = "Cofnij się"
                         )
                     }
                 },
@@ -85,7 +85,7 @@ fun OverlayMain(
                     IconButton(onClick = { expandedSettings = !expandedSettings }) {
                         Icon(
                             imageVector = Icons.Filled.Menu,
-                            contentDescription = "Localized description"
+                            contentDescription = "Otwórz menu"
                         )
                     }
 
@@ -94,14 +94,14 @@ fun OverlayMain(
                         onDismissRequest = { expandedSettings = false }
                     ) {
                         DropdownMenuItem(
-                            text = { Text(text = "Settings") },
+                            text = { Text(text = "Ustawienia") },
                             onClick = {
                                 navController.navigate(MainRootScreen.Settings.route)
                                 expandedSettings = false
                             }
                         )
                         HorizontalDivider()
-                        DropdownMenuItem(text = { Text(text = "Logout") }, onClick = {
+                        DropdownMenuItem(text = { Text(text = "Wyloguj") }, onClick = {
                             preferencesManager.clear()
                             context.startActivity(
                                 Intent(context, LoginActivity::class.java)
@@ -148,12 +148,12 @@ private fun BottomNavBar(
             onClick = { navController.navigateToRootScreen(MainRootScreen.Home) },
             alwaysShowLabel = true,
             label = {
-                Text(text = "Home")
+                Text(text = "Główna")
             },
             icon = {
                 Icon(
                     imageVector = if (currentSelectedScreen == MainRootScreen.Home) Icons.Default.Home else Icons.Outlined.Home,
-                    contentDescription = "home"
+                    contentDescription = "strona główna"
                 )
             }
         )
@@ -162,12 +162,12 @@ private fun BottomNavBar(
             onClick = { navController.navigateToRootScreen(MainRootScreen.ContractList) },
             alwaysShowLabel = true,
             label = {
-                Text(text = "Contracts")
+                Text(text = "Zlecenia")
             },
             icon = {
                 Icon(
                     imageVector = if (currentSelectedScreen == MainRootScreen.ContractList) Icons.Filled.List else Icons.Outlined.List,
-                    contentDescription = "contracts"
+                    contentDescription = "ZLecenia"
                 )
             }
         )
@@ -176,12 +176,12 @@ private fun BottomNavBar(
             onClick = { navController.navigateToRootScreen(MainRootScreen.Pet) },
             alwaysShowLabel = true,
             label = {
-                Text(text = "Pets")
+                Text(text = "Zwierzaki")
             },
             icon = {
                 Icon(
                     imageVector = FontAwesomeIcons.Solid.Paw,
-                    contentDescription = "pets",
+                    contentDescription = "Zwierzaki",
                     modifier = Modifier.size(25.dp)
                 )
             }
@@ -191,12 +191,12 @@ private fun BottomNavBar(
             onClick = { navController.navigateToRootScreen(MainRootScreen.Messages) },
             alwaysShowLabel = true,
             label = {
-                Text(text = "Messages")
+                Text(text = "Czat")
             },
             icon = {
                 Icon(
                     imageVector = if (currentSelectedScreen == MainRootScreen.Messages) Icons.AutoMirrored.Filled.Chat else Icons.AutoMirrored.Outlined.Chat,
-                    contentDescription = "messages"
+                    contentDescription = "Wiadomości"
                 )
             }
         )
@@ -205,12 +205,12 @@ private fun BottomNavBar(
             onClick = { navController.navigateToRootScreen(MainRootScreen.Profile) },
             alwaysShowLabel = true,
             label = {
-                Text(text = "Profile")
+                Text(text = "Profil")
             },
             icon = {
                 Icon(
                     imageVector = if (currentSelectedScreen == MainRootScreen.Profile) Icons.Filled.ManageAccounts else Icons.Outlined.ManageAccounts,
-                    contentDescription = "profile"
+                    contentDescription = "Profil"
                 )
             }
         )

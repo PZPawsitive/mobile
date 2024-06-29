@@ -3,17 +3,17 @@
     <string name="title_activity_login">LoginActivity</string>
     <string name="title_activity_register">RegisterActivity</string>
     <string name="title_activity_main_screen">MainScreen</string>
-    <string name="scan_device">scan devices</string>
-    <string name="device_connected">connected device</string>
-    <string name="device_connected_successfully">The device is connected successfully</string>
+    <string name="scan_device">Skanuj urządzenia</string>
+    <string name="device_connected">Połączone urządzenie</string>
+    <string name="device_connected_successfully">Pomyślnie połączono z urządzeniem</string>
 
-    <string name="device_connecting">Connecting</string>
-    <string name="device_successfully">Connected Successfully</string>
-    <string name="device_fail">Connected Fail</string>
+    <string name="device_connecting">Łączenie</string>
+    <string name="device_successfully">Połączono</string>
+    <string name="device_fail">Nie połączono</string>
 
-    <string name="need_permission_continue">Pawsitive needs following permissions to continue</string>
-    <string name="allow_permission_in_settings">Please allow following permissions in settings</string>
-    <string name="loading">Loading</string>
+    <string name="need_permission_continue">Pawsitive potrzebuje następujących uprawnień</string>
+    <string name="allow_permission_in_settings">Zezwól na następujące uprawnienia w ustawieniach</string>
+    <string name="loading">Ładowanie</string>
     <string name="connected_device">Connect the device</string>
     <string name="title_activity_walk">WalkActivity</string>
 </resources>

@@ -65,7 +65,7 @@ fun MessageScreen() {
                     )
                     Icon(
                         imageVector = Icons.Filled.Send,
-                        contentDescription = "send message",
+                        contentDescription = "Wyślij wiadomość",
                         modifier = Modifier
                             .padding(10.dp)
                             .clickable {

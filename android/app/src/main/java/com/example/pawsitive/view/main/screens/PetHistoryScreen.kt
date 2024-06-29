@@ -81,7 +81,7 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                     }
                     Log.d("retrofit", "histories ${p1.body()}")
                 } else {
-                    Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Błąd, spróbuj ponownie", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -90,7 +90,7 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                 p1: Throwable
             ) {
                 Log.d("retrofit", p1.message.toString())
-                Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Błąd połączenia", Toast.LENGTH_SHORT).show()
             }
 
         })
@@ -113,7 +113,7 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                         }
                         Log.d("retrofit", "histories ${p1.body()}")
                     } else {
-                        Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Błąd, spróbuj ponownie", Toast.LENGTH_SHORT).show()
                     }
                 }
 
@@ -122,7 +122,7 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                     p1: Throwable
                 ) {
                     Log.d("retrofit", p1.message.toString())
-                    Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Błąd połączenia", Toast.LENGTH_SHORT).show()
                 }
 
             })
@@ -157,7 +157,7 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                                 onDismissRequest = { expandedSettings = false }
                             ) {
                                 DropdownMenuItem(
-                                    text = { Text(text = "Change description") },
+                                    text = { Text(text = "Zmień opis") },
                                     onClick = {
                                         selectedHistoryId = it!!.id
                                         expandedSettings = !expandedSettings
@@ -166,7 +166,7 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                                     })
                                 HorizontalDivider()
                                 DropdownMenuItem(
-                                    text = { Text(text = "remove history") },
+                                    text = { Text(text = "Usuń tę historię") },
                                     onClick = {
                                         expandedSettings = !expandedSettings
                                         runBlocking {
@@ -184,7 +184,7 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                                                     } else {
                                                         Toast.makeText(
                                                             context,
-                                                            "Error, try again",
+                                                            "Błąd, spróbuj ponownie",
                                                             Toast.LENGTH_SHORT
                                                         ).show()
                                                     }
@@ -197,7 +197,7 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                                                     Log.d("retrofit", p1.message.toString())
                                                     Toast.makeText(
                                                         context,
-                                                        "Connection error",
+                                                        "Błąd połączenia",
                                                         Toast.LENGTH_SHORT
                                                     ).show()
                                                 }
@@ -207,7 +207,7 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                                     })
                                 HorizontalDivider()
                                 DropdownMenuItem(
-                                    text = { Text(text = "Show on map") },
+                                    text = { Text(text = "Pokaż na mapie") },
                                     onClick = { navController.navigate("${MainLeafScreen.PetHistoryMap.route}?id=${it!!.id}") })
                             }
                             Card(
@@ -225,7 +225,7 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                                             val date = it.completedAt!!.format(formatter)
                                             Row {
                                                 Text(
-                                                    text = "Completed at: ",
+                                                    text = "Ukończono: ",
                                                     fontWeight = FontWeight.Bold,
                                                     style = MaterialTheme.typography.labelLarge
                                                 )
@@ -240,7 +240,7 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                                             val date = it.acceptedAt!!.format(formatter)
                                             Row {
                                                 Text(
-                                                    text = "Active since: ",
+                                                    text = "Aktywny od: ",
                                                     fontWeight = FontWeight.Bold,
                                                     style = MaterialTheme.typography.labelLarge
                                                 )
@@ -256,7 +256,7 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                                             val date = it.createdAt.format(formatter)
                                             Row {
                                                 Text(
-                                                    text = "created at: ",
+                                                    text = "Stworzono: ",
                                                     fontWeight = FontWeight.Bold,
                                                     style = MaterialTheme.typography.labelLarge
                                                 )
@@ -316,7 +316,7 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                                         } else {
                                             Toast.makeText(
                                                 context,
-                                                "Error, try again",
+                                                "Błąd, spróbuj ponownie",
                                                 Toast.LENGTH_SHORT
                                             ).show()
                                         }
@@ -329,7 +329,7 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                                         Log.d("retrofit", p1.message.toString())
                                         Toast.makeText(
                                             context,
-                                            "Connection error",
+                                            "Błąd połączenia",
                                             Toast.LENGTH_SHORT
                                         ).show()
                                     }
@@ -338,12 +338,12 @@ fun PetHistoryScreen(navController: NavController, apiViewModel: ApiViewModel, p
                             }
 
                         }) {
-                            Icon(imageVector = Icons.Default.Check, contentDescription = "accept")
+                            Icon(imageVector = Icons.Default.Check, contentDescription = "Akceptuj")
                         }
                     },
                     dismissButton = {
                         Button(onClick = { openAlertDialog.value = false }) {
-                            Icon(imageVector = Icons.Default.Clear, contentDescription = "decline")
+                            Icon(imageVector = Icons.Default.Clear, contentDescription = "Anuluj")
                         }
                     },
                     text = {

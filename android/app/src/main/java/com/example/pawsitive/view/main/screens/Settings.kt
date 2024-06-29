@@ -15,7 +15,7 @@ import androidx.navigation.NavController
 fun Settings(navController: NavController) {
     Box(modifier = Modifier.fillMaxSize()) {
         Row(modifier = Modifier.align(Alignment.Center), verticalAlignment = Alignment.CenterVertically) {
-            Text(text = "Settings Screen", fontWeight = FontWeight.Bold)
+            Text(text = "Ustawienia aplikacji", fontWeight = FontWeight.Bold)
         }
     }
 }

@@ -31,7 +31,7 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun HistoryMap(apiViewModel: ApiViewModel, contractId: String?) {
-    Log.d("retrofit", "kontrakt id ${contractId.toString()}")
+    Log.d("retrofit", "contract id ${contractId.toString()}")
     val context = LocalContext.current
     var geopoints: List<Geopoint>? by remember {
         mutableStateOf(null)
@@ -49,7 +49,7 @@ fun HistoryMap(apiViewModel: ApiViewModel, contractId: String?) {
 
                     geopoints = p1.body()!!
                 } else {
-                    Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Błąd, spróbuj ponownie", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -58,12 +58,11 @@ fun HistoryMap(apiViewModel: ApiViewModel, contractId: String?) {
                 p1: Throwable
             ) {
                 Log.d("retrofit", p1.message.toString())
-                Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Błąd połączenia", Toast.LENGTH_SHORT).show()
             }
 
         })
     }
-    Log.d("raz", geopoints.toString())
     if (geopoints != null && geopoints!!.isNotEmpty()) {
         AndroidView(
             modifier = Modifier.padding(10.dp),
@@ -79,17 +78,17 @@ fun HistoryMap(apiViewModel: ApiViewModel, contractId: String?) {
                     items.add(
                         OverlayItem(
                             it.createdAt.format(formatter),
-                            "route",
+                            "Punkt trasy",
                             GeoPoint(it.latitude, it.longitude)
                         )
                     )
-//                    items.add(
-//                        OverlayItem(
-//                            it.createdAt.format(formatter),
-//                            "route",
-//                            GeoPoint(it.latitude + 1, it.longitude + 1)
-//                        )
-//                    )
+                    items.add(
+                        OverlayItem(
+                            it.createdAt.format(formatter),
+                            "Punkt trasy",
+                            GeoPoint(it.latitude + 0.0001, it.longitude + 0.0001)
+                        )
+                    )
                 }
                 mapController.setCenter(items[0].point)
                 val overlay = ItemizedOverlayWithFocus<OverlayItem>(items, object :

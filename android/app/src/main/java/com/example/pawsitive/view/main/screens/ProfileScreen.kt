@@ -66,7 +66,7 @@ fun ProfileScreen(apiViewModel: ApiViewModel) {
                     if (p1.body() != null) {
                         user = p1.body()
                     } else {
-                        Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Błąd, spróbuj ponownie", Toast.LENGTH_SHORT).show()
                     }
                 }
 
@@ -75,7 +75,7 @@ fun ProfileScreen(apiViewModel: ApiViewModel) {
                     p1: Throwable
                 ) {
                     Log.d("retrofit", p1.message.toString())
-                    Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Błąd połączenia", Toast.LENGTH_SHORT).show()
                 }
 
             })
@@ -120,7 +120,7 @@ fun UserProfile(user: UserDTO, apiViewModel: ApiViewModel, loadData: () -> Unit)
                 Row {
                     AsyncImage(
                         model = user.profilePic,
-                        contentDescription = "user profile picture",
+                        contentDescription = "Zdjęcie profilowe",
                         modifier = Modifier
                             .padding(15.dp)
                             .size(300.dp)
@@ -137,19 +137,19 @@ fun UserProfile(user: UserDTO, apiViewModel: ApiViewModel, loadData: () -> Unit)
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = "Description: ${user.description}",
+                            text = "Opis: ${user.description}",
                             style = MaterialTheme.typography.headlineSmall
                         )
                         Text(
-                            text = "Email: ${user.email}",
+                            text = "E-mail: ${user.email}",
                             style = MaterialTheme.typography.headlineSmall
                         )
                         Text(
-                            text = "Phone number: ${user.phone}",
+                            text = "Nr telefonu: ${user.phone}",
                             style = MaterialTheme.typography.headlineSmall
                         )
                         Text(
-                            text = "Birthdate: ${user.birthdate}",
+                            text = "Data urodzenia: ${user.birthdate}",
                             style = MaterialTheme.typography.headlineSmall
                         )
                     }
@@ -163,7 +163,7 @@ fun UserProfile(user: UserDTO, apiViewModel: ApiViewModel, loadData: () -> Unit)
                 ) {
                     AsyncImage(
                         model = user.profilePic,
-                        contentDescription = "user profile picture",
+                        contentDescription = "Zdjęcie profilowe",
                         modifier = Modifier
                             .padding(15.dp)
                             .size(300.dp)
@@ -181,19 +181,19 @@ fun UserProfile(user: UserDTO, apiViewModel: ApiViewModel, loadData: () -> Unit)
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = "Description: ${user.description}",
+                            text = "Opis: ${user.description}",
                             style = MaterialTheme.typography.headlineSmall
                         )
                         Text(
-                            text = "Email: ${user.email}",
+                            text = "E-mail: ${user.email}",
                             style = MaterialTheme.typography.headlineSmall
                         )
                         Text(
-                            text = "Phone number: ${user.phone}",
+                            text = "Nr telefonu: ${user.phone}",
                             style = MaterialTheme.typography.headlineSmall
                         )
                         Text(
-                            text = "Birthdate: ${user.birthdate}",
+                            text = "Data urodzenia: ${user.birthdate}",
                             style = MaterialTheme.typography.headlineSmall
                         )
                     }
@@ -216,11 +216,11 @@ fun UserProfile(user: UserDTO, apiViewModel: ApiViewModel, loadData: () -> Unit)
                                 loadData()
                                 Toast.makeText(
                                     context,
-                                    "Updated!",
+                                    "Zaktualizowano!",
                                     Toast.LENGTH_SHORT
                                 ).show()
                             } else {
-                                Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT)
+                                Toast.makeText(context, "Błąd, spróbuj ponownie", Toast.LENGTH_SHORT)
                                     .show()
                             }
                         }
@@ -230,7 +230,7 @@ fun UserProfile(user: UserDTO, apiViewModel: ApiViewModel, loadData: () -> Unit)
                             p1: Throwable
                         ) {
                             Log.d("retrofit", p1.message.toString())
-                            Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Błąd połączenia", Toast.LENGTH_SHORT).show()
                         }
 
                     })
@@ -240,9 +240,8 @@ fun UserProfile(user: UserDTO, apiViewModel: ApiViewModel, loadData: () -> Unit)
                 .padding(bottom = 15.dp)
         ) {
             Box(modifier = Modifier.padding(10.dp)) {
-                Text(text = if (user.dogWalker != null && user.dogWalker) "Quit dog walking" else "Become dog walker")
+                Text(text = if (user.dogWalker != null && user.dogWalker) "Zrezygnuj z wyprowadzania" else "Zostań wyprowadzającym!")
             }
-
         }
         FloatingActionButton(
             onClick = { /*TODO*/ }, modifier = Modifier
@@ -250,7 +249,7 @@ fun UserProfile(user: UserDTO, apiViewModel: ApiViewModel, loadData: () -> Unit)
                 .padding(bottom = 15.dp)
         ) {
             Box(modifier = Modifier.padding(10.dp)) {
-                Text(text = "Edit Info")
+                Text(text = "Edytuj")
             }
 
         }

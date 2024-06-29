@@ -40,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.pawsitive.models.Species
 import com.example.pawsitive.navigation.main.MainLeafScreen
 import com.example.pawsitive.util.DateUtils
 import com.example.pawsitive.util.PreferencesManager
@@ -60,12 +61,12 @@ import retrofit2.Response
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
-    val species = listOf("DOG", "CAT", "BIRD", "OTHER")
-    val breeds = mutableListOf("Labrador", "Bulldog", "Alaskan Malamute", "Other")
-    val dogBreeds = listOf("Labrador", "Bulldog", "Alaskan Malamute", "Other")
-    val catBreeds = listOf("Birman", "Bombay", "Bengal", "Other")
-    val birdBreeds = listOf("Canary", "Columbidae", "Cockatiel", "Finch", "Lovebird", "Other")
-    val otherBreeds = listOf("Other")
+    val species = listOf(Species.DOG, Species.CAT, Species.BIRD, Species.OTHER)
+    val breeds = mutableListOf("Labrador", "Bulldog", "Samojed", "Inny")
+    val dogBreeds = listOf("Labrador", "Bulldog", "Samojed", "Inny")
+    val catBreeds = listOf("Syjamski", "Sfinks", "Perski", "Inny")
+    val birdBreeds = listOf("Kanarek", "Gołąb", "Nimfa", "Gil", "Zięba", "Inny")
+    val otherBreeds = listOf("Inny")
 
     val context = LocalContext.current
     val preferencesManager = PreferencesManager(context)
@@ -76,7 +77,7 @@ fun PetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
     }
     val dateToString = birthDate.selectedDateMillis?.let {
         DateUtils().dateToString(millisToLocalDate!!)
-    } ?: "Choose birthdate"
+    } ?: "Wybierz datę urodzenia"
 
     var nameInput by rememberSaveable {
         mutableStateOf("")
@@ -100,7 +101,7 @@ fun PetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
             OutlinedTextField(
                 value = nameInput,
                 onValueChange = { nameInput = it },
-                label = { Text(text = "Name") },
+                label = { Text(text = "Imię") },
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
             Spacer(modifier = Modifier.height(20.dp))
@@ -114,7 +115,7 @@ fun PetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
                 )
                 Icon(
                     imageVector = Icons.Default.DateRange,
-                    contentDescription = "date picker",
+                    contentDescription = "Data",
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
             }
@@ -130,7 +131,7 @@ fun PetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
                     modifier = Modifier.align(Alignment.CenterVertically)
                 ) {
                     TextField(
-                        value = selectedSpecies,
+                        value = selectedSpecies.translatedName,
                         onValueChange = {},
                         readOnly = true,
                         modifier = Modifier.menuAnchor()
@@ -141,16 +142,15 @@ fun PetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
                         species.forEach {
                             DropdownMenuItem(text = {
                                 Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-                                    Text(text = it)
+                                    Text(text = it.translatedName)
                                     Icon(
                                         imageVector = when (it) {
-                                            "DOG" -> FontAwesomeIcons.Solid.Dog
-                                            "CAT" -> FontAwesomeIcons.Solid.Cat
-                                            "BIRD" -> FontAwesomeIcons.Solid.Dove
-                                            "HORSE" -> FontAwesomeIcons.Solid.Horse
+                                            Species.DOG -> FontAwesomeIcons.Solid.Dog
+                                            Species.CAT -> FontAwesomeIcons.Solid.Cat
+                                            Species.BIRD -> FontAwesomeIcons.Solid.Dove
                                             else -> FontAwesomeIcons.Solid.Paw
                                         },
-                                        contentDescription = "icon",
+                                        contentDescription = "ikona zwierzęcia",
                                         modifier = Modifier.size(20.dp)
                                     )
                                 }
@@ -165,24 +165,24 @@ fun PetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
             }
             Spacer(modifier = Modifier.height(20.dp))
             when (selectedSpecies) {
-                "DOG" -> {
+                Species.DOG -> {
                     breeds.clear()
                     dogBreeds.forEach { breeds.add(it) }
                     selectedBreed = dogBreeds[0]
                 }
-                "CAT" -> {
+                Species.CAT -> {
                     breeds.clear()
                     catBreeds.forEach { breeds.add(it) }
                     selectedBreed = catBreeds[0]
                 }
 
-                "BIRD" -> {
+                Species.BIRD -> {
                     breeds.clear()
                     birdBreeds.forEach { breeds.add(it) }
                     selectedBreed = birdBreeds[0]
                 }
 
-                "OTHER" -> {
+                Species.OTHER -> {
                     breeds.clear()
                     otherBreeds.forEach { breeds.add(it) }
                     selectedBreed = otherBreeds[0]
@@ -234,7 +234,7 @@ fun PetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
                             }) {
                                 Icon(
                                     imageVector = Icons.Default.Check,
-                                    contentDescription = "accept"
+                                    contentDescription = "Akceptuj"
                                 )
                             }
                         },
@@ -242,7 +242,7 @@ fun PetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
                             Button(onClick = { showDialog.value = false }) {
                                 Icon(
                                     imageVector = Icons.Default.Clear,
-                                    contentDescription = "decline"
+                                    contentDescription = "Anuluj"
                                 )
                             }
                         },
@@ -259,7 +259,7 @@ fun PetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
                         val userId = preferencesManager.getUserId()
 
                         val call: Call<String> = apiViewModel.petService.addPet(
-                            nameInput, selectedSpecies, selectedBreed, millisToLocalDate!!, userId!!
+                            nameInput, selectedSpecies.name, selectedBreed, millisToLocalDate!!, userId!!
 
                         )
                         call.enqueue(object : Callback<String> {
@@ -271,12 +271,12 @@ fun PetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
                                 if (p1.body() != null) {
                                     Toast.makeText(
                                         context,
-                                        "Succesfully added pet",
+                                        "Pomyślnie dodano zwierzę",
                                         Toast.LENGTH_SHORT
                                     ).show()
                                     navController.navigate(MainLeafScreen.Pet.route)
                                 } else {
-                                    Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT)
+                                    Toast.makeText(context, "Błąd, spróbuj ponownie", Toast.LENGTH_SHORT)
                                         .show()
                                 }
                             }
@@ -286,7 +286,7 @@ fun PetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
                                 p1: Throwable
                             ) {
                                 Log.d("retrofit", p1.message.toString())
-                                Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT)
+                                Toast.makeText(context, "Błąd połączenia", Toast.LENGTH_SHORT)
                                     .show()
                             }
 
@@ -298,7 +298,7 @@ fun PetAddForm(navController: NavController, apiViewModel: ApiViewModel) {
                     .padding(bottom = 15.dp)
             ) {
                 Box(modifier = Modifier.padding(10.dp)) {
-                    Text(text = "Add pet")
+                    Text(text = "Dodaj zwierzaka")
                 }
             }
     }

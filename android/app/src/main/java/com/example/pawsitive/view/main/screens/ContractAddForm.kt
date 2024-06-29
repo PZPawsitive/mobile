@@ -79,7 +79,7 @@ fun ContractAddForm(navController: NavController, apiViewModel: ApiViewModel) {
                 if (p1.body() != null) {
                     pets = p1.body()
                 } else {
-                    Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Błąd, spróbuj ponownie", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -88,7 +88,7 @@ fun ContractAddForm(navController: NavController, apiViewModel: ApiViewModel) {
                 p1: Throwable
             ) {
                 Log.d("retrofit", p1.message.toString())
-                Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Błąd połączenia", Toast.LENGTH_SHORT).show()
             }
 
         })
@@ -123,7 +123,7 @@ fun ContractAddForm(navController: NavController, apiViewModel: ApiViewModel) {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = "Description", style = MaterialTheme.typography.headlineSmall)
+            Text(text = "Opis", style = MaterialTheme.typography.headlineSmall)
             OutlinedTextField(
                 value = descriptionInput,
                 onValueChange = { descriptionInput = it },
@@ -132,7 +132,7 @@ fun ContractAddForm(navController: NavController, apiViewModel: ApiViewModel) {
                     .padding(30.dp)
             )
             Spacer(modifier = Modifier.height(20.dp))
-            Text(text = "Reward", style = MaterialTheme.typography.headlineSmall)
+            Text(text = "Wynagrodzenie", style = MaterialTheme.typography.headlineSmall)
             OutlinedTextField(
                 value = rewardInput,
                 onValueChange = { rewardInput = it },
@@ -140,10 +140,10 @@ fun ContractAddForm(navController: NavController, apiViewModel: ApiViewModel) {
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
             Spacer(modifier = Modifier.height(20.dp))
-            Text(text = "Is any of pets aggresive?")
+            Text(text = "Czy jakieś zwierzę jest agresywne?")
             Switch(checked = isDangerous, onCheckedChange = { isDangerous = !isDangerous })
             Spacer(modifier = Modifier.height(20.dp))
-            Text(text = "Select pets for this walk")
+            Text(text = "Wybierz zwierzęta")
             if (pets != null) {
                 LazyColumn {
                     items(items = pets!!) {
@@ -166,9 +166,9 @@ fun ContractAddForm(navController: NavController, apiViewModel: ApiViewModel) {
                 }
             } else {
                 Row {
-                    Text(text = "No pets")
+                    Text(text = "Brak zwierząt")
                     OutlinedButton(onClick = { navController.navigate(MainLeafScreen.PetAddForm.route) }) {
-                        Text(text = "Add pet")
+                        Text(text = "Dodaj zwierzęta")
                     }
                 }
             }
@@ -181,7 +181,7 @@ fun ContractAddForm(navController: NavController, apiViewModel: ApiViewModel) {
                     Log.d("retrofit", "dangerous: $isDangerous")
                     runBlocking {
 //                        val userId = preferencesManager.getUserId()
-                        val call: Call<String> = apiViewModel.walkService.addContract(AddContract(descriptionInput, rewardInput.toDouble(), SimpleGeopoint(0.0, 0.0, LocalDateTime.now()), selectedPets.toList(), isDangerous))
+                        val call: Call<String> = apiViewModel.walkService.addContract(AddContract(descriptionInput, rewardInput.toDouble(), SimpleGeopoint(54.39555994665233, 18.5737934140649, LocalDateTime.now()), selectedPets.toList(), isDangerous))
                         call.enqueue(object : Callback<String> {
                             override fun onResponse(
                                 p0: Call<String>,
@@ -191,12 +191,12 @@ fun ContractAddForm(navController: NavController, apiViewModel: ApiViewModel) {
                                 if (p1.body() != null) {
                                     Toast.makeText(
                                         context,
-                                        "Succesfully added contract",
+                                        "Pomyślnie dodano zlecenie",
                                         Toast.LENGTH_SHORT
                                     ).show()
                                     navController.navigate(MainLeafScreen.ContractList.route)
                                 } else {
-                                    Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT)
+                                    Toast.makeText(context, "Błąd, spróbuj ponownie", Toast.LENGTH_SHORT)
                                         .show()
                                 }
                             }
@@ -206,7 +206,7 @@ fun ContractAddForm(navController: NavController, apiViewModel: ApiViewModel) {
                                 p1: Throwable
                             ) {
                                 Log.d("retrofit", p1.message.toString())
-                                Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT)
+                                Toast.makeText(context, "Błąd połączenia", Toast.LENGTH_SHORT)
                                     .show()
                             }
 
@@ -218,7 +218,7 @@ fun ContractAddForm(navController: NavController, apiViewModel: ApiViewModel) {
                     .padding(bottom = 15.dp)
             ) {
                 Box(modifier = Modifier.padding(10.dp)) {
-                    Text(text = "Add Contract")
+                    Text(text = "Dodaj zlecenie")
                 }
             }
     }

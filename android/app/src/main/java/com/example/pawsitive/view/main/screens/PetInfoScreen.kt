@@ -64,7 +64,7 @@ fun PetInfoScreen(apiViewModel: ApiViewModel, petId: String?, navController: Nav
                 if (p1.body() != null) {
                     pet = p1.body()
                 } else {
-                    Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Błąd, spróbuj ponownie", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -73,7 +73,7 @@ fun PetInfoScreen(apiViewModel: ApiViewModel, petId: String?, navController: Nav
                 p1: Throwable
             ) {
                 Log.d("retrofit", p1.message.toString())
-                Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Błąd połączenia", Toast.LENGTH_SHORT).show()
             }
 
         })
@@ -88,26 +88,26 @@ fun PetInfoScreen(apiViewModel: ApiViewModel, petId: String?, navController: Nav
                 else -> FontAwesomeIcons.Solid.Paw
             }
 
-            , contentDescription = "Dog view", Modifier.size(200.dp))
+            , contentDescription = "Ikona zwierzęcia", Modifier.size(200.dp))
             Spacer(modifier = Modifier.height(20.dp))
             Text(text = pet!!.name, style = MaterialTheme.typography.headlineLarge)
             Spacer(modifier = Modifier.height(20.dp))
             Row {
-                Text(text = "Breed: ", fontWeight = FontWeight.Bold)
+                Text(text = "Rasa: ", fontWeight = FontWeight.Bold)
                 Text(text = pet!!.breed)
             }
             Spacer(modifier = Modifier.height(20.dp))
             Row {
-                Text(text = "Born: ", fontWeight = FontWeight.Bold)
+                Text(text = "Urodzone: ", fontWeight = FontWeight.Bold)
                 Text(text = pet!!.birthdate.toString())
             }
             Spacer(modifier = Modifier.height(20.dp))
             Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
                 OutlinedButton(onClick = { navController.navigate("${MainLeafScreen.PetHistory.route}?petId=${pet!!.id}") }) {
-                    Text(text = "Show walk history")
+                    Text(text = "Pokaż historię spacerów")
                 }
                 Button(onClick = { /*TODO*/ }) {
-                    Text(text = "Edit")
+                    Text(text = "Edytuj")
                 }
             }
         }

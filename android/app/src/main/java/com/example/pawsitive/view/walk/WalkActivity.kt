@@ -130,14 +130,14 @@ class WalkActivity : AppCompatActivity() {
                 fusedLocationProviderClient.lastLocation.addOnCompleteListener(this) {
                     val location: Location? = it.result
                     if (location == null) {
-                        Toast.makeText(this, "Null received", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Pusta wartość", Toast.LENGTH_SHORT).show()
                     } else {
                         latitude = location.latitude
                         longtitude = location.longitude
                     }
                 }
             } else {
-                Toast.makeText(this, "Turn on location", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Włącz lokalizację", Toast.LENGTH_SHORT).show()
                 val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                 startActivity(intent)
             }
@@ -174,10 +174,10 @@ class WalkActivity : AppCompatActivity() {
 
         if (requestCode == PERMISSION_REQUEST_ACCESS_LOCATION) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(applicationContext, "Granted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, "Udzielono", Toast.LENGTH_SHORT).show()
                 getCurrentLocation()
             } else {
-                Toast.makeText(applicationContext, "Denied", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, "Nie udzielono", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -260,7 +260,7 @@ class WalkActivity : AppCompatActivity() {
                     deniedList,
                     getString(R.string.need_permission_continue),
                     "Ok",
-                    "Cancel"
+                    "Anuluj"
                 )
             }
             .onForwardToSettings { scope, deniedList ->
@@ -268,7 +268,7 @@ class WalkActivity : AppCompatActivity() {
                     deniedList,
                     getString(R.string.allow_permission_in_settings),
                     "Ok",
-                    "Cancel"
+                    "Anuluj"
                 )
             }
             .request { allGranted, grantedList, deniedList ->
@@ -323,7 +323,7 @@ class WalkActivity : AppCompatActivity() {
                             Log.e("tag", "CONNECTING")
                             Toast.makeText(
                                 this@WalkActivity,
-                                "CONNECTING",
+                                "Łączenie",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -332,7 +332,7 @@ class WalkActivity : AppCompatActivity() {
                             Log.e("tag", "CONNECTED")
                             Toast.makeText(
                                 this@WalkActivity,
-                                "CONNECTED",
+                                "Połączono",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -341,7 +341,7 @@ class WalkActivity : AppCompatActivity() {
                             Log.e("tag", "READINGINFO")
                             Toast.makeText(
                                 this@WalkActivity,
-                                "READINGINFO",
+                                "Odczyt danych",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -350,7 +350,7 @@ class WalkActivity : AppCompatActivity() {
                             Log.e("tag", "DEVICEVALIDATING")
                             Toast.makeText(
                                 this@WalkActivity,
-                                "DEVICEVALIDATING",
+                                "Walidacja urządzenia",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -359,7 +359,7 @@ class WalkActivity : AppCompatActivity() {
                             Log.e("tag", "PASSWORDVALIDATING")
                             Toast.makeText(
                                 this@WalkActivity,
-                                "PASSWORDVALIDATING",
+                                "Sprawdzanie hasła",
                                 Toast.LENGTH_SHORT
                             ).show()
                             val password = "minew123"
@@ -372,7 +372,7 @@ class WalkActivity : AppCompatActivity() {
                             Log.e("tag", "SYNCHRONIZINGTIME")
                             Toast.makeText(
                                 this@WalkActivity,
-                                "SYNCHRONIZINGTIME",
+                                "Synchronizacja",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -381,7 +381,7 @@ class WalkActivity : AppCompatActivity() {
                             Log.e("tag", "READINGCONNECTABLE")
                             Toast.makeText(
                                 this@WalkActivity,
-                                "READINGCONNECTABLE",
+                                "Odczyt połączenia",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -390,7 +390,7 @@ class WalkActivity : AppCompatActivity() {
                             Log.e("tag", "READINGFEATURE")
                             Toast.makeText(
                                 this@WalkActivity,
-                                "READINGFEATURE",
+                                "Odczyt funkcjonalności",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -399,7 +399,7 @@ class WalkActivity : AppCompatActivity() {
                             Log.e("tag", "READINGFRAMES")
                             Toast.makeText(
                                 this@WalkActivity,
-                                "READINGFRAMES",
+                                "Odczyt klatek",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -408,7 +408,7 @@ class WalkActivity : AppCompatActivity() {
                             Log.e("tag", "READINGTRIGGERS")
                             Toast.makeText(
                                 this@WalkActivity,
-                                "READINGTRIGGERS",
+                                "Odczyt wywołań",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -417,7 +417,7 @@ class WalkActivity : AppCompatActivity() {
                             Log.e("tag", "COMPLETED")
                             Toast.makeText(
                                 this@WalkActivity,
-                                "COMPLETED",
+                                "Ukończono",
                                 Toast.LENGTH_SHORT
                             ).show()
                             if (!beaconViewModel.listenedDevices.contains(mtPeripheral)) {
@@ -431,7 +431,7 @@ class WalkActivity : AppCompatActivity() {
                             beaconViewModel.connectedMTPeripheral = null
                             Toast.makeText(
                                 this@WalkActivity,
-                                "DISCONNECTED",
+                                "Rozłączono",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }

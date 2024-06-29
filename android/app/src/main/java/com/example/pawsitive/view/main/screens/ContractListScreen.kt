@@ -66,7 +66,7 @@ fun ContractListScreen(navController: NavHostController, apiViewModel: ApiViewMo
                     if (p1.body() != null) {
                         contracts = p1.body()!!.filter { !it.active && !it.completed }
                     } else {
-                        Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Błąd, spróbuj ponownie", Toast.LENGTH_SHORT).show()
                     }
                 }
 
@@ -75,7 +75,7 @@ fun ContractListScreen(navController: NavHostController, apiViewModel: ApiViewMo
                     p1: Throwable
                 ) {
                     Log.d("retrofit", p1.message.toString())
-                    Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Błąd połączenia", Toast.LENGTH_SHORT).show()
                 }
 
             })
@@ -107,8 +107,8 @@ fun ContractListScreen(navController: NavHostController, apiViewModel: ApiViewMo
                                 Column(modifier = Modifier.fillMaxWidth()) {
                                     Text(text = it.description, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
                                     Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-                                        Text(text = if (it.pets.size == 1) "${it.pets.size} pet" else "${it.pets.size} pets", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelLarge)
-                                        Text(text = "${it.reward} $", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelLarge)
+                                        Text(text = if (it.pets.size == 1) "${it.pets.size} zwierzę" else "${it.pets.size} zwierząt", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelLarge)
+                                        Text(text = "${it.reward} zł", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelLarge)
                                     }
                                 }
                             }
@@ -120,11 +120,11 @@ fun ContractListScreen(navController: NavHostController, apiViewModel: ApiViewMo
                         ) {
 
                             DropdownMenuItem(
-                                text = { Text(text = "Send message") },
+                                text = { Text(text = "Wyślij wiadomość") },
                                 onClick = { navController.navigate(MainLeafScreen.Chat.route) })
                             HorizontalDivider()
                             DropdownMenuItem(
-                                text = { Text(text = "Show details") },
+                                text = { Text(text = "Pokaż szczegóły") },
                                 onClick = { navController.navigate("${MainLeafScreen.ContractScreen.route}?id=${it.id}") })
                         }
                     }
@@ -148,7 +148,7 @@ fun ContractListScreen(navController: NavHostController, apiViewModel: ApiViewMo
                 .align(alignment = Alignment.BottomEnd)
                 .padding(20.dp)
         ) {
-            Icon(imageVector = Icons.Default.Add, contentDescription = "add contract")
+            Icon(imageVector = Icons.Default.Add, contentDescription = "Dodaj zlecenie")
         }
     }
 }

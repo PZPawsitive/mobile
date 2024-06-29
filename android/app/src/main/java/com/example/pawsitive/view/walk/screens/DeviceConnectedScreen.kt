@@ -75,7 +75,7 @@ fun DeviceConnectedScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
             OutlinedTextField(value = nameSpaceInput, onValueChange = {nameSpaceInput = it}, placeholder = { Text(
-                text = "Pet name"
+                text = "Imię zwierzęcia"
             )})
             Spacer(modifier = Modifier.height(10.dp))
             OutlinedButton(onClick = {
@@ -99,11 +99,11 @@ fun DeviceConnectedScreen(
                     }
                 }
             }) {
-                Text(text = "Save name")
+                Text(text = "Zapisz imię")
             }
             Spacer(modifier = Modifier.height(10.dp))
             OutlinedButton(onClick = { saveTrigger() }) {
-                Text(text = "Listen to device")
+                Text(text = "Nasłuchuj urządzenia")
             }
             Spacer(modifier = Modifier.height(10.dp))
             Button(onClick = {
@@ -126,7 +126,7 @@ fun DeviceConnectedScreen(
                     }
                 }
             }) {
-                Text(text = "remove from listened")
+                Text(text = "Usuń z nasłuchiwanych")
             }
         }
         FloatingActionButton(
@@ -141,7 +141,7 @@ fun DeviceConnectedScreen(
                 )
                 .padding(bottom = 10.dp)
         ) {
-            Text(text = "Back do devices list", modifier = Modifier.padding(10.dp))
+            Text(text = "Powrót do urządzeń", modifier = Modifier.padding(10.dp))
         }
     }
 }

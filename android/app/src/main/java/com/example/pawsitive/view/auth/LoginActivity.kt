@@ -121,7 +121,7 @@ class LoginActivity : ComponentActivity() {
                     ) {
                         OutlinedTextField(
                             value = emailInput,
-                            label = { Text(text = "Email") },
+                            label = { Text(text = "E-mail") },
                             onValueChange = { emailInput = it },
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -129,7 +129,7 @@ class LoginActivity : ComponentActivity() {
                         Spacer(modifier = Modifier.height(20.dp))
                         OutlinedTextField(
                             value = passwordInput,
-                            label = { Text(text = "Password") },
+                            label = { Text(text = "Hasło") },
                             visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                             onValueChange = { passwordInput = it },
                             modifier = Modifier
@@ -138,7 +138,7 @@ class LoginActivity : ComponentActivity() {
                                 IconButton(onClick = { showPassword = !showPassword }) {
                                     Icon(
                                         imageVector = if (showPassword) Icons.Outlined.Lock else Icons.Filled.Lock,
-                                        contentDescription = "show password"
+                                        contentDescription = "Pokaż hasło"
                                     )
                                 }
                             }
@@ -157,7 +157,7 @@ class LoginActivity : ComponentActivity() {
                                 },
 
                                 ) {
-                                Text(text = "Don't have account?")
+                                Text(text = "Nie masz konta?")
                             }
                             Button(
                                 onClick = {
@@ -175,7 +175,7 @@ class LoginActivity : ComponentActivity() {
                                                     val intent = Intent(context, MainActivity::class.java)
                                                     startActivity(intent)
                                                 } else {
-                                                    Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
+                                                    Toast.makeText(context, "Błąd, spróbuj ponownie", Toast.LENGTH_SHORT).show()
                                                 }
                                             }
 
@@ -184,15 +184,15 @@ class LoginActivity : ComponentActivity() {
                                                 p1: Throwable
                                             ) {
                                                 Log.d("retrofit", p1.message.toString())
-//                                                Log.d("retrofit", p1.)
-                                                Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+
+                                                Toast.makeText(context, "Błąd połączenia", Toast.LENGTH_SHORT).show()
                                             }
 
                                         })
                                     }
                                 },
                             ) {
-                                Text(text = "Login")
+                                Text(text = "Zaloguj")
                             }
                         }
 

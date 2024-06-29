@@ -95,7 +95,7 @@ fun InfoScreen(
 
         Column {
             Text(
-                text = "Devices nearby",
+                text = "Urządzenia w pobliżu",
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
@@ -103,7 +103,7 @@ fun InfoScreen(
             PeripheralList(beaconViewModel = beaconViewModel, connect, disconnect)
             if (beaconViewModel.listenedDevices.isNotEmpty()) {
                 Text(
-                    text = "Followed devices",
+                    text = "Nasłuchiwane urządzenia",
                     style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center
@@ -119,7 +119,7 @@ fun InfoScreen(
             .align(Alignment.BottomCenter)
             .padding(bottom = 15.dp)) {
             Box(modifier = Modifier.padding(15.dp)) {
-                Text(text = "Walk Completed")
+                Text(text = "Zakończ spacer")
             }
         }
         when {
@@ -144,7 +144,7 @@ fun InfoScreen(
                                             context.startActivity(intent)
                                         } else {
                                             Log.d("retrofit", p1.body().toString())
-                                            Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, "Błąd, spróbuj ponownie", Toast.LENGTH_SHORT).show()
                                         }
                                     }
                                     override fun onFailure(
@@ -152,22 +152,22 @@ fun InfoScreen(
                                         p1: Throwable
                                     ) {
                                         Log.d("retrofit", p1.message.toString())
-                                        Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, "Błąd połączenia", Toast.LENGTH_SHORT).show()
                                     }
 
                                 })
                             }
                         }) {
-                            Text(text = "Yes")
+                            Text(text = "Tak")
                         }
                     },
                     dismissButton = {
                         Button(onClick = { openAlertDialog.value = false }) {
-                            Text(text = "No")
+                            Text(text = "Nie")
                         }
                     },
                     text = {
-                        Text(text = "Are you at paymaster's location?")
+                        Text(text = "Jesteś w lokalizacji początkowej?")
                     }
                 )
             }
@@ -273,13 +273,13 @@ fun Device(
                             }
                         }
                         Text(text = "${String.format("%.2f", calculateDistance(mtFrameHandler.rssi, -59))} m")
-                        Text(text = "battery: ${mtFrameHandler.battery}%")
+                        Text(text = "batteria: ${mtFrameHandler.battery}%")
 //                    Log.d("frames", "frametype: ${mtPeripheral.mMTConnectionHandler.mTConnectionFeature} ")
                     }
                 } else {
 
                     Text(
-                        text = "Wait for the device to configure",
+                        text = "Poczekaj na konfigurację urządzenia",
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -298,7 +298,7 @@ fun Device(
                 if (mtFrameHandler.name == "D15N") {
                     connect(mtPeripheral)
                 } else {
-                    Toast.makeText(context, "wait for device to configure", Toast.LENGTH_SHORT)
+                    Toast.makeText(context, "Poczekaj na konfigurację urządzenia", Toast.LENGTH_SHORT)
                         .show()
                 }
             }
@@ -318,12 +318,12 @@ fun Device(
                         }
                         Text(text = mtFrameHandler.name)
                         Text(text = "${String.format("%.2f", calculateDistance(mtFrameHandler.rssi, -59))} m")
-                        Text(text = "battery: ${mtFrameHandler.battery}%")
+                        Text(text = "batteria: ${mtFrameHandler.battery}%")
                     }
                 } else {
 
                     Text(
-                        text = "Wait for the device to configure",
+                        text = "Poczekaj na konfigurację urządzenia",
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth()
                     )

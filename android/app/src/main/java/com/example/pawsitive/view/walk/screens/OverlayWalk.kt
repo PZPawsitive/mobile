@@ -107,12 +107,12 @@ fun BottomAppBar(
             onClick = { navController.navigateToRootScreen(WalkRootScreen.Info) },
             alwaysShowLabel = true,
             label = {
-                Text(text = "Devices")
+                Text(text = "Urządzenia")
             },
             icon = {
                 Icon(
                     imageVector = if (currentSelectedScreen == WalkRootScreen.Info) Icons.Default.Info else Icons.Outlined.Info,
-                    contentDescription = "devices"
+                    contentDescription = "Urządzenia"
                 )
             }
         )
@@ -121,12 +121,12 @@ fun BottomAppBar(
             onClick = { navController.navigateToRootScreen(WalkRootScreen.Map) },
             alwaysShowLabel = true,
             label = {
-                Text(text = "Map")
+                Text(text = "Mapa")
             },
             icon = {
                 Icon(
                     imageVector = if (currentSelectedScreen == WalkRootScreen.Map) Icons.Default.Map else Icons.Outlined.Map,
-                    contentDescription = "map"
+                    contentDescription = "Mapa"
                 )
             }
         )
@@ -135,12 +135,12 @@ fun BottomAppBar(
             onClick = { navController.navigateToRootScreen(WalkRootScreen.Messages) },
             alwaysShowLabel = true,
             label = {
-                Text(text = "Messages")
+                Text(text = "Czat")
             },
             icon = {
                 Icon(
                     imageVector = if (currentSelectedScreen == WalkRootScreen.Messages) Icons.Default.Chat else Icons.AutoMirrored.Outlined.Chat,
-                    contentDescription = "messages",
+                    contentDescription = "Wiadomości",
                     modifier = Modifier.size(25.dp)
                 )
             }
@@ -166,7 +166,7 @@ fun TopNavBar(navController: NavHostController) {
             IconButton(onClick = { context.startActivity(Intent(context, MainActivity::class.java)) }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Localized description"
+                    contentDescription = "Powrót do widoku głównego"
                 )
             }
         },
@@ -174,7 +174,7 @@ fun TopNavBar(navController: NavHostController) {
             IconButton(onClick = { expandedSettings = !expandedSettings }) {
                 Icon(
                     imageVector = Icons.Filled.Menu,
-                    contentDescription = "Localized description"
+                    contentDescription = "Pokaż menu"
                 )
             }
 
@@ -183,10 +183,10 @@ fun TopNavBar(navController: NavHostController) {
                 onDismissRequest = { expandedSettings = false }
             ) {
                 DropdownMenuItem(
-                    text = { Text(text = "Settings") },
+                    text = { Text(text = "Ustawienia") },
                     onClick = { /*TODO*/ })
                 HorizontalDivider()
-                DropdownMenuItem(text = { Text(text = "Logout") }, onClick = {
+                DropdownMenuItem(text = { Text(text = "Wyloguj") }, onClick = {
                     preferencesManager.clear()
                     val intent = Intent(context, LoginActivity::class.java)
                     context.startActivity(intent)

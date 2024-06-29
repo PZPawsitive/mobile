@@ -74,7 +74,7 @@ fun ContractScreen(apiViewModel: ApiViewModel, id: String?, navController: NavCo
                 if (p1.body() != null) {
                     contract = p1.body()
                 } else {
-                    Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Błąd, spróbuj ponownie", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -83,7 +83,7 @@ fun ContractScreen(apiViewModel: ApiViewModel, id: String?, navController: NavCo
                 p1: Throwable
             ) {
                 Log.d("retrofit", p1.message.toString())
-                Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Błąd połaczenia", Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -99,10 +99,10 @@ fun ContractScreen(apiViewModel: ApiViewModel, id: String?, navController: NavCo
                 val location =
                     Uri.parse("geo:${contract!!.location.latitude},${contract!!.location.longitude}?q=${contract!!.location.latitude},${contract!!.location.longitude}")
                 val mapIntent = Intent(Intent.ACTION_VIEW, location)
-                val chooser = Intent.createChooser(mapIntent, "choose map")
+                val chooser = Intent.createChooser(mapIntent, "Wybierz aplikację z mapą")
 
                 Text(
-                    text = "Contract",
+                    text = "Zlecenie",
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.headlineLarge
@@ -111,7 +111,7 @@ fun ContractScreen(apiViewModel: ApiViewModel, id: String?, navController: NavCo
                 if (contract!!.owner != null) { // for now
                     Row {
                         Text(
-                            text = "Posted by: ",
+                            text = "Dodane przez: ",
                             style = MaterialTheme.typography.headlineSmall,
                             fontWeight = FontWeight.Bold
                         )
@@ -125,7 +125,7 @@ fun ContractScreen(apiViewModel: ApiViewModel, id: String?, navController: NavCo
                 Spacer(modifier = Modifier.height(20.dp))
                 Row {
                     Text(
-                        text = "Description: ",
+                        text = "Opis: ",
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold
                     )
@@ -137,7 +137,7 @@ fun ContractScreen(apiViewModel: ApiViewModel, id: String?, navController: NavCo
                 Spacer(modifier = Modifier.height(20.dp))
                 Row {
                     Text(
-                        text = "Pet amount: ",
+                        text = "Ilość zwierząt: ",
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold
                     )
@@ -149,12 +149,12 @@ fun ContractScreen(apiViewModel: ApiViewModel, id: String?, navController: NavCo
                 Spacer(modifier = Modifier.height(20.dp))
                 Row {
                     Text(
-                        text = "Payment: ",
+                        text = "Wynagrodzenie: ",
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "${contract!!.reward.toString()}$",
+                        text = "${contract!!.reward}zł",
                         style = MaterialTheme.typography.headlineSmall
                     )
                 }
@@ -163,7 +163,7 @@ fun ContractScreen(apiViewModel: ApiViewModel, id: String?, navController: NavCo
                     val date = contract!!.completedAt!!.format(formatter)
                     Row {
                         Text(
-                            text = "Completed at: ",
+                            text = "Ukończone: ",
                             fontWeight = FontWeight.Bold,
                             style = MaterialTheme.typography.headlineSmall,
 
@@ -178,7 +178,7 @@ fun ContractScreen(apiViewModel: ApiViewModel, id: String?, navController: NavCo
                     val date = contract!!.acceptedAt!!.format(formatter)
                     Row {
                         Text(
-                            text = "Active since: ",
+                            text = "Aktywne od: ",
                             fontWeight = FontWeight.Bold,
                             style = MaterialTheme.typography.headlineSmall,
                         )
@@ -193,7 +193,7 @@ fun ContractScreen(apiViewModel: ApiViewModel, id: String?, navController: NavCo
                     val date = contract!!.createdAt.format(formatter)
                     Row {
                         Text(
-                            text = "created at: ",
+                            text = "Stworzone: ",
                             fontWeight = FontWeight.Bold,
                             style = MaterialTheme.typography.headlineSmall,
                         )
@@ -214,7 +214,7 @@ fun ContractScreen(apiViewModel: ApiViewModel, id: String?, navController: NavCo
                             Toast
                                 .makeText(
                                     context,
-                                    "Cannot find application to handle maps",
+                                    "Nie można znaleźć aplikacji do obsługi map",
                                     Toast.LENGTH_LONG
                                 )
                                 .show()
@@ -223,11 +223,11 @@ fun ContractScreen(apiViewModel: ApiViewModel, id: String?, navController: NavCo
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 ) {
                     Row(horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text(text = "Show location", style = MaterialTheme.typography.headlineSmall)
+                        Text(text = "Pokaż lokalizację", style = MaterialTheme.typography.headlineSmall)
                         Spacer(modifier = Modifier.width(10.dp))
                         Icon(
                             imageVector = FontAwesomeIcons.Solid.Map,
-                            contentDescription = "open map with localization",
+                            contentDescription = "Otwórz mapę z lokalizacją",
                             Modifier
                                 .size(30.dp, 30.dp)
                                 .align(Alignment.CenterVertically)
@@ -243,11 +243,11 @@ fun ContractScreen(apiViewModel: ApiViewModel, id: String?, navController: NavCo
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 ) {
                     Row(horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text(text = "Start chat", style = MaterialTheme.typography.headlineSmall)
+                        Text(text = "Zacznij czat", style = MaterialTheme.typography.headlineSmall)
                         Spacer(modifier = Modifier.width(10.dp))
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Chat,
-                            contentDescription = "start chat with contract owner",
+                            contentDescription = "Zacznij czat z właścicielem zlecenia",
                             Modifier
                                 .size(30.dp, 30.dp)
                                 .align(Alignment.CenterVertically)
@@ -287,7 +287,7 @@ fun ContractScreen(apiViewModel: ApiViewModel, id: String?, navController: NavCo
                                                     Log.d("retrofit", p1.body().toString())
                                                     Toast.makeText(
                                                         context,
-                                                        "Error, try again",
+                                                        "Błąd, spróbuj ponownie",
                                                         Toast.LENGTH_SHORT
                                                     ).show()
                                                 }
@@ -300,7 +300,7 @@ fun ContractScreen(apiViewModel: ApiViewModel, id: String?, navController: NavCo
                                                 Log.d("retrofit", p1.message.toString())
                                                 Toast.makeText(
                                                     context,
-                                                    "Connection error",
+                                                    "Błąd połączenia",
                                                     Toast.LENGTH_SHORT
                                                 ).show()
                                             }
@@ -308,16 +308,16 @@ fun ContractScreen(apiViewModel: ApiViewModel, id: String?, navController: NavCo
                                         })
                                     }
                                 }) {
-                                    Text(text = "Yes")
+                                    Text(text = "Tak")
                                 }
                             },
                             dismissButton = {
                                 Button(onClick = { openAlertDialog.value = false }) {
-                                    Text(text = "No")
+                                    Text(text = "Nie")
                                 }
                             },
                             text = {
-                                Text(text = "Do you want to accept the contract and start the walk?")
+                                Text(text = "Chcesz zaakceptować zlecenie i zacząć spacer?")
                             }
                         )
                     }
@@ -330,7 +330,7 @@ fun ContractScreen(apiViewModel: ApiViewModel, id: String?, navController: NavCo
                     .padding(bottom = 15.dp)
             ) {
                 Box(modifier = Modifier.padding(15.dp)) {
-                    Text(text = "Accept contract")
+                    Text(text = "Zaakceptuj zlecenie")
                 }
             }
 

@@ -138,7 +138,7 @@ class RegisterActivity : ComponentActivity() {
         }
         val dateToString = birthDate.selectedDateMillis?.let {
             DateUtils().dateToString(millisToLocalDate!!)
-        } ?: "Choose birthdate"
+        } ?: "Wybierz datę urodzenia"
         var isPhoneValid by rememberSaveable {
             mutableStateOf(true)
         }
@@ -200,7 +200,7 @@ class RegisterActivity : ComponentActivity() {
                     ) {
                         OutlinedTextField(
                             value = firstNameInput,
-                            label = { Text(text = "Firstname") },
+                            label = { Text(text = "Imię") },
                             onValueChange = { firstNameInput = it },
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -208,7 +208,7 @@ class RegisterActivity : ComponentActivity() {
                         Spacer(modifier = Modifier.height(10.dp))
                         OutlinedTextField(
                             value = lastNameInput,
-                            label = { Text(text = "Lastname") },
+                            label = { Text(text = "Nazwisko") },
                             onValueChange = { lastNameInput = it },
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -217,7 +217,7 @@ class RegisterActivity : ComponentActivity() {
                         OutlinedTextField(
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                             value = emailInput,
-                            label = { Text(text = "Email") },
+                            label = { Text(text = "E-mail") },
                             colors = TextFieldDefaults.outlinedTextFieldColors(
                                 errorBorderColor = Color.Red,
                                 errorTrailingIconColor = Color.Black
@@ -233,7 +233,7 @@ class RegisterActivity : ComponentActivity() {
                             supportingText = {
                                 if (!isEmailValid) {
                                     Text(
-                                        text = "email must be in format: x@x",
+                                        text = "E-mail musi być w formacie: x@x",
                                         textAlign = TextAlign.Center
                                     )
                                 }
@@ -251,7 +251,7 @@ class RegisterActivity : ComponentActivity() {
                         Spacer(modifier = Modifier.height(20.dp))
                         OutlinedTextField(
                             value = passwordInput,
-                            label = { Text(text = "Password") },
+                            label = { Text(text = "Hasło") },
                             visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                             onValueChange = { passwordInput = it },
                             modifier = Modifier
@@ -265,14 +265,14 @@ class RegisterActivity : ComponentActivity() {
                                 IconButton(onClick = { showPassword = !showPassword }) {
                                     Icon(
                                         imageVector = if (showPassword) Icons.Outlined.Lock else Icons.Filled.Lock,
-                                        contentDescription = "show password"
+                                        contentDescription = "Pokaż hasło"
                                     )
                                 }
                             }
                         )
                         OutlinedTextField(
                             value = repeatPasswordInput,
-                            label = { Text(text = "Repeat password") },
+                            label = { Text(text = "Powtórz hasło") },
                             visualTransformation = if (showRepeatedPassword) VisualTransformation.None else PasswordVisualTransformation(),
                             onValueChange = { repeatPasswordInput = it },
                             modifier = Modifier
@@ -285,7 +285,7 @@ class RegisterActivity : ComponentActivity() {
                             supportingText = {
                                 if (passwordInput != repeatPasswordInput) {
                                     Text(
-                                        text = "Password don't match!",
+                                        text = "Hasła są inne!",
                                         textAlign = TextAlign.Center
                                     )
                                 }
@@ -296,7 +296,7 @@ class RegisterActivity : ComponentActivity() {
                                 }) {
                                     Icon(
                                         imageVector = if (showRepeatedPassword) Icons.Outlined.Lock else Icons.Filled.Lock,
-                                        contentDescription = "show password"
+                                        contentDescription = "Pokaż hasło"
                                     )
                                 }
                             }
@@ -311,14 +311,14 @@ class RegisterActivity : ComponentActivity() {
                             )
                             Icon(
                                 imageVector = Icons.Default.DateRange,
-                                contentDescription = "date picker",
+                                contentDescription = "wybór daty",
                                 modifier = Modifier.align(Alignment.CenterVertically)
                             )
                         }
                         OutlinedTextField(
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                             value = phoneInput,
-                            label = { Text(text = "Phone number") },
+                            label = { Text(text = "Numer telefonu") },
                             onValueChange = {
                                 phoneInput = it
                                 if (phoneInputTouched) {
@@ -328,7 +328,7 @@ class RegisterActivity : ComponentActivity() {
                             supportingText = {
                                 if (!isPhoneValid) {
                                     Text(
-                                        text = "Number must be in format: 123456789",
+                                        text = "Numer musi być w formacie: 123456789",
                                         textAlign = TextAlign.Center
                                     )
                                 }
@@ -364,20 +364,20 @@ class RegisterActivity : ComponentActivity() {
                                     startActivity(intent)
                                 },
                             ) {
-                                Text(text = "Already have an account?")
+                                Text(text = "Masz już konto?")
                             }
                             Button(
                                 onClick = {
                                     runBlocking {
                                         val call: Call<User> = apiViewModel.userService.register(
                                             RegisterRequest(
-                                                firstName = firstNameInput,
-                                                lastName = lastNameInput,
+                                                firstName = firstNameInput.replaceFirstChar(Char::titlecase),
+                                                lastName = lastNameInput.replaceFirstChar(Char::titlecase),
                                                 email = emailInput,
                                                 password = passwordInput,
                                                 birthdate = millisToLocalDate!!,
                                                 phone = phoneInput.toInt(),
-                                                description = "New user",
+                                                description = "Nowy użytkownik",
                                                 profilePic = "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                                                 role = "USER_NOT_VERIFIED",
                                                 location = SimpleGeopoint(54.39555994665233, 18.5737934140649, LocalDateTime.now())
@@ -399,7 +399,7 @@ class RegisterActivity : ComponentActivity() {
                                                 } else {
 
                                                     Log.d("retrofit", p1.body().toString())
-                                                    Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
+                                                    Toast.makeText(context, "Błąd, spróbuj ponownie", Toast.LENGTH_SHORT).show()
                                                 }
                                             }
 
@@ -408,7 +408,7 @@ class RegisterActivity : ComponentActivity() {
                                                 p1: Throwable
                                             ) {
                                                 Log.d("retrofit", p1.message.toString())
-                                                Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(context, "Błąd połączenia", Toast.LENGTH_SHORT).show()
                                             }
 
                                         })
@@ -416,7 +416,7 @@ class RegisterActivity : ComponentActivity() {
                                 },
                                 enabled = canRegister(),
                             ) {
-                                Text(text = "Register")
+                                Text(text = "Zarejestruj")
                             }
 
                         }
@@ -431,7 +431,7 @@ class RegisterActivity : ComponentActivity() {
                                         }) {
                                             Icon(
                                                 imageVector = Icons.Default.Check,
-                                                contentDescription = "accept"
+                                                contentDescription = "Potwierdź"
                                             )
                                         }
                                     },
@@ -439,7 +439,7 @@ class RegisterActivity : ComponentActivity() {
                                         Button(onClick = { showDialog.value = false }) {
                                             Icon(
                                                 imageVector = Icons.Default.Clear,
-                                                contentDescription = "decline"
+                                                contentDescription = "Anuluj"
                                             )
                                         }
                                     },
@@ -465,7 +465,7 @@ class RegisterActivity : ComponentActivity() {
         Box(modifier = Modifier.fillMaxSize()) {
             Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
                 Row(Modifier.fillMaxWidth().padding(10.dp), horizontalArrangement = Arrangement.Center) {
-                    Text(text = "Verification code was sent to your email, type it to verify account", textAlign = TextAlign.Center)
+                    Text(text = "Kod weryfikacyjny został wysłany na podany e-mail, wpisz go by zweryfikować konto", textAlign = TextAlign.Center)
                 }
                 Row(Modifier.fillMaxWidth().padding(10.dp), horizontalArrangement = Arrangement.Center) {
                     OutlinedTextField(value = tokenInput, onValueChange = {tokenInput = it})
@@ -479,14 +479,10 @@ class RegisterActivity : ComponentActivity() {
                                     p0: Call<String>,
                                     p1: Response<String>
                                 ) {
-                                    Log.d("retrofit", "message ${p1.message()}")
-                                    Log.d("retrofit", "is succesful ${p1.isSuccessful}")
-                                    Log.d("retrofit", "code ${p1.code()}")
-                                    Log.d("retrofit", "body ${p1.body()}")
                                     if (p1.code() == 200) {
                                         Toast.makeText(context, p1.body().toString(), Toast.LENGTH_SHORT).show()
                                     } else {
-                                        Toast.makeText(context, "Could not resend, try again", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, "Nie można wysłać, spróbuj ponownie", Toast.LENGTH_SHORT).show()
                                     }
                                 }
 
@@ -494,13 +490,13 @@ class RegisterActivity : ComponentActivity() {
                                     p0: Call<String>,
                                     p1: Throwable
                                 ) {
-                                    Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, "Błąd połączenia", Toast.LENGTH_SHORT).show()
                                 }
 
                             })
                         }
                     }) {
-                        Text(text = "Resend")
+                        Text(text = "Wyślij ponownie")
                     }
                     Button(enabled = tokenInput.isNotEmpty(),onClick = {
                         Log.d("retrofit", "$tokenInput ${preferencesManager.getEmail()}")
@@ -511,15 +507,11 @@ class RegisterActivity : ComponentActivity() {
                                     p0: Call<String>,
                                     p1: Response<String>
                                 ) {
-                                    Log.d("retrofit", "message ${p1.message()}")
-                                    Log.d("retrofit", "is succesful ${p1.isSuccessful}")
-                                    Log.d("retrofit", "code ${p1.code()}")
-                                    Log.d("retrofit", "body ${p1.body()}")
                                     if (p1.code() == 200) {
                                         val intent = Intent(context, LoginActivity::class.java)
                                         startActivity(intent)
                                     } else {
-                                        Toast.makeText(context, "Could not verify, try again", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, "Nie można zweryfikować, spróbuj ponownie", Toast.LENGTH_SHORT).show()
                                     }
                                 }
 
@@ -527,16 +519,13 @@ class RegisterActivity : ComponentActivity() {
                                     p0: Call<String>,
                                     p1: Throwable
                                 ) {
-                                    Log.d("retrofit", "message ${p1.localizedMessage}")
-                                    Log.d("retrofit", "message ${p1.message}")
-                                    Log.d("retrofit", "message ${p1.cause}")
-                                    Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, "Błąd połączenia", Toast.LENGTH_SHORT).show()
                                 }
 
                             })
                         }
                     }) {
-                        Text(text = "Submit")
+                        Text(text = "Zweryfikuj")
                     }
                 }
             }

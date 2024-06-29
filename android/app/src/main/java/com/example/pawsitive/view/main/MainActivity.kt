@@ -77,14 +77,14 @@ class MainActivity : AppCompatActivity() {
                 fusedLocationProviderClient.lastLocation.addOnCompleteListener(this) {
                     val location: Location? = it.result
                     if (location==null) {
-                        Toast.makeText(this, "Null reveived", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Pusta wartość", Toast.LENGTH_SHORT).show()
                     } else {
                         latitude = location.latitude
                         longitude = location.longitude
                     }
                 }
             } else {
-                Toast.makeText(this, "Turn on location", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Włącz lokalizację", Toast.LENGTH_SHORT).show()
                 val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                 startActivity(intent)
             }
@@ -119,11 +119,11 @@ class MainActivity : AppCompatActivity() {
 
         if (requestCode == PERMISSION_REQUEST_ACCESS_LOCATION) {
             if (grantResults.isNotEmpty() && grantResults[0]== PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(applicationContext, "Granted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, "Udzielono", Toast.LENGTH_SHORT).show()
                 updateLocation()
             }
             else {
-                Toast.makeText(applicationContext, "Denied", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, "Nie udzielono", Toast.LENGTH_SHORT).show()
             }
         }
     }

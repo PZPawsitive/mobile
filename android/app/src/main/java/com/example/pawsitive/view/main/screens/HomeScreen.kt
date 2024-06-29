@@ -137,7 +137,7 @@ fun DogWalkersScreen(
                         _dogWalkers.add(it)
                     }
                 } else {
-                    Toast.makeText(context, "Error, try again", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Błąd, spróbuj ponownie", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -146,7 +146,7 @@ fun DogWalkersScreen(
                 p1: Throwable
             ) {
                 Log.d("retrofit", p1.message.toString())
-                Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Błąd połączenia", Toast.LENGTH_SHORT).show()
             }
 
         })
@@ -180,7 +180,7 @@ fun DogWalkersScreen(
                                 ) { //horizontalArrangement = Arrangement.SpaceBetween,
                                     AsyncImage(
                                         model = it!!.profilePic,
-                                        contentDescription = "user profile picture",
+                                        contentDescription = "Zdjęcie profilu użytkownika",
                                         modifier = Modifier
                                             .size(70.dp)
                                             .clip(shape = RoundedCornerShape(40.dp))
@@ -300,7 +300,7 @@ fun DogWalkersScreen(
             Box(modifier = Modifier.padding(15.dp)) {
                 Icon(
                     imageVector = Icons.Default.FilterAlt,
-                    contentDescription = "filter by range icon",
+                    contentDescription = "Filtruj po zasięgu w kilometrach",
                     Modifier.size(25.dp)
                 )
             }
@@ -313,7 +313,7 @@ fun DogWalkersScreen(
         ) {
             Icon(
                 imageVector = if (viewMode) FontAwesomeIcons.Solid.Map else FontAwesomeIcons.Solid.List,
-                contentDescription = "viewmode",
+                contentDescription = "tryb wyświetlania (mapa/lista)",
                 Modifier.size(25.dp)
             )
         }
@@ -357,7 +357,7 @@ fun DogWalkersScreen(
                                         Log.d("retrofit", p1.message.toString())
                                         Toast.makeText(
                                             context,
-                                            "Connection error",
+                                            "Błąd połączenia",
                                             Toast.LENGTH_SHORT
                                         ).show()
                                     }
@@ -366,18 +366,18 @@ fun DogWalkersScreen(
                             }
 
                         }) {
-                            Icon(imageVector = Icons.Default.Check, contentDescription = "accept")
+                            Icon(imageVector = Icons.Default.Check, contentDescription = "Akceptuj")
                         }
                     },
                     dismissButton = {
                         Button(onClick = { openAlertDialog.value = false }) {
-                            Icon(imageVector = Icons.Default.Clear, contentDescription = "decline")
+                            Icon(imageVector = Icons.Default.Clear, contentDescription = "Anuluj")
                         }
                     },
                     text = {
                         OutlinedTextField(
                             modifier = Modifier.width(150.dp),
-                            label = { Text(text = "Kilometres") },
+                            label = { Text(text = "Kilometry") },
                             value = input,
                             onValueChange = {
                                 input = it
